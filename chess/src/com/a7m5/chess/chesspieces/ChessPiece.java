@@ -1,12 +1,18 @@
 package com.a7m5.chess.chesspieces;
 
+import java.io.Serializable;
+
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.GdxChessGame;
 import com.a7m5.chess.Vector2;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-public abstract class ChessPiece {
+public abstract class ChessPiece implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6131164911961928291L;
 	private int ownerID;
 	private ChessBoard board;
 	private Vector2 position;

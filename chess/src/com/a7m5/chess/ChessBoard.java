@@ -1,5 +1,7 @@
 package com.a7m5.chess;
 
+import java.io.Serializable;
+
 import com.a7m5.chess.chesspieces.Bishop;
 import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.King;
@@ -15,8 +17,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class ChessBoard {
+public class ChessBoard implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7954652516619094585L;
 	private static TextureRegion kingTextureRegion;
 	private static TextureRegion pawnTextureRegion;
 	private static TextureRegion queenTextureRegion;
@@ -116,21 +122,6 @@ public class ChessBoard {
 	
 	public void start() {
 		clear();
-		for(int x = 0; x < 2; x++) {
-			addPiece(0, (x == 0 ? 0 : 7), new Rook(x));
-			addPiece(1, (x == 0 ? 0 : 7), new Knight(x));
-			addPiece(2, (x == 0 ? 0 : 7), new Bishop(x));
-			addPiece(3, (x == 0 ? 0 : 7), new Queen(x));
-			addPiece(4, (x == 0 ? 0 : 7), new King(x));
-			addPiece(5, (x == 0 ? 0 : 7), new Bishop(x));
-			addPiece(6, (x == 0 ? 0 : 7), new Knight(x));
-			addPiece(7, (x == 0 ? 0 : 7), new Rook(x));
-		}
-		
-		for(int x = 0; x < 8; x++) {
-			addPiece(x, 1, new Pawn(0));
-			addPiece(x, 6, new Pawn(1));
-		}
 	}
 	
 	public void restart() {
@@ -166,5 +157,8 @@ public class ChessBoard {
 		chessPieces[oldPosition.getX()][oldPosition.getY()] = null;
 		chessPiece.setPosition(newPosition);
 		chessPieces[newPosition.getX()][newPosition.getY()] = chessPiece;
+	}
+	public void setChessPieces(ChessPiece[][] chessPieces) {
+		this.chessPieces = chessPieces;
 	}
 }

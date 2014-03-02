@@ -68,8 +68,11 @@ public class Client implements Runnable {
 							Vector2[] vectors = command.getVectorArray();
 							board.moveChessPiece(vectors[0], vectors[1]);
 							break;
+						case 2: //Sync
+							board = command.getChessBoard();
+							break;
 						}
-					} else {
+				} else {
 						running = false;
 					}
 				} catch (ClassNotFoundException e) {
@@ -104,9 +107,11 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void sendMove(ChessPiece chessPiece, Vector2 newTile) {
-		NetworkCommand command = new NetworkCommand(NetworkCommand.MOVE);
-		command.move(chessPiece.getPosition(), newTile);
+	public void sendMove(ChessPiece chessPiece, Vector2 newPosition) {
+		NetworkCommand command = new NetworkCommand();
+		command.setCommand(NetworkCommand.MOVE);
+		command.setVectorArray(new Vector2[] { chessPiece.getPosition(), newPosition});
+		
 		send(command);
 	}
 }

@@ -1,5 +1,11 @@
 package com.a7m5.chess;
 
+import com.a7m5.chess.chesspieces.Bishop;
+import com.a7m5.chess.chesspieces.King;
+import com.a7m5.chess.chesspieces.Knight;
+import com.a7m5.chess.chesspieces.Pawn;
+import com.a7m5.chess.chesspieces.Queen;
+import com.a7m5.chess.chesspieces.Rook;
 import com.a7m5.networking.Client;
 import com.a7m5.networking.ClientCommand;
 import com.a7m5.networking.Server;
@@ -109,7 +115,23 @@ public class GdxChessGame implements ApplicationListener {
 
 	public static void startServer() {
 		if(server == null && serverThread == null) {
-			server = new Server();
+			ChessBoard board = new ChessBoard();
+			for(int x = 0; x < 2; x++) {
+				board.addPiece(0, (x == 0 ? 0 : 7), new Rook(x));
+				board.addPiece(1, (x == 0 ? 0 : 7), new Knight(x));
+				board.addPiece(2, (x == 0 ? 0 : 7), new Bishop(x));
+				board.addPiece(3, (x == 0 ? 0 : 7), new Queen(x));
+				board.addPiece(4, (x == 0 ? 0 : 7), new King(x));
+				board.addPiece(5, (x == 0 ? 0 : 7), new Bishop(x));
+				board.addPiece(6, (x == 0 ? 0 : 7), new Knight(x));
+				board.addPiece(7, (x == 0 ? 0 : 7), new Rook(x));
+			}
+			
+			for(int x = 0; x < 8; x++) {
+				board.addPiece(x, 1, new Pawn(0));
+				board.addPiece(x, 6, new Pawn(1));
+			}
+			server = new Server(board);
 			serverThread = new Thread(server);
 			serverThread.start();
 		}

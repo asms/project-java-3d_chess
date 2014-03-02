@@ -31,6 +31,7 @@ public class ServerThread implements Runnable {
 			ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);  
 			os = socket.getOutputStream();
 			oos = new ObjectOutputStream(os);
+			syncClient();
 			while(running) {
 				try {
 					NetworkCommand command = (NetworkCommand) objectInputStream.readObject();
@@ -61,7 +62,16 @@ public class ServerThread implements Runnable {
 	}
 
 	private void doMove(NetworkCommand command) {
+		Vector2[] vectors = command.getVectorArray();
+		server.getChessBoard().moveChessPiece(vectors[0], vectors[1]);
 		server.sendAll(command);
+	}
+	
+	private void syncClient() {
+		NetworkCommand command = new NetworkCommand();
+		command.setCommand(NetworkCommand.SYNC);
+		command.setChessBoard(server.getChessBoard());
+		send(command);
 	}
 
 	public void close() {

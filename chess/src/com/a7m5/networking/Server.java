@@ -6,6 +6,15 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import com.a7m5.chess.ChessBoard;
+import com.a7m5.chess.chesspieces.Bishop;
+import com.a7m5.chess.chesspieces.ChessPiece;
+import com.a7m5.chess.chesspieces.King;
+import com.a7m5.chess.chesspieces.Knight;
+import com.a7m5.chess.chesspieces.Pawn;
+import com.a7m5.chess.chesspieces.Queen;
+import com.a7m5.chess.chesspieces.Rook;
+
 public class Server implements Runnable {
 
 	private static int port = 8082; // arbitrary port
@@ -16,6 +25,11 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket = null;
 	private ArrayList<Thread> clientThreads = new ArrayList<Thread>();
 	private ArrayList<Runnable> clientRunnables = new ArrayList<Runnable>();
+	private ChessBoard chessBoard;
+	
+	public Server(ChessBoard chessBoard) {
+		this.chessBoard = chessBoard;
+	}
 
 	@Override
 	public void run() {
@@ -83,6 +97,14 @@ public class Server implements Runnable {
 			ServerThread client = (ServerThread) runnable;
 			client.send(command);
 		}
+	}
+	
+	public void setChessBoard(ChessBoard chessBoard) {
+		this.chessBoard = chessBoard;
+	}
+
+	public ChessBoard getChessBoard() {
+		return this.chessBoard;
 	}
 
 }
