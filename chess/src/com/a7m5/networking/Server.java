@@ -16,8 +16,8 @@ import com.a7m5.chess.chesspieces.Queen;
 import com.a7m5.chess.chesspieces.Rook;
 
 public class Server implements Runnable {
-
-	private static int port = 8082; // arbitrary port
+	
+	private int port;
 	private static int MAX_CONNECTIONS = 13; // arbitrary # of conn.
 	private static int connections = 0;
 	private boolean running = true;
@@ -27,7 +27,8 @@ public class Server implements Runnable {
 	private ArrayList<Runnable> clientRunnables = new ArrayList<Runnable>();
 	private ChessBoard chessBoard;
 	
-	public Server(ChessBoard chessBoard) {
+	public Server(int port, ChessBoard chessBoard) {
+		this.port = port;
 		this.chessBoard = chessBoard;
 	}
 

@@ -7,18 +7,18 @@ import com.a7m5.chess.GdxChessGame;
 import com.a7m5.chess.Vector2;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-public abstract class ChessPiece implements Serializable {
+public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6131164911961928291L;
-	private int ownerID;
-	private ChessBoard board;
+	protected ChessOwner owner;
+	protected ChessBoard board;
 	private Vector2 position;
 	
-	public ChessPiece(int ownerID) {
-		this.ownerID = ownerID;
+	public ChessPiece(ChessOwner owner) {
+		this.owner = owner;
 	}
 
 	public void register(ChessBoard chessBoard, int tileX, int tileY) {
@@ -39,9 +39,12 @@ public abstract class ChessPiece implements Serializable {
 		int tileY = ChessBoard.getTileYFromYCoordinate(y);
 		Vector2 tileClicked = new Vector2(tileX, tileY);
 		board.setSelectedChessPiece(null);
-		GdxChessGame.getClient().sendMove(this, tileClicked);
+		boolean moved = tryMove(tileClicked);
+		if(moved) {
+			GdxChessGame.getClient().sendMove(this, tileClicked);
+		}
 	}
-	
+
 	public Vector2 getPosition() {
 		return position;
 	}

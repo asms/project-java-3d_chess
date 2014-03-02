@@ -1,10 +1,38 @@
 package com.a7m5.chess.chesspieces;
 
+import com.a7m5.chess.Vector2;
+
 
 public class Pawn extends ChessPiece {
+	
+	public Pawn(ChessOwner owner) {
+		super(owner);
+		
+	}
 
-	public Pawn(int ownerID) {
-		super(ownerID);
+	public static final Vector2[] specialMovementVectors = {
+		new Vector2(0, 2)
+	};
+	
+	public static final Vector2[] movementVectors = {
+		new Vector2(0, 1)
+	};
+	
+	public static final Vector2[] attackVectors = {
+		new Vector2(-1, 1),
+		new Vector2(1, 1)
+	};
+	
+	public boolean tryMove(Vector2 newPosition) {
+		for(Vector2 movementVector : movementVectors) {
+			if(owner == ChessOwner.TOP) {
+				movementVector = movementVector.multiplyY(-1);
+			}
+			if(getPosition().add(movementVector).equals(newPosition)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -7,7 +7,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import com.a7m5.chess.GdxChessGame;
 import com.a7m5.chess.Vector2;
 
 public class ServerThread implements Runnable {

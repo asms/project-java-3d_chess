@@ -1,6 +1,7 @@
 package com.a7m5.chess;
 
 import com.a7m5.chess.chesspieces.Bishop;
+import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.King;
 import com.a7m5.chess.chesspieces.Knight;
 import com.a7m5.chess.chesspieces.Pawn;
@@ -113,25 +114,26 @@ public class GdxChessGame implements ApplicationListener {
 
 	}
 
-	public static void startServer() {
+	public static void startServer(int port) {
 		if(server == null && serverThread == null) {
 			ChessBoard board = new ChessBoard();
 			for(int x = 0; x < 2; x++) {
-				board.addPiece(0, (x == 0 ? 0 : 7), new Rook(x));
-				board.addPiece(1, (x == 0 ? 0 : 7), new Knight(x));
-				board.addPiece(2, (x == 0 ? 0 : 7), new Bishop(x));
-				board.addPiece(3, (x == 0 ? 0 : 7), new Queen(x));
-				board.addPiece(4, (x == 0 ? 0 : 7), new King(x));
-				board.addPiece(5, (x == 0 ? 0 : 7), new Bishop(x));
-				board.addPiece(6, (x == 0 ? 0 : 7), new Knight(x));
-				board.addPiece(7, (x == 0 ? 0 : 7), new Rook(x));
+				ChessOwner owner = (x == 0 ? ChessOwner.BOTTOM : ChessOwner.TOP);
+				board.addPiece(0, (x == 0 ? 0 : 7), new Rook(owner));
+				board.addPiece(1, (x == 0 ? 0 : 7), new Knight(owner));
+				board.addPiece(2, (x == 0 ? 0 : 7), new Bishop(owner));
+				board.addPiece(3, (x == 0 ? 0 : 7), new Queen(owner));
+				board.addPiece(4, (x == 0 ? 0 : 7), new King(owner));
+				board.addPiece(5, (x == 0 ? 0 : 7), new Bishop(owner));
+				board.addPiece(6, (x == 0 ? 0 : 7), new Knight(owner));
+				board.addPiece(7, (x == 0 ? 0 : 7), new Rook(owner));
 			}
 			
 			for(int x = 0; x < 8; x++) {
-				board.addPiece(x, 1, new Pawn(0));
-				board.addPiece(x, 6, new Pawn(1));
+				board.addPiece(x, 1, new Pawn(ChessOwner.BOTTOM));
+				board.addPiece(x, 6, new Pawn(ChessOwner.TOP));
 			}
-			server = new Server(board);
+			server = new Server(port, board);
 			serverThread = new Thread(server);
 			serverThread.start();
 		}
