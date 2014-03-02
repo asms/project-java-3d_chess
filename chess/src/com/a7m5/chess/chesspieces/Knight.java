@@ -9,9 +9,34 @@ public class Knight extends ChessPiece {
 		super(owner);
 	}
 
-	@Override
+	public static final Vector2[] specialMovementVectors = {};
+	
+	public static final Vector2[] movementVectors = {
+		new Vector2(2, -1),
+		new Vector2(2, 1),
+		
+		new Vector2(-2, -1),
+		new Vector2(-2, 1),
+		
+		new Vector2(1, -2),
+		new Vector2(1, 2),
+		
+		new Vector2(-1, -2),
+		new Vector2(-1, 2)
+		
+	};
+	
+	public static final Vector2[] attackVectors = movementVectors;
+	
 	public boolean tryMove(Vector2 newPosition) {
-		// TODO Auto-generated method stub
+		for(Vector2 movementVector : movementVectors) {
+			if(owner == ChessOwner.TOP) {
+				movementVector = movementVector.multiplyY(-1);
+			}
+			if(getPosition().add(movementVector).equals(newPosition)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
