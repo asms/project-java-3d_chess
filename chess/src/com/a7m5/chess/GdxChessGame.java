@@ -30,13 +30,12 @@ public class GdxChessGame implements ApplicationListener {
 	private String address;
 	private Texture yourTurnTexture;
 	private Texture waitTexture;
-	static ChessBoard board;
 
 	private static Server server = null;
 	private static Client client = null;
 	private static Thread clientThread = null;
 	private static Thread serverThread = null;
-	private static int owner;
+	private static ChessOwner owner;
 
 	public GdxChessGame(String address, int port) {
 		this.address = address;
@@ -56,7 +55,6 @@ public class GdxChessGame implements ApplicationListener {
 		camera = new OrthographicCamera(512, 512);
 		camera.setToOrtho(false);
 
-
 		batch = new SpriteBatch();
 		
 		//Your Turn
@@ -67,7 +65,7 @@ public class GdxChessGame implements ApplicationListener {
 
 		yourTurnSprite = new Sprite(yourTurnRegion);
 		yourTurnSprite.setOrigin(yourTurnSprite.getWidth()/2, yourTurnSprite.getHeight()/2);
-		yourTurnSprite.setPosition(612-64, 412-64);
+		yourTurnSprite.setPosition(612-64, 412-64-128-32);
 		
 		//Wait
 		waitTexture = new Texture(Gdx.files.internal("data/wait.png"));
@@ -107,8 +105,11 @@ public class GdxChessGame implements ApplicationListener {
 
 			batch.setProjectionMatrix(camera.combined);
 			batch.begin();
-			yourTurnSprite.draw(batch);
-			waitSprite.draw(batch);
+			if(getOwner() == getClient().board.getTurnOwner()) {
+				yourTurnSprite.draw(batch);
+			} else {
+				waitSprite.draw(batch);
+			}
 			client.board.drawPieces(batch);
 			batch.end();
 		}
@@ -129,6 +130,7 @@ public class GdxChessGame implements ApplicationListener {
 	public static void startServer(int port) {
 		if(server == null && serverThread == null) {
 			ChessBoard board = new ChessBoard();
+			board.setTurnOwner(ChessOwner.TOP);
 			for(int x = 0; x < 2; x++) {
 				ChessOwner owner = (x == 0 ? ChessOwner.BOTTOM : ChessOwner.TOP);
 				board.addPiece(0, (x == 0 ? 0 : 7), new Rook(owner));
@@ -183,7 +185,11 @@ public class GdxChessGame implements ApplicationListener {
 		return client;
 	}
 
-	public static int getOwner() {
+	public static ChessOwner getOwner() {
 		return owner;
+	}
+
+	public static void setOwner(ChessOwner arg) {
+		owner = arg;
 	}
 }

@@ -96,6 +96,7 @@ public class Client implements Runnable {
 	
 	public void onClickListener(int x, int y, int pointer, int button) {
 		System.out.println(x + ":" + y);
+		if(GdxChessGame.getOwner() == board.getTurnOwner())
 		try {
 			ChessPiece clickedChessPiece = board.getChessPieceByXY(x, y);
 			if(clickedChessPiece != null) {
@@ -106,9 +107,10 @@ public class Client implements Runnable {
 					selectedChessPiece.onNullTileClicked(x, y);
 				}
 			}
-		} catch(IndexOutOfBoundsException e) {
-			// side menu interaction
-		}
+			return;
+		} catch(IndexOutOfBoundsException e) {}
+		
+		//side menu interaction
 	}
 	
 	public void send(NetworkCommand command) {
@@ -138,7 +140,7 @@ public class Client implements Runnable {
 	public void sendGameOver() {
 		NetworkCommand command = new NetworkCommand();
 		command.setCommand(NetworkCommand.GAME_OVER);
-		Vector2[] vectorArray = {new Vector2(GdxChessGame.getOwner(), 0)};
+		Vector2[] vectorArray = {new Vector2(GdxChessGame.getOwner().ordinal(), 0)};
 		command.setVectorArray(vectorArray);
 		
 		send(command);

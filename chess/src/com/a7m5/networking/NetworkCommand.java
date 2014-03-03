@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.Vector2;
+import com.a7m5.chess.chesspieces.ChessOwner;
 
 public class NetworkCommand implements Serializable {
 	
@@ -21,9 +22,18 @@ public class NetworkCommand implements Serializable {
 	private Vector2[] vectors;
 
 	private ChessBoard chessBoard;
+	private ChessOwner owner;
 	
 	public void setCommand(int command) {
 		this.command = command;
+	}
+	
+	public void setOwner(ChessOwner owner) {
+		this.owner = owner;
+	}
+	
+	public ChessOwner getOwner() {
+		return owner;
 	}
 
 	public int getCommand() {

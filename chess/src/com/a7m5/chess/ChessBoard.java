@@ -35,6 +35,7 @@ public class ChessBoard implements Serializable {
 
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
+	private ChessOwner turnOwner;
 	public static int tileWidth = 64;
 	private static int actualBoardWidth = tileWidth * 8;
 
@@ -80,7 +81,7 @@ public class ChessBoard implements Serializable {
 
 	public void drawBoard(ShapeRenderer shapeRenderer) {
 		boolean alt = true;
-		shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
+		shapeRenderer.setColor(Color.BLACK);
 		shapeRenderer.rect(0,
 				0,
 				actualBoardWidth,
@@ -90,15 +91,16 @@ public class ChessBoard implements Serializable {
 				0);
 		for(int y = 0; y < 8; y++) {
 			for(int x = 0; x < 4; x++) {
-				shapeRenderer.setColor(Color.BLACK);
-				shapeRenderer.rect((2*x+(alt?1:0)) * 64,
-						y*64,
-						tileWidth,
-						tileWidth
+				
+				shapeRenderer.setColor(new Color(0.8f, 1, 0.8f, 1));
+				shapeRenderer.rect((2*x+(alt?1:0)) * 64 + 1,
+						y*64 + 1,
+						tileWidth-2,
+						tileWidth-2
 						);
 				
-				shapeRenderer.setColor(new Color(0.7f, 1, 0.7f, 1));
-				shapeRenderer.rect((2*x+(alt?1:0)) * 64 + 1,
+				shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
+				shapeRenderer.rect((2*x+(alt?0:1)) * 64 + 1,
 						y*64 + 1,
 						tileWidth-2,
 						tileWidth-2
@@ -197,18 +199,30 @@ public class ChessBoard implements Serializable {
 	}
 	public void moveChessPiece(Vector2 oldPosition, Vector2 newPosition) {
 		ChessPiece chessPiece = chessPieces[oldPosition.getX()][oldPosition.getY()];
+		if(chessPiece.getOwner() == ChessOwner.TOP) {
+			turnOwner  = ChessOwner.BOTTOM;
+		} else {
+			turnOwner = ChessOwner.TOP;
+		}
 		chessPieces[oldPosition.getX()][oldPosition.getY()] = null;
 		chessPiece.setPosition(newPosition);
 		chessPieces[newPosition.getX()][newPosition.getY()] = chessPiece;
+		selectedChessPiece = null;
 	}
 	public void setChessPieces(ChessPiece[][] chessPieces) {
 		this.chessPieces = chessPieces;
 	}
 	public void attackChessPiece(Vector2 vector1, Vector2 vector2) {
 		ChessPiece attacker = chessPieces[vector1.getX()][vector1.getY()];
+		if(attacker.getOwner() == ChessOwner.TOP) {
+			turnOwner  = ChessOwner.BOTTOM;
+		} else {
+			turnOwner = ChessOwner.TOP;
+		}
 		chessPieces[vector1.getX()][vector1.getY()] = null;
 		attacker.setPosition(vector2);
 		chessPieces[vector2.getX()][vector2.getY()] = attacker;
+		selectedChessPiece = null;
 	}
 	public int getBoardWidth() {
 		return actualBoardWidth / tileWidth;
@@ -216,5 +230,11 @@ public class ChessBoard implements Serializable {
 	public void gameOver(int winner) {
 		// TODO Auto-generated method stub
 		
+	}
+	public void setTurnOwner(ChessOwner owner) {
+		this.turnOwner = owner;
+	}
+	public ChessOwner getTurnOwner() {
+		return turnOwner;
 	}
 }

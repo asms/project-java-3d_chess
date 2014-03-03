@@ -1,5 +1,6 @@
 package com.a7m5.chess;
 
+import com.a7m5.chess.chesspieces.ChessOwner;
 import com.badlogic.gdx.InputProcessor;
 
 public class ChessInputProcessor implements InputProcessor {
@@ -15,6 +16,11 @@ public class ChessInputProcessor implements InputProcessor {
 
    @Override
    public boolean keyTyped (char character) {
+	   if(character == 'w') {
+		   GdxChessGame.setOwner(ChessOwner.TOP);
+	   } else if(character == 'b') {
+		   GdxChessGame.setOwner(ChessOwner.BOTTOM);
+	   }
       return false;
    }
 
