@@ -7,21 +7,11 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 import com.a7m5.chess.ChessBoard;
-import com.a7m5.chess.chesspieces.Bishop;
-import com.a7m5.chess.chesspieces.ChessPiece;
-import com.a7m5.chess.chesspieces.King;
-import com.a7m5.chess.chesspieces.Knight;
-import com.a7m5.chess.chesspieces.Pawn;
-import com.a7m5.chess.chesspieces.Queen;
-import com.a7m5.chess.chesspieces.Rook;
 
 public class Server implements Runnable {
 	
 	private int port;
-	private static int MAX_CONNECTIONS = 13; // arbitrary # of conn.
-	private static int connections = 0;
 	private boolean running = true;
-	private boolean closing = true;
 	private ServerSocket serverSocket = null;
 	private ArrayList<Thread> clientThreads = new ArrayList<Thread>();
 	private ArrayList<Runnable> clientRunnables = new ArrayList<Runnable>();

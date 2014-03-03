@@ -14,8 +14,8 @@ import com.a7m5.chess.chesspieces.ChessPiece;
 
 public class Client implements Runnable {
 
-	private static String address;
-	private static int port;
+	private String address;
+	private int port;
 
 	public Socket socket;
 	public ChessBoard board;

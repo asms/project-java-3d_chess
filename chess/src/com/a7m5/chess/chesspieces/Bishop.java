@@ -5,6 +5,11 @@ import com.a7m5.chess.Vector2;
 
 public class Bishop extends ChessPiece {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8899602072817271337L;
+
 	public Bishop(ChessOwner owner) {
 		super(owner);
 	}

@@ -12,7 +12,6 @@ import com.a7m5.chess.chesspieces.Rook;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -95,19 +94,23 @@ public class ChessBoard implements Serializable {
 			for(int x = 0; x < 8; x++) {
 				ChessPiece chessPiece = chessPieces[x][y];
 				if(chessPiece != null) {
+					TextureRegion textureRegion;
 					if(chessPiece instanceof Pawn) {
-						batch.draw(pawnTextureRegion, x*64, y*64);
+						textureRegion = pawnTextureRegion;
 					} else if(chessPiece instanceof King) {
-						batch.draw(kingTextureRegion, x*64, y*64);
+						textureRegion = kingTextureRegion;
 					} else if(chessPiece instanceof Queen) {
-						batch.draw(queenTextureRegion, x*64, y*64);
+						textureRegion = queenTextureRegion;
 					} else if(chessPiece instanceof Knight) {
-						batch.draw(knightTextureRegion, x*64, y*64);
+						textureRegion = knightTextureRegion;
 					} else if(chessPiece instanceof Rook) {
-						batch.draw(rookTextureRegion, x*64, y*64);
+						textureRegion = rookTextureRegion;
 					} else if(chessPiece instanceof Bishop) {
-						batch.draw(bishopTextureRegion, x*64, y*64);
+						textureRegion = bishopTextureRegion;
+					} else {
+						break;
 					}
+					batch.draw(textureRegion, x*64, y*64);
 				}
 
 			}

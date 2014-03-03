@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.Vector2;
-import com.a7m5.chess.chesspieces.ChessPiece;
 
 public class NetworkCommand implements Serializable {
 	

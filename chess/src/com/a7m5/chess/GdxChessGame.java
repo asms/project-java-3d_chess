@@ -8,7 +8,6 @@ import com.a7m5.chess.chesspieces.Pawn;
 import com.a7m5.chess.chesspieces.Queen;
 import com.a7m5.chess.chesspieces.Rook;
 import com.a7m5.networking.Client;
-import com.a7m5.networking.ClientCommand;
 import com.a7m5.networking.Server;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -48,8 +47,8 @@ public class GdxChessGame implements ApplicationListener {
 		ChessInputProcessor inputProcessor = new ChessInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
+		//float w = Gdx.graphics.getWidth();
+		//float h = Gdx.graphics.getHeight();
 
 		camera = new OrthographicCamera(512, 512);
 		camera.setToOrtho(false);

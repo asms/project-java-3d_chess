@@ -5,6 +5,11 @@ import com.a7m5.chess.Vector2;
 
 public class Rook extends ChessPiece {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8281050694944104353L;
+
 	public Rook(ChessOwner owner) {
 		super(owner);
 	}

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.GdxChessGame;
 import com.a7m5.chess.Vector2;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	
