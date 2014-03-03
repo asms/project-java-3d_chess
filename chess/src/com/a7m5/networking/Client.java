@@ -71,6 +71,10 @@ public class Client implements Runnable {
 						case 2: //Sync
 							board = command.getChessBoard();
 							break;
+						case 3: //ATTACK
+							Vector2[] positions = command.getVectorArray();
+							board.attackChessPiece(positions[0], positions[1]);
+							break;
 						}
 				} else {
 						running = false;
@@ -107,10 +111,18 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void sendMove(ChessPiece chessPiece, Vector2 newPosition) {
+	public void sendMove(Vector2 oldPosition, Vector2 newPosition) {
 		NetworkCommand command = new NetworkCommand();
 		command.setCommand(NetworkCommand.MOVE);
-		command.setVectorArray(new Vector2[] { chessPiece.getPosition(), newPosition});
+		command.setVectorArray(new Vector2[] { oldPosition, newPosition});
+		
+		send(command);
+	}
+
+	public void sendAttack(Vector2 piece1, Vector2 piece2) {
+		NetworkCommand command = new NetworkCommand();
+		command.setCommand(NetworkCommand.ATTACK);
+		command.setVectorArray(new Vector2[] { piece1, piece2});
 		
 		send(command);
 	}

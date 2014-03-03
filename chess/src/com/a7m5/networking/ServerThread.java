@@ -41,6 +41,12 @@ public class ServerThread implements Runnable {
 							break;
 						case 1: //MOVE
 							doMove(command);
+							syncClient();
+							break;
+
+						case 3: //ATTACK
+							doAttack(command);
+							syncClient();
 							break;
 						}
 						System.out.println("Command received: " + command.getCommand());
@@ -60,12 +66,18 @@ public class ServerThread implements Runnable {
 		}
 	}
 
+	private void doAttack(NetworkCommand command) {
+		Vector2[] vectors = command.getVectorArray();
+		server.getChessBoard().attackChessPiece(vectors[0], vectors[1]);
+		server.sendAll(command);
+	}
+
 	private void doMove(NetworkCommand command) {
 		Vector2[] vectors = command.getVectorArray();
 		server.getChessBoard().moveChessPiece(vectors[0], vectors[1]);
 		server.sendAll(command);
 	}
-	
+
 	private void syncClient() {
 		NetworkCommand command = new NetworkCommand();
 		command.setCommand(NetworkCommand.SYNC);

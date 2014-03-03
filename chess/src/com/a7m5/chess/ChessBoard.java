@@ -18,7 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class ChessBoard implements Serializable {
-	
+
 	/**
 	 * 
 	 */
@@ -29,13 +29,13 @@ public class ChessBoard implements Serializable {
 	private static TextureRegion knightTextureRegion;
 	private static TextureRegion rookTextureRegion;
 	private static TextureRegion bishopTextureRegion;
-	
+
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
 	public static int tileWidth = 64;
-	private static int boardWidth = tileWidth * 8;
-	
-	
+	private static int actualBoardWidth = tileWidth * 8;
+
+
 	public ChessBoard() {
 		chessPieces = new ChessPiece[8][8];
 	}
@@ -43,38 +43,38 @@ public class ChessBoard implements Serializable {
 		Texture pawnTexture = new Texture(Gdx.files.internal("data/pawn.png"));
 		pawnTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		pawnTextureRegion = new TextureRegion(pawnTexture, 0, 0, 64, 64);
-		
+
 		Texture kingTexture = new Texture(Gdx.files.internal("data/king.png"));
 		kingTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		kingTextureRegion = new TextureRegion(kingTexture, 0, 0, 64, 64);
-		
+
 		Texture queenTexture = new Texture(Gdx.files.internal("data/queen.png"));
 		queenTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		queenTextureRegion = new TextureRegion(queenTexture, 0, 0, 64, 64);
-		
+
 		Texture knightTexture = new Texture(Gdx.files.internal("data/knight.png"));
 		knightTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		knightTextureRegion = new TextureRegion(knightTexture, 0, 0, 64, 64);
-		
+
 		Texture rookTexture = new Texture(Gdx.files.internal("data/rook.png"));
 		rookTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		rookTextureRegion = new TextureRegion(rookTexture, 0, 0, 64, 64);
-		
+
 		Texture bishopTexture = new Texture(Gdx.files.internal("data/bishop.png"));
 		bishopTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bishopTextureRegion = new TextureRegion(bishopTexture, 0, 0, 64, 64);
 	}
-	
-	
+
+
 	public void drawBoard(ShapeRenderer shapeRenderer) {
 		boolean alt = true;
 		shapeRenderer.setColor(0, 0, 0, 1);
 		shapeRenderer.rect(0,
 				0,
-				boardWidth,
-				boardWidth,
-				boardWidth/2,
-				boardWidth/2,
+				actualBoardWidth,
+				actualBoardWidth,
+				actualBoardWidth/2,
+				actualBoardWidth/2,
 				0);
 		shapeRenderer.setColor(1, 1, 1, 1);
 		for(int y = 0; y < 8; y++) {
@@ -87,9 +87,9 @@ public class ChessBoard implements Serializable {
 			}
 			alt = !alt;
 		}
-		
+
 	}
-	
+
 	public void drawPieces(SpriteBatch batch) {
 		for(int y = 0; y < 8; y++) {
 			for(int x = 0; x < 8; x++) {
@@ -109,7 +109,7 @@ public class ChessBoard implements Serializable {
 						batch.draw(bishopTextureRegion, x*64, y*64);
 					}
 				}
-				
+
 			}
 		}
 	}
@@ -119,15 +119,15 @@ public class ChessBoard implements Serializable {
 		chessPiece.register(this, x, y);
 		chessPieces[x][y] = chessPiece;
 	}
-	
+
 	public void start() {
 		clear();
 	}
-	
+
 	public void restart() {
 		start();
 	}
-	
+
 	public void clear() {
 		chessPieces = new ChessPiece[8][8];
 	}
@@ -135,12 +135,15 @@ public class ChessBoard implements Serializable {
 		return (int) Math.floor((float) x / (float) tileWidth);
 	}
 	public static int getTileYFromYCoordinate(int y) {
-		return (int) Math.floor((float) (boardWidth - y )/ (float) tileWidth);
+		return (int) Math.floor((float) (actualBoardWidth - y )/ (float) tileWidth);
 	}
 	public ChessPiece getChessPieceByXY(int x, int y) {
 		int tileX = getTileXFromXCoordinate(x);
 		int tileY = getTileYFromYCoordinate(y);
 		return chessPieces[tileX][tileY];
+	}
+	public ChessPiece getChessPieceByVector(Vector2 vector) {
+		return chessPieces[vector.getX()][vector.getY()];
 	}
 	public void moveChessPiece(int tileX0, int tileY0, int tileX1, int tileY1) {
 		chessPieces[tileX1][tileY1] = chessPieces[tileX0][tileY0];
@@ -160,5 +163,14 @@ public class ChessBoard implements Serializable {
 	}
 	public void setChessPieces(ChessPiece[][] chessPieces) {
 		this.chessPieces = chessPieces;
+	}
+	public void attackChessPiece(Vector2 vector1, Vector2 vector2) {
+		ChessPiece attacker = chessPieces[vector1.getX()][vector1.getY()];
+		chessPieces[vector1.getX()][vector1.getY()] = null;
+		attacker.setPosition(vector2);
+		chessPieces[vector2.getX()][vector2.getY()] = attacker;
+	}
+	public int getBoardWidth() {
+		return actualBoardWidth / tileWidth;
 	}
 }

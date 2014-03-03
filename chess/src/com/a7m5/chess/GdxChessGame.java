@@ -109,11 +109,6 @@ public class GdxChessGame implements ApplicationListener {
 	public void resume() {
 	}
 
-	public static void onNetworkCommand(ClientCommand networkCommand) {
-
-
-	}
-
 	public static void startServer(int port) {
 		if(server == null && serverThread == null) {
 			ChessBoard board = new ChessBoard();

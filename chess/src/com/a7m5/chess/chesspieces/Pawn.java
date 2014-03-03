@@ -34,5 +34,19 @@ public class Pawn extends ChessPiece {
 		}
 		return false;
 	}
+	
+	public boolean tryAttack(ChessPiece targetChessPiece) {
+		if(owner != targetChessPiece.owner) {
+			for(Vector2 attackVector : attackVectors) {
+				if(owner == ChessOwner.TOP) {
+					attackVector = attackVector.multiplyY(-1);
+				}
+				if(getPosition().add(attackVector).equals(targetChessPiece.getPosition())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 }

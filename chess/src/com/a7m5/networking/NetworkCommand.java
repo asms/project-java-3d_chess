@@ -15,6 +15,7 @@ public class NetworkCommand implements Serializable {
 	public static final int DEBUG = 0;
 	public static final int MOVE = 1;
 	public static final int SYNC = 2;
+	public static final int ATTACK = 3;
 	
 	public int command;
 	private Vector2[] vectors;

@@ -31,6 +31,13 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 		if(selectedChessPiece == null) {
 			System.out.println("Chess piece selected.");
 			board.setSelectedChessPiece(this);
+		} else {
+			boolean attacked = selectedChessPiece.tryAttack(this);
+			if(attacked) {
+				GdxChessGame.getClient().sendAttack(selectedChessPiece.getPosition(), getPosition());
+			} else {
+				board.setSelectedChessPiece(this);
+			}
 		}
 	}
 
@@ -41,7 +48,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 		board.setSelectedChessPiece(null);
 		boolean moved = tryMove(tileClicked);
 		if(moved) {
-			GdxChessGame.getClient().sendMove(this, tileClicked);
+			GdxChessGame.getClient().sendMove(getPosition(), tileClicked);
 		}
 	}
 
