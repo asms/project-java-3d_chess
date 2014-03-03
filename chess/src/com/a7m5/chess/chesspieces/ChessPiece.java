@@ -74,4 +74,8 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public void setPosition(Vector2 newPosition) {
 		this.position = newPosition;
 	}
+
+	public ChessOwner getOwner() {
+		return owner;
+	}
 }

@@ -1,5 +1,6 @@
 package com.a7m5.chess.chesspieces;
 
+import com.a7m5.chess.GdxChessGame;
 import com.a7m5.chess.Vector2;
 
 
@@ -30,6 +31,21 @@ public class King extends ChessPiece {
 	};
 	
 	public static final Vector2[] attackVectors = movementVectors;
+	
+	public void onClick() {
+		ChessPiece selectedChessPiece= board.getSelectedChessPiece();
+		if(selectedChessPiece == null) {
+			System.out.println("Chess piece selected.");
+			board.setSelectedChessPiece(this);
+		} else {
+			boolean attacked = selectedChessPiece.tryAttack(this);
+			if(attacked) {
+				GdxChessGame.getClient().sendGameOver();
+			} else {
+				board.setSelectedChessPiece(this);
+			}
+		}
+	}
 	
 	public boolean tryMove(Vector2 newPosition) {
 		for(Vector2 movementVector : movementVectors) {

@@ -3,6 +3,7 @@ package com.a7m5.chess;
 import java.io.Serializable;
 
 import com.a7m5.chess.chesspieces.Bishop;
+import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.King;
 import com.a7m5.chess.chesspieces.Knight;
@@ -10,6 +11,7 @@ import com.a7m5.chess.chesspieces.Pawn;
 import com.a7m5.chess.chesspieces.Queen;
 import com.a7m5.chess.chesspieces.Rook;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,10 +25,12 @@ public class ChessBoard implements Serializable {
 	 */
 	private static final long serialVersionUID = 7954652516619094585L;
 	private static TextureRegion kingTextureRegion;
-	private static TextureRegion pawnTextureRegion;
+	private static TextureRegion pawnWhiteTextureRegion;
+	private static TextureRegion pawnBlackTextureRegion;
 	private static TextureRegion queenTextureRegion;
 	private static TextureRegion knightTextureRegion;
-	private static TextureRegion rookTextureRegion;
+	private static TextureRegion rookWhiteTextureRegion;
+	private static TextureRegion rookBlackTextureRegion;
 	private static TextureRegion bishopTextureRegion;
 
 	private ChessPiece[][] chessPieces;
@@ -39,10 +43,15 @@ public class ChessBoard implements Serializable {
 		chessPieces = new ChessPiece[8][8];
 	}
 	public static void loadTextures() {
-		Texture pawnTexture = new Texture(Gdx.files.internal("data/pawn.png"));
-		pawnTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		pawnTextureRegion = new TextureRegion(pawnTexture, 0, 0, 64, 64);
+		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
+		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		pawnWhiteTextureRegion = new TextureRegion(pawnWhiteTexture, 0, 0, 64, 64);
+		
+		Texture pawnBlackTexture = new Texture(Gdx.files.internal("data/pawn-black.png"));
+		pawnBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		pawnBlackTextureRegion = new TextureRegion(pawnBlackTexture, 0, 0, 64, 64);
 
+		
 		Texture kingTexture = new Texture(Gdx.files.internal("data/king.png"));
 		kingTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		kingTextureRegion = new TextureRegion(kingTexture, 0, 0, 64, 64);
@@ -55,9 +64,13 @@ public class ChessBoard implements Serializable {
 		knightTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		knightTextureRegion = new TextureRegion(knightTexture, 0, 0, 64, 64);
 
-		Texture rookTexture = new Texture(Gdx.files.internal("data/rook.png"));
-		rookTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		rookTextureRegion = new TextureRegion(rookTexture, 0, 0, 64, 64);
+		Texture rookWhiteTexture = new Texture(Gdx.files.internal("data/rook-white.png"));
+		rookWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		rookWhiteTextureRegion = new TextureRegion(rookWhiteTexture, 0, 0, 64, 64);
+		
+		Texture rookBlackTexture = new Texture(Gdx.files.internal("data/rook-black.png"));
+		rookBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		rookBlackTextureRegion = new TextureRegion(rookBlackTexture, 0, 0, 64, 64);
 
 		Texture bishopTexture = new Texture(Gdx.files.internal("data/bishop.png"));
 		bishopTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -67,7 +80,7 @@ public class ChessBoard implements Serializable {
 
 	public void drawBoard(ShapeRenderer shapeRenderer) {
 		boolean alt = true;
-		shapeRenderer.setColor(0, 0, 0, 1);
+		shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
 		shapeRenderer.rect(0,
 				0,
 				actualBoardWidth,
@@ -75,18 +88,34 @@ public class ChessBoard implements Serializable {
 				actualBoardWidth/2,
 				actualBoardWidth/2,
 				0);
-		shapeRenderer.setColor(1, 1, 1, 1);
 		for(int y = 0; y < 8; y++) {
 			for(int x = 0; x < 4; x++) {
+				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.rect((2*x+(alt?1:0)) * 64,
 						y*64,
 						tileWidth,
 						tileWidth
 						);
+				
+				shapeRenderer.setColor(new Color(0.7f, 1, 0.7f, 1));
+				shapeRenderer.rect((2*x+(alt?1:0)) * 64 + 1,
+						y*64 + 1,
+						tileWidth-2,
+						tileWidth-2
+						);
 			}
 			alt = !alt;
 		}
 
+		shapeRenderer.rect(512,
+						0,
+						200,
+						512,
+						Color.LIGHT_GRAY,
+						Color.LIGHT_GRAY,
+						Color.WHITE,
+						Color.WHITE
+						);
 	}
 
 	public void drawPieces(SpriteBatch batch) {
@@ -96,7 +125,11 @@ public class ChessBoard implements Serializable {
 				if(chessPiece != null) {
 					TextureRegion textureRegion;
 					if(chessPiece instanceof Pawn) {
-						textureRegion = pawnTextureRegion;
+						if(chessPiece.getOwner() == ChessOwner.TOP) {
+							textureRegion = pawnWhiteTextureRegion;
+						} else {
+							textureRegion = pawnBlackTextureRegion;
+						}
 					} else if(chessPiece instanceof King) {
 						textureRegion = kingTextureRegion;
 					} else if(chessPiece instanceof Queen) {
@@ -104,7 +137,11 @@ public class ChessBoard implements Serializable {
 					} else if(chessPiece instanceof Knight) {
 						textureRegion = knightTextureRegion;
 					} else if(chessPiece instanceof Rook) {
-						textureRegion = rookTextureRegion;
+						if(chessPiece.getOwner() == ChessOwner.TOP) {
+							textureRegion = rookWhiteTextureRegion;
+						} else {
+							textureRegion = rookBlackTextureRegion;
+						}
 					} else if(chessPiece instanceof Bishop) {
 						textureRegion = bishopTextureRegion;
 					} else {
@@ -140,7 +177,7 @@ public class ChessBoard implements Serializable {
 	public static int getTileYFromYCoordinate(int y) {
 		return (int) Math.floor((float) (actualBoardWidth - y )/ (float) tileWidth);
 	}
-	public ChessPiece getChessPieceByXY(int x, int y) {
+	public ChessPiece getChessPieceByXY(int x, int y) throws IndexOutOfBoundsException {
 		int tileX = getTileXFromXCoordinate(x);
 		int tileY = getTileYFromYCoordinate(y);
 		return chessPieces[tileX][tileY];
@@ -175,5 +212,9 @@ public class ChessBoard implements Serializable {
 	}
 	public int getBoardWidth() {
 		return actualBoardWidth / tileWidth;
+	}
+	public void gameOver(int winner) {
+		// TODO Auto-generated method stub
+		
 	}
 }

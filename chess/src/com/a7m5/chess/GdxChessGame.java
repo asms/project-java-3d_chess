@@ -24,16 +24,19 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 public class GdxChessGame implements ApplicationListener {
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	private Texture texture;
-	private Sprite sprite;
+	private Sprite yourTurnSprite;
+	private Sprite waitSprite;
 	private int port;
 	private String address;
+	private Texture yourTurnTexture;
+	private Texture waitTexture;
 	static ChessBoard board;
 
 	private static Server server = null;
 	private static Client client = null;
 	private static Thread clientThread = null;
 	private static Thread serverThread = null;
+	private static int owner;
 
 	public GdxChessGame(String address, int port) {
 		this.address = address;
@@ -55,15 +58,27 @@ public class GdxChessGame implements ApplicationListener {
 
 
 		batch = new SpriteBatch();
+		
+		//Your Turn
+		yourTurnTexture = new Texture(Gdx.files.internal("data/your_turn.png"));
+		yourTurnTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		texture = new Texture(Gdx.files.internal("data/king.png"));
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		TextureRegion yourTurnRegion = new TextureRegion(yourTurnTexture, 0, 0, 128, 128);
 
-		TextureRegion region = new TextureRegion(texture, 0, 0, 64, 64);
+		yourTurnSprite = new Sprite(yourTurnRegion);
+		yourTurnSprite.setOrigin(yourTurnSprite.getWidth()/2, yourTurnSprite.getHeight()/2);
+		yourTurnSprite.setPosition(612-64, 412-64);
+		
+		//Wait
+		waitTexture = new Texture(Gdx.files.internal("data/wait.png"));
+		waitTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		sprite = new Sprite(region);
-		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
-		sprite.setPosition(64*4, 0);
+
+		TextureRegion waitRegion = new TextureRegion(waitTexture, 0, 0, 128, 128);
+
+		waitSprite = new Sprite(waitRegion);
+		waitSprite.setOrigin(waitSprite.getWidth()/2, waitSprite.getHeight()/2);
+		waitSprite.setPosition(612-64, 412-64-128-32);
 		
 		client = new Client(address, port);
 		clientThread = new Thread(client);
@@ -73,7 +88,8 @@ public class GdxChessGame implements ApplicationListener {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		texture.dispose();
+		yourTurnTexture.dispose();
+		waitTexture.dispose();
 	}
 
 	@Override
@@ -91,6 +107,8 @@ public class GdxChessGame implements ApplicationListener {
 
 			batch.setProjectionMatrix(camera.combined);
 			batch.begin();
+			yourTurnSprite.draw(batch);
+			waitSprite.draw(batch);
 			client.board.drawPieces(batch);
 			batch.end();
 		}
@@ -163,5 +181,9 @@ public class GdxChessGame implements ApplicationListener {
 
 	public static Client getClient() {
 		return client;
+	}
+
+	public static int getOwner() {
+		return owner;
 	}
 }

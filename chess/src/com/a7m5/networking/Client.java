@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import com.a7m5.chess.ChessBoard;
+import com.a7m5.chess.GdxChessGame;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.chesspieces.ChessPiece;
 
@@ -75,6 +76,9 @@ public class Client implements Runnable {
 							Vector2[] positions = command.getVectorArray();
 							board.attackChessPiece(positions[0], positions[1]);
 							break;
+						case 4: //GAME OVER
+							int winner = command.getVectorArray()[0].getX();
+							board.gameOver(winner);
 						}
 				} else {
 						running = false;
@@ -92,14 +96,18 @@ public class Client implements Runnable {
 	
 	public void onClickListener(int x, int y, int pointer, int button) {
 		System.out.println(x + ":" + y);
-		ChessPiece clickedChessPiece = board.getChessPieceByXY(x, y);
-		if(clickedChessPiece != null) {
-			clickedChessPiece.onClick();
-		} else {
-			ChessPiece selectedChessPiece = board.getSelectedChessPiece();
-			if(selectedChessPiece != null) {
-				selectedChessPiece.onNullTileClicked(x, y);
+		try {
+			ChessPiece clickedChessPiece = board.getChessPieceByXY(x, y);
+			if(clickedChessPiece != null) {
+				clickedChessPiece.onClick();
+			} else {
+				ChessPiece selectedChessPiece = board.getSelectedChessPiece();
+				if(selectedChessPiece != null) {
+					selectedChessPiece.onNullTileClicked(x, y);
+				}
 			}
+		} catch(IndexOutOfBoundsException e) {
+			// side menu interaction
 		}
 	}
 	
@@ -123,6 +131,15 @@ public class Client implements Runnable {
 		NetworkCommand command = new NetworkCommand();
 		command.setCommand(NetworkCommand.ATTACK);
 		command.setVectorArray(new Vector2[] { piece1, piece2});
+		
+		send(command);
+	}
+
+	public void sendGameOver() {
+		NetworkCommand command = new NetworkCommand();
+		command.setCommand(NetworkCommand.GAME_OVER);
+		Vector2[] vectorArray = {new Vector2(GdxChessGame.getOwner(), 0)};
+		command.setVectorArray(vectorArray);
 		
 		send(command);
 	}
