@@ -34,7 +34,7 @@ public class Queen extends ChessPiece {
 
 	public boolean tryMove(Vector2 newPosition) {
 		for(Vector2 movementVector : movementDirectionVectors) {
-			if(owner == ChessOwner.TOP) {
+			if(owner == ChessOwner.WHITE) {
 				movementVector = movementVector.multiplyY(-1);
 			}
 			for(int i = 1; i < board.getBoardWidth() - 1; i++) {
@@ -59,7 +59,7 @@ public class Queen extends ChessPiece {
 	public boolean tryAttack(ChessPiece targetChessPiece) {
 		if(owner != targetChessPiece.owner) {
 			for(Vector2 attackVector : attackDirectionVectors) {
-				if(owner == ChessOwner.TOP) {
+				if(owner == ChessOwner.WHITE) {
 					attackVector = attackVector.multiplyY(-1);
 				}
 				for(int i = 1; i < board.getBoardWidth() - 1; i++) {

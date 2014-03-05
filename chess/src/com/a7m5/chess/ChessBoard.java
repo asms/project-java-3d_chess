@@ -129,7 +129,7 @@ public class ChessBoard implements Serializable {
 				if(chessPiece != null) {
 					TextureRegion textureRegion;
 					if(chessPiece instanceof Pawn) {
-						if(chessPiece.getOwner() == ChessOwner.TOP) {
+						if(chessPiece.getOwner() == ChessOwner.WHITE) {
 							textureRegion = pawnWhiteTextureRegion;
 						} else {
 							textureRegion = pawnBlackTextureRegion;
@@ -141,7 +141,7 @@ public class ChessBoard implements Serializable {
 					} else if(chessPiece instanceof Knight) {
 						textureRegion = knightTextureRegion;
 					} else if(chessPiece instanceof Rook) {
-						if(chessPiece.getOwner() == ChessOwner.TOP) {
+						if(chessPiece.getOwner() == ChessOwner.WHITE) {
 							textureRegion = rookWhiteTextureRegion;
 						} else {
 							textureRegion = rookBlackTextureRegion;
@@ -205,10 +205,10 @@ public class ChessBoard implements Serializable {
 	}
 	public void moveChessPiece(Vector2 oldPosition, Vector2 newPosition) {
 		ChessPiece chessPiece = chessPieces[oldPosition.getX()][oldPosition.getY()];
-		if(chessPiece.getOwner() == ChessOwner.TOP) {
-			turnOwner  = ChessOwner.BOTTOM;
+		if(chessPiece.getOwner() == ChessOwner.WHITE) {
+			turnOwner  = ChessOwner.BLACK;
 		} else {
-			turnOwner = ChessOwner.TOP;
+			turnOwner = ChessOwner.WHITE;
 		}
 		chessPieces[oldPosition.getX()][oldPosition.getY()] = null;
 		chessPiece.setPosition(newPosition);
@@ -220,10 +220,10 @@ public class ChessBoard implements Serializable {
 	}
 	public void attackChessPiece(Vector2 vector1, Vector2 vector2) {
 		ChessPiece attacker = chessPieces[vector1.getX()][vector1.getY()];
-		if(attacker.getOwner() == ChessOwner.TOP) {
-			turnOwner  = ChessOwner.BOTTOM;
+		if(attacker.getOwner() == ChessOwner.WHITE) {
+			turnOwner  = ChessOwner.BLACK;
 		} else {
-			turnOwner = ChessOwner.TOP;
+			turnOwner = ChessOwner.WHITE;
 		}
 		chessPieces[vector1.getX()][vector1.getY()] = null;
 		attacker.setPosition(vector2);

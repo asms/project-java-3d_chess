@@ -35,7 +35,7 @@ public class Knight extends ChessPiece {
 	
 	public boolean tryMove(Vector2 newPosition) {
 		for(Vector2 movementVector : movementVectors) {
-			if(owner == ChessOwner.TOP) {
+			if(owner == ChessOwner.WHITE) {
 				movementVector = movementVector.multiplyY(-1);
 			}
 			if(getPosition().add(movementVector).equals(newPosition)) {
@@ -48,7 +48,7 @@ public class Knight extends ChessPiece {
 	public boolean tryAttack(ChessPiece targetChessPiece) {
 		if(owner != targetChessPiece.owner) {
 			for(Vector2 attackVector : attackVectors) {
-				if(owner == ChessOwner.TOP) {
+				if(owner == ChessOwner.WHITE) {
 					attackVector = attackVector.multiplyY(-1);
 				}
 				if(getPosition().add(attackVector).equals(targetChessPiece.getPosition())) {

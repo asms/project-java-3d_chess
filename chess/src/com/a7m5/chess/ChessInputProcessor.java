@@ -17,9 +17,9 @@ public class ChessInputProcessor implements InputProcessor {
    @Override
    public boolean keyTyped (char character) {
 	   if(character == 'w') {
-		   GdxChessGame.setOwner(ChessOwner.TOP);
+		   GdxChessGame.setOwner(ChessOwner.WHITE);
 	   } else if(character == 'b') {
-		   GdxChessGame.setOwner(ChessOwner.BOTTOM);
+		   GdxChessGame.setOwner(ChessOwner.BLACK);
 	   }
       return false;
    }

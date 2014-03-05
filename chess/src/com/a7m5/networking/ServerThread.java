@@ -55,14 +55,14 @@ public class ServerThread implements Runnable {
 							
 							board.moveChessPiece(vectors[0], vectors[1]);
 							check = checkForCheck(board, owner);
-							if(owner == ChessOwner.BOTTOM) {
+							if(owner == ChessOwner.BLACK) {
 								canMove = !check[0];
 								checkedOtherPlayer = check[1];
-								opponent = ChessOwner.TOP;
+								opponent = ChessOwner.WHITE;
 							} else {
 								canMove = !check[1];
 								checkedOtherPlayer = check[0];
-								opponent = ChessOwner.BOTTOM;
+								opponent = ChessOwner.BLACK;
 							}
 							if(canMove) {
 								if(checkedOtherPlayer) {
@@ -106,7 +106,7 @@ public class ServerThread implements Runnable {
 		for(ChessPiece[] chessPieces : board.getChessPieces()) {
 			for(ChessPiece chessPiece : chessPieces) {
 				if((chessPiece instanceof King)) {
-					if(chessPiece.getOwner() == ChessOwner.TOP) {
+					if(chessPiece.getOwner() == ChessOwner.WHITE) {
 						topKing = (King) chessPiece;
 					} else {
 						bottomKing = (King) chessPiece;
@@ -117,7 +117,7 @@ public class ServerThread implements Runnable {
 		for(ChessPiece[] chessPieces : board.getChessPieces()) {
 			for(ChessPiece chessPiece : chessPieces) {
 				if(!(chessPiece instanceof King) && chessPiece != null) {
-					if(chessPiece.getOwner() == ChessOwner.TOP) {
+					if(chessPiece.getOwner() == ChessOwner.WHITE) {
 						if(chessPiece.tryAttack(bottomKing)) {
 							check[0] = true;
 						}

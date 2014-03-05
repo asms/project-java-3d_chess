@@ -131,9 +131,9 @@ public class GdxChessGame implements ApplicationListener {
 	public static void startServer(int port) {
 		if(server == null && serverThread == null) {
 			ChessBoard board = new ChessBoard();
-			board.setTurnOwner(ChessOwner.TOP);
+			board.setTurnOwner(ChessOwner.WHITE);
 			for(int x = 0; x < 2; x++) {
-				ChessOwner owner = (x == 0 ? ChessOwner.BOTTOM : ChessOwner.TOP);
+				ChessOwner owner = (x == 0 ? ChessOwner.BLACK : ChessOwner.WHITE);
 				board.addPiece(0, (x == 0 ? 0 : 7), new Rook(owner));
 				board.addPiece(1, (x == 0 ? 0 : 7), new Knight(owner));
 				board.addPiece(2, (x == 0 ? 0 : 7), new Bishop(owner));
@@ -145,8 +145,8 @@ public class GdxChessGame implements ApplicationListener {
 			}
 			
 			for(int x = 0; x < 8; x++) {
-				board.addPiece(x, 1, new Pawn(ChessOwner.BOTTOM));
-				board.addPiece(x, 6, new Pawn(ChessOwner.TOP));
+				board.addPiece(x, 1, new Pawn(ChessOwner.BLACK));
+				board.addPiece(x, 6, new Pawn(ChessOwner.WHITE));
 			}
 			server = new Server(port, board);
 			serverThread = new Thread(server);
