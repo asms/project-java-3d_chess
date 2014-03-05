@@ -20,22 +20,25 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 		this.owner = owner;
 	}
 
-	public void register(ChessBoard chessBoard, int tileX, int tileY) {
+	public void register(ChessBoard chessBoard, Vector2 position) {
 		this.board = chessBoard;
-		this.position = new Vector2(tileX, tileY);
+		this.position = position;
 	}
 	
 	public void onClick() {
 		ChessPiece selectedChessPiece= board.getSelectedChessPiece();
 		if(selectedChessPiece == null) {
-			System.out.println("Chess piece selected.");
-			board.setSelectedChessPiece(this);
+			if(getOwner() == GdxChessGame.getOwner()) {
+				board.setSelectedChessPiece(this);
+			}
 		} else {
 			boolean attacked = selectedChessPiece.tryAttack(this);
 			if(attacked) {
 				GdxChessGame.getClient().sendAttack(selectedChessPiece.getPosition(), getPosition());
 			} else {
-				board.setSelectedChessPiece(this);
+				if(getOwner() == GdxChessGame.getOwner()) {
+					board.setSelectedChessPiece(this);
+				}
 			}
 		}
 	}

@@ -7,7 +7,11 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.Vector2;
+import com.a7m5.chess.chesspieces.ChessOwner;
+import com.a7m5.chess.chesspieces.ChessPiece;
+import com.a7m5.chess.chesspieces.King;
 
 public class ServerThread implements Runnable {
 
@@ -35,18 +39,47 @@ public class ServerThread implements Runnable {
 				try {
 					NetworkCommand command = (NetworkCommand) objectInputStream.readObject();
 					if(command != null) {
+						boolean[] check;
+						ChessOwner owner = command.getOwner();
+						ChessBoard board = server.getChessBoard();
+						Vector2[] vectors = command.getVectorArray();
+						
 						switch(command.getCommand()) {
 						case 0: //DEBUG
 
 							break;
 						case 1: //MOVE
-							doMove(command);
-							syncClient();
+							ChessOwner opponent;
+							boolean canMove;
+							boolean checkedOtherPlayer;
+							
+							board.moveChessPiece(vectors[0], vectors[1]);
+							check = checkForCheck(board, owner);
+							if(owner == ChessOwner.BOTTOM) {
+								canMove = !check[0];
+								checkedOtherPlayer = check[1];
+								opponent = ChessOwner.TOP;
+							} else {
+								canMove = !check[1];
+								checkedOtherPlayer = check[0];
+								opponent = ChessOwner.BOTTOM;
+							}
+							if(canMove) {
+								if(checkedOtherPlayer) {
+									board.setCheck(opponent);
+								}
+								doMove(command);
+							} else {
+								board.moveChessPiece(vectors[1], vectors[0]);
+							}
+							server.setChessBoard(board);
+							//syncClient();
 							break;
 
 						case 3: //ATTACK
 							doAttack(command);
-							syncClient();
+							//check = checkForCheck(board, owner);
+							//syncClient();
 							break;
 						}
 						System.out.println("Command received: " + command.getCommand());
@@ -66,6 +99,40 @@ public class ServerThread implements Runnable {
 		}
 	}
 
+	private boolean[] checkForCheck(ChessBoard board, ChessOwner owner) {
+		boolean[] check = { false, false };
+		King topKing = null;
+		King bottomKing = null;
+		for(ChessPiece[] chessPieces : board.getChessPieces()) {
+			for(ChessPiece chessPiece : chessPieces) {
+				if((chessPiece instanceof King)) {
+					if(chessPiece.getOwner() == ChessOwner.TOP) {
+						topKing = (King) chessPiece;
+					} else {
+						bottomKing = (King) chessPiece;
+					}
+				}
+			}
+		}
+		for(ChessPiece[] chessPieces : board.getChessPieces()) {
+			for(ChessPiece chessPiece : chessPieces) {
+				if(!(chessPiece instanceof King) && chessPiece != null) {
+					if(chessPiece.getOwner() == ChessOwner.TOP) {
+						if(chessPiece.tryAttack(bottomKing)) {
+							check[0] = true;
+						}
+						
+					} else {
+						if(chessPiece.tryAttack(topKing)) {
+							check[1] = true;
+						}
+					}
+				}
+			}
+		}
+		return check;
+	}
+
 	private void doAttack(NetworkCommand command) {
 		Vector2[] vectors = command.getVectorArray();
 		server.getChessBoard().attackChessPiece(vectors[0], vectors[1]);
@@ -73,8 +140,6 @@ public class ServerThread implements Runnable {
 	}
 
 	private void doMove(NetworkCommand command) {
-		Vector2[] vectors = command.getVectorArray();
-		server.getChessBoard().moveChessPiece(vectors[0], vectors[1]);
 		server.sendAll(command);
 	}
 

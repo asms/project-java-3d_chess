@@ -37,9 +37,10 @@ public class GdxChessGame implements ApplicationListener {
 	private static Thread serverThread = null;
 	private static ChessOwner owner;
 
-	public GdxChessGame(String address, int port) {
-		this.address = address;
-		this.port = port;
+	public GdxChessGame(ChessOwner chessOwner, String address, int port) {
+		setOwner(chessOwner);
+		setAddress(address);
+		setPort(port);
 	}
 
 	@Override
@@ -191,5 +192,13 @@ public class GdxChessGame implements ApplicationListener {
 
 	public static void setOwner(ChessOwner arg) {
 		owner = arg;
+	}
+	
+	private void setPort(int port) {
+		this.port = port;
+	}
+
+	private void setAddress(String address) {
+		this.address = address;
 	}
 }

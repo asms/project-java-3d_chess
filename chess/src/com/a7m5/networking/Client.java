@@ -71,6 +71,9 @@ public class Client implements Runnable {
 							break;
 						case 2: //Sync
 							board = command.getChessBoard();
+							if(board.getCheckedPlayer() != null) {
+								System.out.println("Someone is checked.");
+							}
 							break;
 						case 3: //ATTACK
 							Vector2[] positions = command.getVectorArray();
@@ -114,6 +117,7 @@ public class Client implements Runnable {
 	}
 	
 	public void send(NetworkCommand command) {
+		command.setOwner(GdxChessGame.getOwner());
 		try {
 			oos.writeObject(command);
 		} catch (IOException e) {

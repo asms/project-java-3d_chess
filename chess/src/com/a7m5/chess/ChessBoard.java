@@ -1,6 +1,7 @@
 package com.a7m5.chess;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import com.a7m5.chess.chesspieces.Bishop;
 import com.a7m5.chess.chesspieces.ChessOwner;
@@ -36,6 +37,7 @@ public class ChessBoard implements Serializable {
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
 	private ChessOwner turnOwner;
+	private ChessOwner checkedPlayer = null;
 	public static int tileWidth = 64;
 	private static int actualBoardWidth = tileWidth * 8;
 
@@ -158,7 +160,7 @@ public class ChessBoard implements Serializable {
 
 
 	public void addPiece(int x, int y, ChessPiece chessPiece) {
-		chessPiece.register(this, x, y);
+		chessPiece.register(this, new Vector2(x, y));
 		chessPieces[x][y] = chessPiece;
 	}
 
@@ -195,7 +197,11 @@ public class ChessBoard implements Serializable {
 		return selectedChessPiece ;
 	}
 	public void setSelectedChessPiece(ChessPiece chessPiece) {
-		selectedChessPiece = chessPiece;
+		if(chessPiece == null) {
+			selectedChessPiece = null;
+		} else if(chessPiece.getOwner() == GdxChessGame.getOwner()) {
+			this.selectedChessPiece = chessPiece;
+		}
 	}
 	public void moveChessPiece(Vector2 oldPosition, Vector2 newPosition) {
 		ChessPiece chessPiece = chessPieces[oldPosition.getX()][oldPosition.getY()];
@@ -236,5 +242,14 @@ public class ChessBoard implements Serializable {
 	}
 	public ChessOwner getTurnOwner() {
 		return turnOwner;
+	}
+	public ChessPiece[][] getChessPieces() {
+		return chessPieces;
+	}
+	public void setCheck(ChessOwner opponent) {
+		checkedPlayer = opponent;
+	}
+	public ChessOwner getCheckedPlayer() {
+		return checkedPlayer;
 	}
 }
