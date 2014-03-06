@@ -44,11 +44,11 @@ public class ChessBoard implements Serializable {
 	public static int actualBoardWidth = 512;
 	public static int boardWidth = 8; //8 (traditional), 16 (large), 32 (extra large)
 	public static int tileWidth = actualBoardWidth / boardWidth;
-	
+
 	public ChessBoard() {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
 	}
-	
+
 	public static void loadTextures() {
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -96,22 +96,21 @@ public class ChessBoard implements Serializable {
 				actualBoardWidth/2,
 				0);
 		for(int y = 0; y < boardWidth; y++) {
-			for(int x = 0; x < boardWidth/2; x++) {
-				shapeRenderer.setColor(new Color(0.9f, 0.9f, 0.9f, 1));
-				shapeRenderer.rect((2*x+(alt?1:0)) * tileWidth + 1,
+			alt =  (1 == y % 2);
+			for(int x = 0; x < boardWidth; x++) {
+				if(alt){
+					shapeRenderer.setColor(new Color(0.9f, 0.9f, 0.9f, 1));
+				} else {
+					shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
+				}
+				shapeRenderer.rect(x*tileWidth + 1,
 						y*tileWidth + 1,
 						tileWidth-2,
 						tileWidth-2
 						);
-
-				shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
-				shapeRenderer.rect((2*x+(alt?0:1)) * tileWidth + 1,
-						y*tileWidth + 1,
-						tileWidth-2,
-						tileWidth-2
-						);
+				
+				alt = !alt;	// Alternate colors on rows.
 			}
-			alt = !alt;
 		}
 
 		if(selectedChessPiece != null) {
@@ -199,7 +198,7 @@ public class ChessBoard implements Serializable {
 			}
 		}
 	}
-	
+
 	public void drawCursors(ShapeRenderer shapeRenderer) {
 		if(whiteCursor != null) {
 			shapeRenderer.setColor(Color.WHITE);
@@ -316,7 +315,7 @@ public class ChessBoard implements Serializable {
 			blackCursor = vector;
 		}
 	}
-	
+
 	public static void setBoardWidth(int boardWidth) {
 		ChessBoard.boardWidth = boardWidth;
 		tileWidth = actualBoardWidth / boardWidth;
