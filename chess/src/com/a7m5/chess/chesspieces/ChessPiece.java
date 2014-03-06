@@ -240,4 +240,8 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 		}
 		return possibleAttacks;
 	}
+
+	public double getSpeed() {
+		return ChessBoard.tileWidth/4;
+	}
 }

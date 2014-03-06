@@ -39,12 +39,13 @@ public class ChessBoard implements Serializable {
 	private ChessPiece selectedChessPiece = null;
 	private ChessOwner turnOwner;
 	private ChessOwner checkedPlayer = null;
-	public static int tileWidth = 64;
-	private static int actualBoardWidth = tileWidth * 8;
+	private static int boardWidth = 16;
+	public static int tileWidth = boardWidth*2;
+	private static int actualBoardWidth = tileWidth * boardWidth;
 
 
 	public ChessBoard() {
-		chessPieces = new ChessPiece[8][8];
+		chessPieces = new ChessPiece[16][16];
 	}
 	public static void loadTextures() {
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
@@ -92,18 +93,18 @@ public class ChessBoard implements Serializable {
 				actualBoardWidth/2,
 				actualBoardWidth/2,
 				0);
-		for(int y = 0; y < 8; y++) {
-			for(int x = 0; x < 4; x++) {
+		for(int y = 0; y < boardWidth; y++) {
+			for(int x = 0; x < boardWidth/2; x++) {
 				shapeRenderer.setColor(new Color(0.8f, 1, 0.8f, 1));
-				shapeRenderer.rect((2*x+(alt?1:0)) * 64 + 1,
-						y*64 + 1,
+				shapeRenderer.rect((2*x+(alt?1:0)) * tileWidth + 1,
+						y*tileWidth + 1,
 						tileWidth-2,
 						tileWidth-2
 						);
 
 				shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
-				shapeRenderer.rect((2*x+(alt?0:1)) * 64 + 1,
-						y*64 + 1,
+				shapeRenderer.rect((2*x+(alt?0:1)) * tileWidth + 1,
+						y*tileWidth + 1,
 						tileWidth-2,
 						tileWidth-2
 						);
@@ -115,8 +116,8 @@ public class ChessBoard implements Serializable {
 			ArrayList<Vector2> possibleMoves = selectedChessPiece.getPossibleMoves();
 			for(Vector2 possibleMove : possibleMoves) {
 				shapeRenderer.setColor(Color.BLUE);
-				shapeRenderer.rect((float) (possibleMove.getX() * 64 + 1),
-						(float) (possibleMove.getY()*64 + 1),
+				shapeRenderer.rect((float) (possibleMove.getX() * tileWidth + 1),
+						(float) (possibleMove.getY()*tileWidth + 1),
 						tileWidth-2,
 						tileWidth-2
 						);
@@ -124,8 +125,8 @@ public class ChessBoard implements Serializable {
 			ArrayList<Vector2> possibleAttacks = selectedChessPiece.getPossibleAttacks();
 			for(Vector2 possibleAttack : possibleAttacks) {
 				shapeRenderer.setColor(Color.RED);
-				shapeRenderer.rect((float) (possibleAttack.getX() * 64 + 1),
-						(float) (possibleAttack.getY()*64 + 1),
+				shapeRenderer.rect((float) (possibleAttack.getX() * tileWidth + 1),
+						(float) (possibleAttack.getY()*tileWidth + 1),
 						tileWidth-2,
 						tileWidth-2
 						);
@@ -144,8 +145,8 @@ public class ChessBoard implements Serializable {
 	}
 
 	public void drawPieces(SpriteBatch batch) {
-		for(int y = 0; y < 8; y++) {
-			for(int x = 0; x < 8; x++) {
+		for(int y = 0; y < boardWidth; y++) {
+			for(int x = 0; x < boardWidth; x++) {
 				ChessPiece chessPiece = chessPieces[x][y];
 				if(chessPiece != null) {
 					TextureRegion textureRegion;
@@ -176,22 +177,22 @@ public class ChessBoard implements Serializable {
 					int positionY;
 					if(chessPiece.isAnimating()) {
 						Vector2 animationPosition = chessPiece.getAnimationPosition();					Vector2 displacementVector = new Vector2(
-								x*64 - animationPosition.getX(),
-								y*64 - animationPosition.getY());
+								x*tileWidth - animationPosition.getX(),
+								y*tileWidth - animationPosition.getY());
 						if(displacementVector.getMagnitude() <= 1) {
 							chessPiece.stopAnimation();
 						} else {
-							Vector2 unitVector = displacementVector.getUnitVector().multiply(8);
+							Vector2 unitVector = displacementVector.getUnitVector().multiply(chessPiece.getSpeed());
 							animationPosition = animationPosition.add(unitVector);
 							chessPiece.setAnimationPosition(animationPosition);
 						}
 						positionX = (int) Math.floor(animationPosition.getX());
 						positionY = (int) Math.floor(animationPosition.getY());
 					} else {
-						positionX = x*64;
-						positionY = y*64;
+						positionX = x*tileWidth;
+						positionY = y*tileWidth;
 					}
-					batch.draw(textureRegion, positionX, positionY);
+					batch.draw(textureRegion, positionX, positionY, tileWidth,tileWidth);
 				}
 
 			}
