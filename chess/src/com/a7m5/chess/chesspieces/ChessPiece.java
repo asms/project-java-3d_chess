@@ -112,7 +112,6 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 		}
 		if(movementVectors != null) {
 			for(Vector2 movementVector : movementVectors) {
-				System.out.println("asdf");
 				if(owner == ChessOwner.WHITE) {
 					movementVector = movementVector.multiplyY(-1);
 				}
