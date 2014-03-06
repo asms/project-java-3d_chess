@@ -47,6 +47,7 @@ public class ChessBoard implements Serializable {
 	public ChessBoard() {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
 	}
+	
 	public static void loadTextures() {
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -192,9 +193,8 @@ public class ChessBoard implements Serializable {
 						positionX = x*tileWidth;
 						positionY = y*tileWidth;
 					}
-					batch.draw(textureRegion, positionX, positionY, tileWidth,tileWidth);
+					batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 				}
-
 			}
 		}
 	}
@@ -214,7 +214,7 @@ public class ChessBoard implements Serializable {
 	}
 
 	public void clear() {
-		chessPieces = new ChessPiece[8][8];
+		chessPieces = new ChessPiece[boardWidth][boardWidth];
 	}
 	public static int getTileXFromXCoordinate(int x) {
 		return (int) Math.floor((float) x / (float) tileWidth);
