@@ -137,7 +137,7 @@ public class ChessBoard implements Serializable {
 
 		shapeRenderer.rect(512,
 				0,
-				200,
+				400,
 				512,
 				Color.LIGHT_GRAY,
 				Color.LIGHT_GRAY,

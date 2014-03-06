@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.GdxChessGame;
 import com.a7m5.chess.Vector2;
+import com.a7m5.chess.editor.ChessBoardPalette;
 
 public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 
@@ -15,6 +16,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	private static final long serialVersionUID = 6131164911961928291L;
 	protected ChessOwner owner;
 	protected ChessBoard board;
+	protected ChessBoardPalette palette;
 	private Vector2 position;
 	private boolean animating = false;
 	private Vector2 animationPosition;
@@ -27,9 +29,14 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
 	}
-
+	
 	public void register(ChessBoard chessBoard, Vector2 position) {
 		this.board = chessBoard;
+		this.position = position;
+	}
+	
+	public void register(ChessBoardPalette chessPalette, Vector2 position) {
+		this.palette = chessPalette;
 		this.position = position;
 	}
 	
