@@ -80,7 +80,7 @@ public class Client implements Runnable {
 							board.attackChessPiece(positions[0], positions[1]);
 							break;
 						case 4: //GAME OVER
-							int winner = command.getVectorArray()[0].getX();
+							int winner = (int) command.getVectorArray()[0].getX();
 							board.gameOver(winner);
 						}
 				} else {

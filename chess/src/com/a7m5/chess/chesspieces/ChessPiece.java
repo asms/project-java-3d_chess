@@ -16,11 +16,13 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	protected ChessOwner owner;
 	protected ChessBoard board;
 	private Vector2 position;
-	public Vector2[] attackDirectionVectors = null;
-	public Vector2[] movementDirectionVectors = null;
-	public Vector2[] specialMovementVectors = null;
-	public Vector2[] movementVectors = null;
-	public Vector2[] attackVectors = null;
+	private boolean animating = false;
+	private Vector2 animationPosition;
+	protected Vector2[] attackDirectionVectors = null;
+	protected Vector2[] movementDirectionVectors = null;
+	protected Vector2[] specialMovementVectors = null;
+	protected Vector2[] movementVectors = null;
+	protected Vector2[] attackVectors = null;
 
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
@@ -29,6 +31,27 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public void register(ChessBoard chessBoard, Vector2 position) {
 		this.board = chessBoard;
 		this.position = position;
+	}
+	
+	public boolean isAnimating() {
+		return animating;
+	}
+	
+	public void animate(Vector2 animationPosition) {
+		animating = true;
+		this.animationPosition = animationPosition;
+	}
+	
+	public void setAnimationPosition(Vector2 animationPosition) {
+		this.animationPosition = animationPosition;
+	}
+	
+	public Vector2 getAnimationPosition() {
+		return animationPosition;
+	}
+	
+	public void stopAnimation() {
+		this.animating = false;
 	}
 
 	public void onClick() {
@@ -69,7 +92,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	}
 
 	public int getX() {
-		return position.getX();
+		return (int) position.getX();
 	}
 
 	public void setY(int y) {
@@ -77,7 +100,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	}
 
 	public int getY() {
-		return position.getY();
+		return (int) position.getY();
 	}
 
 	public void setPosition(Vector2 newPosition) {
@@ -129,8 +152,6 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public boolean tryMove(Vector2 newPosition) {
 		ArrayList<Vector2> possibleMoves = getPossibleMoves();
 		for(Vector2 possibleMove : possibleMoves) {
-			System.out.println("try" + newPosition.getX() + newPosition.getY());
-			System.out.println("can do" + possibleMove.getX() + possibleMove.getY());
 			if(newPosition.equals(possibleMove)) {
 				return true;
 			}
