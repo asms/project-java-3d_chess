@@ -1,6 +1,7 @@
 package com.a7m5.chess;
 
 import com.a7m5.chess.chesspieces.ChessOwner;
+import com.a7m5.networking.NetworkCommand;
 import com.badlogic.gdx.InputProcessor;
 
 public class ChessInputProcessor implements InputProcessor {
@@ -47,7 +48,11 @@ public class ChessInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
+		NetworkCommand command = new NetworkCommand();
+		command.setCommand(NetworkCommand.MOUSE_MOVE);
+		Vector2[] vector2Array = { new Vector2(screenX, ChessBoard.actualBoardWidth-screenY) };
+		command.setVectorArray(vector2Array);
+		GdxChessGame.getClient().send(command);
 		return false;
 	}
 }

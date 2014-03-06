@@ -82,6 +82,8 @@ public class Client implements Runnable {
 						case 4: //GAME OVER
 							int winner = (int) command.getVectorArray()[0].getX();
 							board.gameOver(winner);
+						case 5: //MOUSE_MOVED
+							board.setCursor(command.getOwner(), command.getVectorArray()[0]);
 						}
 				} else {
 						running = false;
@@ -118,10 +120,12 @@ public class Client implements Runnable {
 	
 	public void send(NetworkCommand command) {
 		command.setOwner(GdxChessGame.getOwner());
-		try {
-			oos.writeObject(command);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(oos != null) {
+			try {
+				oos.writeObject(command);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

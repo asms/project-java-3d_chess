@@ -39,8 +39,10 @@ public class ChessBoard implements Serializable {
 	private ChessPiece selectedChessPiece = null;
 	private ChessOwner turnOwner;
 	private ChessOwner checkedPlayer = null;
-	private static int actualBoardWidth = 512;
-	private static int boardWidth = 16; //8 (traditional), 16 (large), 32 (extra large)
+	private Vector2 whiteCursor = null;
+	private Vector2 blackCursor = null;
+	public static int actualBoardWidth = 512;
+	public static int boardWidth = 8; //8 (traditional), 16 (large), 32 (extra large)
 	public static int tileWidth = actualBoardWidth / boardWidth;
 
 
@@ -96,7 +98,7 @@ public class ChessBoard implements Serializable {
 				0);
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth/2; x++) {
-				shapeRenderer.setColor(new Color(0.8f, 1, 0.8f, 1));
+				shapeRenderer.setColor(new Color(0.9f, 0.9f, 0.9f, 1));
 				shapeRenderer.rect((2*x+(alt?1:0)) * tileWidth + 1,
 						y*tileWidth + 1,
 						tileWidth-2,
@@ -180,7 +182,7 @@ public class ChessBoard implements Serializable {
 						Vector2 animationPosition = chessPiece.getAnimationPosition();					Vector2 displacementVector = new Vector2(
 								x*tileWidth - animationPosition.getX(),
 								y*tileWidth - animationPosition.getY());
-						if(displacementVector.getMagnitude() <= 1) {
+						if(displacementVector.getMagnitude() <= 3) {
 							chessPiece.stopAnimation();
 						} else {
 							Vector2 unitVector = displacementVector.getUnitVector().multiply(chessPiece.getSpeed());
@@ -196,6 +198,17 @@ public class ChessBoard implements Serializable {
 					batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 				}
 			}
+		}
+	}
+	
+	public void drawCursors(ShapeRenderer shapeRenderer) {
+		if(whiteCursor != null) {
+			shapeRenderer.setColor(Color.WHITE);
+			shapeRenderer.circle((float) whiteCursor.getX(), (float) whiteCursor.getY(), 6);
+		}
+		if(blackCursor != null) {
+			shapeRenderer.setColor(Color.BLACK);
+			shapeRenderer.circle((float) blackCursor.getX(), (float) blackCursor.getY(), 6);
 		}
 	}
 
@@ -296,5 +309,12 @@ public class ChessBoard implements Serializable {
 	}
 	public ChessOwner getCheckedPlayer() {
 		return checkedPlayer;
+	}
+	public void setCursor(ChessOwner owner, Vector2 vector) {
+		if(owner == ChessOwner.WHITE) {
+			whiteCursor = vector;
+		} else if(owner == ChessOwner.BLACK) {
+			blackCursor = vector;
+		}
 	}
 }

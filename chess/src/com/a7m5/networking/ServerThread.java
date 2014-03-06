@@ -84,7 +84,11 @@ public class ServerThread implements Runnable {
 							//check = checkForCheck(board, owner);
 							//syncClient();
 							break;
+						case 5: //MOUSE_MOVED
+							server.sendAll(command);
+							break;
 						}
+						
 						System.out.println("Command received: " + command.getCommand());
 					} else {
 						System.out.println("Command was null.");

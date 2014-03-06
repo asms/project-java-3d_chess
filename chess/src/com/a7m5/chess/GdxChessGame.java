@@ -102,6 +102,7 @@ public class GdxChessGame implements ApplicationListener {
 
 			shapeRenderer.begin(ShapeType.Filled);
 			client.board.drawBoard(shapeRenderer);
+			client.board.drawCursors(shapeRenderer);
 			shapeRenderer.end();
 
 			batch.setProjectionMatrix(camera.combined);
