@@ -1,4 +1,4 @@
-package com.a7m5.Editor;
+package com.a7m5.chess.editor;
 
 import java.io.File;
 
