@@ -12,19 +12,15 @@ public class Bishop extends ChessPiece {
 
 	public Bishop(ChessOwner owner) {
 		super(owner);
+		Vector2[] bishopMovementDirectionVectors = {
+				new Vector2(1, 1),
+				new Vector2(-1, -1),
+				new Vector2(-1, 1),
+				new Vector2(1, -1)
+			};
+		movementDirectionVectors = bishopMovementDirectionVectors;
+		attackDirectionVectors = movementDirectionVectors;
+		
 	}
-
-	public static final Vector2[] specialMovementVectors = {};
-
-	public static final Vector2[] movementDirectionVectors = {
-		new Vector2(1, 1),
-		new Vector2(-1, -1),
-		new Vector2(-1, 1),
-		new Vector2(1, -1)
-	};
-
-	public static final Vector2[] attackDirectionVectors = movementDirectionVectors;
-
-	
 
 }

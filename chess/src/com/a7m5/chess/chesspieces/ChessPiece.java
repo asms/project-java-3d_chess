@@ -1,13 +1,14 @@
 package com.a7m5.chess.chesspieces;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.GdxChessGame;
 import com.a7m5.chess.Vector2;
 
 public abstract class ChessPiece implements Serializable, ChessPieceInterface {
-	
+
 	/**
 	 * 
 	 */
@@ -20,7 +21,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public Vector2[] specialMovementVectors = null;
 	public Vector2[] movementVectors = null;
 	public Vector2[] attackVectors = null;
-	
+
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
 	}
@@ -29,7 +30,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 		this.board = chessBoard;
 		this.position = position;
 	}
-	
+
 	public void onClick() {
 		ChessPiece selectedChessPiece= board.getSelectedChessPiece();
 		if(selectedChessPiece == null) {
@@ -62,19 +63,19 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public Vector2 getPosition() {
 		return position;
 	}
-	
+
 	public void setX(int x) {
 		position.setX(x);
 	}
-	
+
 	public int getX() {
 		return position.getX();
 	}
-	
+
 	public void setY(int y) {
 		position.setY(y);
 	}
-	
+
 	public int getY() {
 		return position.getY();
 	}
@@ -86,8 +87,9 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public ChessOwner getOwner() {
 		return owner;
 	}
-	
-	public boolean tryMove(Vector2 newPosition) {
+
+	public ArrayList<Vector2> getPossibleMoves() {
+		ArrayList<Vector2> possibleMoves = new ArrayList<Vector2>();
 		if(movementDirectionVectors != null) {
 			for(Vector2 movementVector : movementDirectionVectors) {
 				if(owner == ChessOwner.WHITE) {
@@ -97,9 +99,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 					Vector2 testVector = getPosition().add(movementVector.multiply(i));
 					try {
 						if(board.getChessPieceByVector(testVector) == null) {
-							if(testVector.equals(newPosition)) {
-								return true;
-							}
+							possibleMoves.add(testVector);
 						} else {
 							break;
 						}
@@ -107,21 +107,38 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 						break;
 					}
 				}
-				
+
 			}
-		} else if(movementVectors != null) {
+		}
+		if(movementVectors != null) {
 			for(Vector2 movementVector : movementVectors) {
+				System.out.println("asdf");
 				if(owner == ChessOwner.WHITE) {
 					movementVector = movementVector.multiplyY(-1);
 				}
-				if(getPosition().add(movementVector).equals(newPosition)) {
-					return true;
-				}
+				Vector2 testVector = getPosition().add(movementVector);
+				try {
+					if(board.getChessPieceByVector(testVector) == null) {
+						possibleMoves.add(testVector);
+					}
+				} catch(Exception e) {}
+			}
+		}
+		return possibleMoves;
+	}
+
+	public boolean tryMove(Vector2 newPosition) {
+		ArrayList<Vector2> possibleMoves = getPossibleMoves();
+		for(Vector2 possibleMove : possibleMoves) {
+			System.out.println("try" + newPosition.getX() + newPosition.getY());
+			System.out.println("can do" + possibleMove.getX() + possibleMove.getY());
+			if(newPosition.equals(possibleMove)) {
+				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	public boolean tryAttack(ChessPiece targetChessPiece) {
 		if(owner != targetChessPiece.owner) {
 			if(attackDirectionVectors != null) {
@@ -143,9 +160,10 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 							break;
 						}
 					}
-					
+
 				}
-			} else if(attackVectors != null) {
+			}
+			if(attackVectors != null) {
 				for(Vector2 attackVector : attackVectors) {
 					if(owner == ChessOwner.WHITE) {
 						attackVector = attackVector.multiplyY(-1);
