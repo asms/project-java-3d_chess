@@ -44,8 +44,7 @@ public class ChessBoard implements Serializable {
 	public static int actualBoardWidth = 512;
 	public static int boardWidth = 8; //8 (traditional), 16 (large), 32 (extra large)
 	public static int tileWidth = actualBoardWidth / boardWidth;
-
-
+	
 	public ChessBoard() {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
 	}
@@ -316,5 +315,10 @@ public class ChessBoard implements Serializable {
 		} else if(owner == ChessOwner.BLACK) {
 			blackCursor = vector;
 		}
+	}
+	
+	public static void setBoardWidth(int boardWidth) {
+		ChessBoard.boardWidth = boardWidth;
+		tileWidth = actualBoardWidth / boardWidth;
 	}
 }
