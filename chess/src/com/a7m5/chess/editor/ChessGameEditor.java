@@ -85,6 +85,7 @@ public class ChessGameEditor implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		editingPalette.drawPieces(batch);
+		//editingPalette.drawTabs(batch);
 		batch.end();
 	}
 

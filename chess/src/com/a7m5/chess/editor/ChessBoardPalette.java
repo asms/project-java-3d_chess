@@ -29,6 +29,11 @@ public class ChessBoardPalette implements Serializable{
 	private static TextureRegion rookWhiteTextureRegion;
 	private static TextureRegion rookBlackTextureRegion;
 	private static TextureRegion bishopTextureRegion;
+	// Tabs
+	private static TextureRegion tabWhiteTeamTextureRegion;
+	private static TextureRegion tabBlackTeamTextureRegion;
+	private static TextureRegion tabNPCTextureRegion;
+	private static TextureRegion tabTilesTextureRegion;
 
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
@@ -40,6 +45,13 @@ public class ChessBoardPalette implements Serializable{
 	public static int tileHeight = actualPaletteHeight / paletteHeight;
 	public static int paletteBottomLeftX;
 	public static int paletteBottomLeftY;
+	
+	// Definition of the palette modes.
+	public final static int MODE_WHITE = 0;
+	public final static int MODE_BLACK = 1;
+	public final static int MODE_NPC = 2;
+	public final static int MODE_TILE = 3;
+	public static int paletteMode = MODE_WHITE;
 
 
 	public ChessBoardPalette(int bottomLeftX, int bottomLeftY) {
@@ -49,6 +61,8 @@ public class ChessBoardPalette implements Serializable{
 	}
 
 	public static void loadTextures() {
+	
+		// Standard Chess pieces
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		pawnWhiteTextureRegion = new TextureRegion(pawnWhiteTexture, 0, 0, 64, 64);
@@ -80,6 +94,24 @@ public class ChessBoardPalette implements Serializable{
 		Texture bishopTexture = new Texture(Gdx.files.internal("data/bishop.png"));
 		bishopTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bishopTextureRegion = new TextureRegion(bishopTexture, 0, 0, 64, 64);
+		/*
+		// Tabs
+		Texture tabWhiteTeamTextureRegion = new Texture(Gdx.files.internal("data/tabWhiteTeam.png"));
+		tabWhiteTeamTextureRegion.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bishopTextureRegion = new TextureRegion(tabWhiteTeamTextureRegion, 0, 0, 154, 26);
+		
+		Texture tabBlackTeamTextureRegion = new Texture(Gdx.files.internal("data/tabBlackTeam.png"));
+		tabBlackTeamTextureRegion.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bishopTextureRegion = new TextureRegion(tabBlackTeamTextureRegion, 0, 0, 154, 26);
+		
+		Texture tabNPCTextureRegion = new Texture(Gdx.files.internal("data/tabNPC.png"));
+		tabNPCTextureRegion.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bishopTextureRegion = new TextureRegion(tabNPCTextureRegion, 0, 0, 154, 26);
+		
+		Texture tabTilesTextureRegion = new Texture(Gdx.files.internal("data/tabTiles.png"));
+		tabTilesTextureRegion.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bishopTextureRegion = new TextureRegion(tabTilesTextureRegion, 0, 0, 154, 26);
+		*/
 	}
 	public void drawPalette(ShapeRenderer shapeRenderer) {
 
@@ -144,7 +176,14 @@ public class ChessBoardPalette implements Serializable{
 			}
 		}
 	}
+	/*
+	public void drawTabs(SpriteBatch batch) {
+		int positionX = paletteBottomLeftX + 4;
+		int positionY = paletteBottomLeftY + actualPaletteHeight;
 
+		batch.draw(tabWhiteTeamTextureRegion, positionX, positionY, 128, 16);
+	}
+*/
 	public void start() {
 		clear();
 	}
