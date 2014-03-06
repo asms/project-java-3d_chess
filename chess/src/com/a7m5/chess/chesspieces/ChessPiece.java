@@ -175,4 +175,48 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 		}
 		return false;
 	}
+
+	public ArrayList<Vector2> getPossibleAttacks() {
+		ArrayList<Vector2> possibleAttacks = new ArrayList<Vector2>();
+		if(attackDirectionVectors != null) {
+			for(Vector2 attackVector : attackDirectionVectors) {
+				if(owner == ChessOwner.WHITE) {
+					attackVector = attackVector.multiplyY(-1);
+				}
+				for(int i = 1; i < board.getBoardWidth() - 1; i++) {
+					Vector2 testVector = getPosition().add(attackVector.multiply(i));
+					try {
+						ChessPiece testPiece = board.getChessPieceByVector(testVector);
+						if(testPiece != null) {
+							if(testPiece.getOwner() != GdxChessGame.getOwner()) {
+								possibleAttacks.add(testVector);
+							}
+							break;
+						}
+					} catch(Exception e) {
+						break;
+					}
+				}
+
+			}
+		}
+		if(attackVectors != null) {
+			for(Vector2 attackVector : attackVectors) {
+				if(owner == ChessOwner.WHITE) {
+					attackVector = attackVector.multiplyY(-1);
+				}
+				Vector2 testVector = getPosition().add(attackVector);
+				try {
+					ChessPiece testPiece = board.getChessPieceByVector(testVector);
+					if(testPiece != null) {
+						if(testPiece.getOwner() != GdxChessGame.getOwner()) {
+							possibleAttacks.add(testVector);
+						}
+						
+					}
+				} catch(Exception e) {}
+			}
+		}
+		return possibleAttacks;
+	}
 }

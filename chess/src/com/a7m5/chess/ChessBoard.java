@@ -1,6 +1,7 @@
 package com.a7m5.chess;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.a7m5.chess.chesspieces.Bishop;
@@ -93,7 +94,6 @@ public class ChessBoard implements Serializable {
 				0);
 		for(int y = 0; y < 8; y++) {
 			for(int x = 0; x < 4; x++) {
-				
 				shapeRenderer.setColor(new Color(0.8f, 1, 0.8f, 1));
 				shapeRenderer.rect((2*x+(alt?1:0)) * 64 + 1,
 						y*64 + 1,
@@ -109,6 +109,27 @@ public class ChessBoard implements Serializable {
 						);
 			}
 			alt = !alt;
+		}
+		
+		if(selectedChessPiece != null) {
+			ArrayList<Vector2> possibleMoves = selectedChessPiece.getPossibleMoves();
+			for(Vector2 possibleMove : possibleMoves) {
+				shapeRenderer.setColor(Color.BLUE);
+				shapeRenderer.rect(possibleMove.getX() * 64 + 1,
+						possibleMove.getY()*64 + 1,
+						tileWidth-2,
+						tileWidth-2
+						);
+			}
+			ArrayList<Vector2> possibleAttacks = selectedChessPiece.getPossibleAttacks();
+			for(Vector2 possibleAttack : possibleAttacks) {
+				shapeRenderer.setColor(Color.RED);
+				shapeRenderer.rect(possibleAttack.getX() * 64 + 1,
+						possibleAttack.getY()*64 + 1,
+						tileWidth-2,
+						tileWidth-2
+						);
+			}
 		}
 
 		shapeRenderer.rect(512,
