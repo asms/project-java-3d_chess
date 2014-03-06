@@ -15,6 +15,11 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	protected ChessOwner owner;
 	protected ChessBoard board;
 	private Vector2 position;
+	public Vector2[] attackDirectionVectors = null;
+	public Vector2[] movementDirectionVectors = null;
+	public Vector2[] specialMovementVectors = null;
+	public Vector2[] movementVectors = null;
+	public Vector2[] attackVectors = null;
 	
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
@@ -80,5 +85,77 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 
 	public ChessOwner getOwner() {
 		return owner;
+	}
+	
+	public boolean tryMove(Vector2 newPosition) {
+		if(movementDirectionVectors != null) {
+			for(Vector2 movementVector : movementDirectionVectors) {
+				if(owner == ChessOwner.WHITE) {
+					movementVector = movementVector.multiplyY(-1);
+				}
+				for(int i = 1; i < board.getBoardWidth() - 1; i++) {
+					Vector2 testVector = getPosition().add(movementVector.multiply(i));
+					try {
+						if(board.getChessPieceByVector(testVector) == null) {
+							if(testVector.equals(newPosition)) {
+								return true;
+							}
+						} else {
+							break;
+						}
+					} catch(Exception e) {
+						break;
+					}
+				}
+				
+			}
+		} else if(movementVectors != null) {
+			for(Vector2 movementVector : movementVectors) {
+				if(owner == ChessOwner.WHITE) {
+					movementVector = movementVector.multiplyY(-1);
+				}
+				if(getPosition().add(movementVector).equals(newPosition)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean tryAttack(ChessPiece targetChessPiece) {
+		if(owner != targetChessPiece.owner) {
+			if(attackDirectionVectors != null) {
+				for(Vector2 attackVector : attackDirectionVectors) {
+					if(owner == ChessOwner.WHITE) {
+						attackVector = attackVector.multiplyY(-1);
+					}
+					for(int i = 1; i < board.getBoardWidth() - 1; i++) {
+						Vector2 testVector = getPosition().add(attackVector.multiply(i));
+						try {
+							if(board.getChessPieceByVector(testVector) != null) {
+								if(testVector.equals(targetChessPiece.getPosition())) {
+									return true;
+								} else {
+									break;
+								}
+							}
+						} catch(Exception e) {
+							break;
+						}
+					}
+					
+				}
+			} else if(attackVectors != null) {
+				for(Vector2 attackVector : attackVectors) {
+					if(owner == ChessOwner.WHITE) {
+						attackVector = attackVector.multiplyY(-1);
+					}
+					if(getPosition().add(attackVector).equals(targetChessPiece.getPosition())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

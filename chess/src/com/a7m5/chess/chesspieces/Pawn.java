@@ -12,46 +12,19 @@ public class Pawn extends ChessPiece {
 
 	public Pawn(ChessOwner owner) {
 		super(owner);
+		Vector2[] pawnSpecialMovementVectors = {
+				new Vector2(0, 2)
+			};
+		Vector2[] pawnMovementVectors = {
+				new Vector2(0, 1)
+			};
+		Vector2[] pawnAttackVectors = {
+				new Vector2(-1, 1),
+				new Vector2(1, 1)
+			};
+		movementVectors = pawnMovementVectors;
+		attackVectors = pawnAttackVectors;
+		specialMovementVectors = pawnSpecialMovementVectors;
 		
 	}
-
-	public static final Vector2[] specialMovementVectors = {
-		new Vector2(0, 2)
-	};
-	
-	public static final Vector2[] movementVectors = {
-		new Vector2(0, 1)
-	};
-	
-	public static final Vector2[] attackVectors = {
-		new Vector2(-1, 1),
-		new Vector2(1, 1)
-	};
-	
-	public boolean tryMove(Vector2 newPosition) {
-		for(Vector2 movementVector : movementVectors) {
-			if(owner == ChessOwner.WHITE) {
-				movementVector = movementVector.multiplyY(-1);
-			}
-			if(getPosition().add(movementVector).equals(newPosition)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean tryAttack(ChessPiece targetChessPiece) {
-		if(owner != targetChessPiece.owner) {
-			for(Vector2 attackVector : attackVectors) {
-				if(owner == ChessOwner.WHITE) {
-					attackVector = attackVector.multiplyY(-1);
-				}
-				if(getPosition().add(attackVector).equals(targetChessPiece.getPosition())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 }

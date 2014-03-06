@@ -54,6 +54,7 @@ public class ServerThread implements Runnable {
 							boolean checkedOtherPlayer;
 							
 							board.moveChessPiece(vectors[0], vectors[1]);
+							/*
 							check = checkForCheck(board, owner);
 							if(owner == ChessOwner.BLACK) {
 								canMove = !check[0];
@@ -73,6 +74,8 @@ public class ServerThread implements Runnable {
 								board.moveChessPiece(vectors[1], vectors[0]);
 							}
 							server.setChessBoard(board);
+							*/
+							doMove(command);
 							//syncClient();
 							break;
 

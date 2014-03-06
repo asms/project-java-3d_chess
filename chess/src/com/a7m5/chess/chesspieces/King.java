@@ -13,24 +13,22 @@ public class King extends ChessPiece {
 
 	public King(ChessOwner owner) {
 		super(owner);
+		Vector2[] kingMovementVectors = {
+				new Vector2(1, -1),
+				new Vector2(1, 0),
+				new Vector2(1, 1),
+				
+				new Vector2(0, 1),
+				new Vector2(0, -1),
+				
+				new Vector2(-1, -1),
+				new Vector2(-1, 0),
+				new Vector2(-1, 1)
+			};
+		
+		movementVectors = kingMovementVectors;
+		attackVectors = movementVectors;
 	}
-
-	public static final Vector2[] specialMovementVectors = {};
-	
-	public static final Vector2[] movementVectors = {
-		new Vector2(1, -1),
-		new Vector2(1, 0),
-		new Vector2(1, 1),
-		
-		new Vector2(0, 1),
-		new Vector2(0, -1),
-		
-		new Vector2(-1, -1),
-		new Vector2(-1, 0),
-		new Vector2(-1, 1)
-	};
-	
-	public static final Vector2[] attackVectors = movementVectors;
 	
 	public void onClick() {
 		ChessPiece selectedChessPiece= board.getSelectedChessPiece();
@@ -45,32 +43,6 @@ public class King extends ChessPiece {
 				board.setSelectedChessPiece(this);
 			}
 		}
-	}
-	
-	public boolean tryMove(Vector2 newPosition) {
-		for(Vector2 movementVector : movementVectors) {
-			if(owner == ChessOwner.WHITE) {
-				movementVector = movementVector.multiplyY(-1);
-			}
-			if(getPosition().add(movementVector).equals(newPosition)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean tryAttack(ChessPiece targetChessPiece) {
-		if(owner != targetChessPiece.owner) {
-			for(Vector2 attackVector : attackVectors) {
-				if(owner == ChessOwner.WHITE) {
-					attackVector = attackVector.multiplyY(-1);
-				}
-				if(getPosition().add(attackVector).equals(targetChessPiece.getPosition())) {
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 }
