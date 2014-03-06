@@ -39,13 +39,13 @@ public class ChessBoard implements Serializable {
 	private ChessPiece selectedChessPiece = null;
 	private ChessOwner turnOwner;
 	private ChessOwner checkedPlayer = null;
-	private static int boardWidth = 16;
-	public static int tileWidth = boardWidth*2;
-	private static int actualBoardWidth = tileWidth * boardWidth;
+	private static int actualBoardWidth = 512;
+	private static int boardWidth = 16; //8 (traditional), 16 (large), 32 (extra large)
+	public static int tileWidth = actualBoardWidth / boardWidth;
 
 
 	public ChessBoard() {
-		chessPieces = new ChessPiece[16][16];
+		chessPieces = new ChessPiece[boardWidth][boardWidth];
 	}
 	public static void loadTextures() {
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
