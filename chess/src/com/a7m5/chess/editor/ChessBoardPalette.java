@@ -41,22 +41,21 @@ public class ChessBoardPalette implements Serializable{
 
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
-	public static int paletteWidth = 6;
-	public static int actualPaletteWidth = 62*paletteWidth;
-	public static int paletteHeight = 7;
-	public static int actualPaletteHeight = 62*paletteHeight;
-	public static int tileWidth = actualPaletteWidth / paletteWidth;
-	public static int tileHeight = actualPaletteHeight / paletteHeight;
-	public static int paletteBottomLeftX;
-	public static int paletteBottomLeftY;
+	private static int paletteWidth = 6;
+	private static int actualPaletteWidth = 62*paletteWidth;
+	private static int paletteHeight = 7;
+	private static int actualPaletteHeight = 62*paletteHeight;
+	private static int tileWidth = actualPaletteWidth / paletteWidth;
+	private static int tileHeight = actualPaletteHeight / paletteHeight;
+	private static int paletteBottomLeftX;
+	private static int paletteBottomLeftY;
 
 	// Definition of the palette modes.
 	public final static int MODE_WHITE = 0;
 	public final static int MODE_BLACK = 1;
 	public final static int MODE_NPC = 2;
 	public final static int MODE_TILE = 3;
-	public static int paletteMode = MODE_WHITE;
-
+	private static int paletteMode = MODE_WHITE;
 
 	public ChessBoardPalette(int bottomLeftX, int bottomLeftY) {
 		chessPieces = new ChessPiece[tileWidth][tileHeight];
@@ -246,6 +245,15 @@ public class ChessBoardPalette implements Serializable{
 	public void addPiece(int x, int y, ChessPiece chessPiece) {
 		chessPiece.register(this, new Vector2(x, y));
 		chessPieces[x][y] = chessPiece;
+	}
+	
+
+	public static int getPaletteMode() {
+		return paletteMode;
+	}
+
+	public static void setPaletteMode(int paletteMode) {
+		ChessBoardPalette.paletteMode = paletteMode;
 	}
 
 }
