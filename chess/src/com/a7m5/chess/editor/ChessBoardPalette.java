@@ -30,10 +30,14 @@ public class ChessBoardPalette implements Serializable{
 	private static TextureRegion rookBlackTextureRegion;
 	private static TextureRegion bishopTextureRegion;
 	// Tabs
-	private static TextureRegion tabWhiteTeamTextureRegion;
-	private static TextureRegion tabBlackTeamTextureRegion;
-	private static TextureRegion tabNPCTextureRegion;
-	private static TextureRegion tabTilesTextureRegion;
+	private static TextureRegion en_tabWhiteTeamTextureRegion;
+	private static TextureRegion en_tabBlackTeamTextureRegion;
+	private static TextureRegion en_tabNPCTextureRegion;
+	private static TextureRegion en_tabTilesTextureRegion;
+	private static TextureRegion dn_tabWhiteTeamTextureRegion;
+	private static TextureRegion dn_tabBlackTeamTextureRegion;
+	private static TextureRegion dn_tabNPCTextureRegion;
+	private static TextureRegion dn_tabTilesTextureRegion;
 
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
@@ -45,7 +49,7 @@ public class ChessBoardPalette implements Serializable{
 	public static int tileHeight = actualPaletteHeight / paletteHeight;
 	public static int paletteBottomLeftX;
 	public static int paletteBottomLeftY;
-	
+
 	// Definition of the palette modes.
 	public final static int MODE_WHITE = 0;
 	public final static int MODE_BLACK = 1;
@@ -61,7 +65,7 @@ public class ChessBoardPalette implements Serializable{
 	}
 
 	public static void loadTextures() {
-	
+
 		// Standard Chess pieces
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -94,24 +98,39 @@ public class ChessBoardPalette implements Serializable{
 		Texture bishopTexture = new Texture(Gdx.files.internal("data/bishop.png"));
 		bishopTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bishopTextureRegion = new TextureRegion(bishopTexture, 0, 0, 64, 64);
-		/*
-		// Tabs
-		Texture tabWhiteTeamTextureRegion = new Texture(Gdx.files.internal("data/tabWhiteTeam.png"));
-		tabWhiteTeamTextureRegion.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bishopTextureRegion = new TextureRegion(tabWhiteTeamTextureRegion, 0, 0, 154, 26);
-		
-		Texture tabBlackTeamTextureRegion = new Texture(Gdx.files.internal("data/tabBlackTeam.png"));
-		tabBlackTeamTextureRegion.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bishopTextureRegion = new TextureRegion(tabBlackTeamTextureRegion, 0, 0, 154, 26);
-		
-		Texture tabNPCTextureRegion = new Texture(Gdx.files.internal("data/tabNPC.png"));
-		tabNPCTextureRegion.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bishopTextureRegion = new TextureRegion(tabNPCTextureRegion, 0, 0, 154, 26);
-		
-		Texture tabTilesTextureRegion = new Texture(Gdx.files.internal("data/tabTiles.png"));
-		tabTilesTextureRegion.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bishopTextureRegion = new TextureRegion(tabTilesTextureRegion, 0, 0, 154, 26);
-		*/
+
+		// Tabs (Enabled:Disabled => selected:unselected)
+		Texture en_tabWhiteTeamTexture = new Texture(Gdx.files.internal("data/en_tabWhiteTeam.png"));
+		en_tabWhiteTeamTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		en_tabWhiteTeamTextureRegion = new TextureRegion(en_tabWhiteTeamTexture, 0, 0, 128, 32);
+
+		Texture en_tabBlackTeamTexture = new Texture(Gdx.files.internal("data/en_tabBlackTeam.png"));
+		en_tabBlackTeamTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		en_tabBlackTeamTextureRegion = new TextureRegion(en_tabBlackTeamTexture, 0, 0, 128, 32);
+
+		Texture en_tabNPCTexture = new Texture(Gdx.files.internal("data/en_tabNPC.png"));
+		en_tabNPCTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		en_tabNPCTextureRegion = new TextureRegion(en_tabNPCTexture, 0, 0, 128, 32);
+
+		Texture en_tabTilesTexture = new Texture(Gdx.files.internal("data/en_tabTiles.png"));
+		en_tabTilesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		en_tabTilesTextureRegion = new TextureRegion(en_tabTilesTexture, 0, 0, 128, 32);
+
+		Texture dn_tabWhiteTeamTexture = new Texture(Gdx.files.internal("data/dn_tabWhiteTeam.png"));
+		dn_tabWhiteTeamTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		dn_tabWhiteTeamTextureRegion = new TextureRegion(dn_tabWhiteTeamTexture, 0, 0, 128, 32);
+
+		Texture dn_tabBlackTeamTexture = new Texture(Gdx.files.internal("data/dn_tabBlackTeam.png"));
+		dn_tabBlackTeamTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		dn_tabBlackTeamTextureRegion = new TextureRegion(dn_tabBlackTeamTexture, 0, 0, 128, 32);
+
+		Texture dn_tabNPCTexture = new Texture(Gdx.files.internal("data/dn_tabNPC.png"));
+		dn_tabNPCTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		dn_tabNPCTextureRegion = new TextureRegion(dn_tabNPCTexture, 0, 0, 128, 32);
+
+		Texture dn_tabTilesTexture = new Texture(Gdx.files.internal("data/dn_tabTiles.png"));
+		dn_tabTilesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		dn_tabTilesTextureRegion = new TextureRegion(dn_tabTilesTexture, 0, 0, 128, 32);
 	}
 	public void drawPalette(ShapeRenderer shapeRenderer) {
 
@@ -176,14 +195,42 @@ public class ChessBoardPalette implements Serializable{
 			}
 		}
 	}
-	/*
+
 	public void drawTabs(SpriteBatch batch) {
+		TextureRegion tabWhite	= dn_tabWhiteTeamTextureRegion;
+		TextureRegion tabBlack	= dn_tabBlackTeamTextureRegion;
+		TextureRegion tabNPC	= dn_tabNPCTextureRegion;
+		TextureRegion tabTiles	= dn_tabTilesTextureRegion;
+		
+		switch(paletteMode){
+		case MODE_WHITE:
+			tabWhite = en_tabWhiteTeamTextureRegion;
+			break;
+		case MODE_BLACK:
+			tabBlack = en_tabBlackTeamTextureRegion;
+			break;
+		case MODE_NPC:
+			tabNPC = en_tabNPCTextureRegion;
+			break;
+		case MODE_TILE:
+			tabTiles = en_tabTilesTextureRegion;
+			break;
+		}
+
+		int tabWidth = 85;
+		int tabHeight = 20;
 		int positionX = paletteBottomLeftX + 4;
 		int positionY = paletteBottomLeftY + actualPaletteHeight;
 
-		batch.draw(tabWhiteTeamTextureRegion, positionX, positionY, 128, 16);
+		batch.draw(tabWhite, positionX, positionY, tabWidth, tabHeight);
+		positionX += tabWidth + tabWidth/15;
+		batch.draw(tabBlack, positionX, positionY, tabWidth, tabHeight);
+		positionX += tabWidth + tabWidth/15;
+		batch.draw(tabNPC, positionX, positionY, tabWidth, tabHeight);
+		positionX += tabWidth + tabWidth/15;
+		batch.draw(tabTiles, positionX, positionY, tabWidth, tabHeight);
 	}
-*/
+
 	public void start() {
 		clear();
 	}
