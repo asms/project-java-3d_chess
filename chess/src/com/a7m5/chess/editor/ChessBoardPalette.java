@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.Input.Buttons;
 
 public class ChessBoardPalette implements Serializable{
 	private static TextureRegion kingTextureRegion;
@@ -29,15 +30,6 @@ public class ChessBoardPalette implements Serializable{
 	private static TextureRegion rookWhiteTextureRegion;
 	private static TextureRegion rookBlackTextureRegion;
 	private static TextureRegion bishopTextureRegion;
-	// Tabs
-	private static TextureRegion en_tabWhiteTeamTextureRegion;
-	private static TextureRegion en_tabBlackTeamTextureRegion;
-	private static TextureRegion en_tabNPCTextureRegion;
-	private static TextureRegion en_tabTilesTextureRegion;
-	private static TextureRegion dn_tabWhiteTeamTextureRegion;
-	private static TextureRegion dn_tabBlackTeamTextureRegion;
-	private static TextureRegion dn_tabNPCTextureRegion;
-	private static TextureRegion dn_tabTilesTextureRegion;
 
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
@@ -50,12 +42,12 @@ public class ChessBoardPalette implements Serializable{
 	private static int paletteBottomLeftX;
 	private static int paletteBottomLeftY;
 
-	// Definition of the palette modes.
-	public final static int MODE_WHITE = 0;
-	public final static int MODE_BLACK = 1;
-	public final static int MODE_NPC = 2;
-	public final static int MODE_TILE = 3;
-	private static int paletteMode = MODE_WHITE;
+	private static ArrayList<ClickableComponent> clickableComponents = new ArrayList<ClickableComponent>();
+	private static ClickableComponent tabWhite;
+	private static ClickableComponent tabBlack;
+	private static ClickableComponent tabNPC;
+	private static ClickableComponent tabTiles;
+
 
 	public ChessBoardPalette(int bottomLeftX, int bottomLeftY) {
 		chessPieces = new ChessPiece[tileWidth][tileHeight];
@@ -64,7 +56,6 @@ public class ChessBoardPalette implements Serializable{
 	}
 
 	public static void loadTextures() {
-
 		// Standard Chess pieces
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -98,39 +89,43 @@ public class ChessBoardPalette implements Serializable{
 		bishopTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bishopTextureRegion = new TextureRegion(bishopTexture, 0, 0, 64, 64);
 
-		// Tabs (Enabled:Disabled => selected:unselected)
-		Texture en_tabWhiteTeamTexture = new Texture(Gdx.files.internal("data/en_tabWhiteTeam.png"));
-		en_tabWhiteTeamTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		en_tabWhiteTeamTextureRegion = new TextureRegion(en_tabWhiteTeamTexture, 0, 0, 128, 32);
+		int tabWidth = 85;
+		int tabHeight = 20;
+		// Clickables
+		tabWhite = new ClickableComponent(paletteBottomLeftX,
+				paletteBottomLeftY + actualPaletteHeight,
+				tabWidth,
+				tabHeight,
+				"data/en_tabWhiteTeam.png",
+				"data/dn_tabWhiteTeam.png");
+		clickableComponents.add(tabWhite);
+		
+		tabBlack = new ClickableComponent(paletteBottomLeftX + tabWidth,
+				paletteBottomLeftY + actualPaletteHeight,
+				tabWidth,
+				tabHeight,
+				"data/en_tabBlackTeam.png",
+				"data/dn_tabBlackTeam.png");
+		clickableComponents.add(tabBlack);
+		
+		tabNPC = new ClickableComponent(paletteBottomLeftX + tabWidth*2,
+				paletteBottomLeftY + actualPaletteHeight,
+				tabWidth,
+				tabHeight,
+				"data/en_tabNPC.png",
+				"data/dn_tabNPC.png");
+		clickableComponents.add(tabNPC);
+		
+		tabTiles = new ClickableComponent(paletteBottomLeftX + tabWidth*3,
+				paletteBottomLeftY + actualPaletteHeight,
+				tabWidth,
+				tabHeight,
+				"data/en_tabTiles.png",
+				"data/dn_tabTiles.png");
+		clickableComponents.add(tabTiles);
 
-		Texture en_tabBlackTeamTexture = new Texture(Gdx.files.internal("data/en_tabBlackTeam.png"));
-		en_tabBlackTeamTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		en_tabBlackTeamTextureRegion = new TextureRegion(en_tabBlackTeamTexture, 0, 0, 128, 32);
-
-		Texture en_tabNPCTexture = new Texture(Gdx.files.internal("data/en_tabNPC.png"));
-		en_tabNPCTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		en_tabNPCTextureRegion = new TextureRegion(en_tabNPCTexture, 0, 0, 128, 32);
-
-		Texture en_tabTilesTexture = new Texture(Gdx.files.internal("data/en_tabTiles.png"));
-		en_tabTilesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		en_tabTilesTextureRegion = new TextureRegion(en_tabTilesTexture, 0, 0, 128, 32);
-
-		Texture dn_tabWhiteTeamTexture = new Texture(Gdx.files.internal("data/dn_tabWhiteTeam.png"));
-		dn_tabWhiteTeamTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		dn_tabWhiteTeamTextureRegion = new TextureRegion(dn_tabWhiteTeamTexture, 0, 0, 128, 32);
-
-		Texture dn_tabBlackTeamTexture = new Texture(Gdx.files.internal("data/dn_tabBlackTeam.png"));
-		dn_tabBlackTeamTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		dn_tabBlackTeamTextureRegion = new TextureRegion(dn_tabBlackTeamTexture, 0, 0, 128, 32);
-
-		Texture dn_tabNPCTexture = new Texture(Gdx.files.internal("data/dn_tabNPC.png"));
-		dn_tabNPCTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		dn_tabNPCTextureRegion = new TextureRegion(dn_tabNPCTexture, 0, 0, 128, 32);
-
-		Texture dn_tabTilesTexture = new Texture(Gdx.files.internal("data/dn_tabTiles.png"));
-		dn_tabTilesTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		dn_tabTilesTextureRegion = new TextureRegion(dn_tabTilesTexture, 0, 0, 128, 32);
 	}
+
 	public void drawPalette(ShapeRenderer shapeRenderer) {
 
 		shapeRenderer.setColor(Color.RED);
@@ -196,38 +191,9 @@ public class ChessBoardPalette implements Serializable{
 	}
 
 	public void drawTabs(SpriteBatch batch) {
-		TextureRegion tabWhite	= dn_tabWhiteTeamTextureRegion;
-		TextureRegion tabBlack	= dn_tabBlackTeamTextureRegion;
-		TextureRegion tabNPC	= dn_tabNPCTextureRegion;
-		TextureRegion tabTiles	= dn_tabTilesTextureRegion;
-		
-		switch(paletteMode){
-		case MODE_WHITE:
-			tabWhite = en_tabWhiteTeamTextureRegion;
-			break;
-		case MODE_BLACK:
-			tabBlack = en_tabBlackTeamTextureRegion;
-			break;
-		case MODE_NPC:
-			tabNPC = en_tabNPCTextureRegion;
-			break;
-		case MODE_TILE:
-			tabTiles = en_tabTilesTextureRegion;
-			break;
+		for(int i = 0; i < clickableComponents.size(); i++){
+			clickableComponents.get(i).drawComponent(batch);
 		}
-
-		int tabWidth = 85;
-		int tabHeight = 20;
-		int positionX = paletteBottomLeftX + 4;
-		int positionY = paletteBottomLeftY + actualPaletteHeight;
-
-		batch.draw(tabWhite, positionX, positionY, tabWidth, tabHeight);
-		positionX += tabWidth + tabWidth/15;
-		batch.draw(tabBlack, positionX, positionY, tabWidth, tabHeight);
-		positionX += tabWidth + tabWidth/15;
-		batch.draw(tabNPC, positionX, positionY, tabWidth, tabHeight);
-		positionX += tabWidth + tabWidth/15;
-		batch.draw(tabTiles, positionX, positionY, tabWidth, tabHeight);
 	}
 
 	public void start() {
@@ -246,14 +212,15 @@ public class ChessBoardPalette implements Serializable{
 		chessPiece.register(this, new Vector2(x, y));
 		chessPieces[x][y] = chessPiece;
 	}
-	
 
-	public static int getPaletteMode() {
-		return paletteMode;
-	}
-
-	public static void setPaletteMode(int paletteMode) {
-		ChessBoardPalette.paletteMode = paletteMode;
+	public static void onClickListener(int x, int y, int pointer, int button) {
+		System.out.println("(" + x + ", " + y + ")");
+		for(int i = 0; i < clickableComponents.size(); i++){
+			//System.out.print("*");
+			if(clickableComponents.get(i).compClicked(x, y)){
+				clickableComponents.get(i).setComponentSelected(true);
+			}
+		}
 	}
 
 }

@@ -1,9 +1,5 @@
 package com.a7m5.chess.editor;
 
-import javax.swing.JOptionPane;
-
-import com.a7m5.chess.chesspieces.ChessOwner;
-import com.a7m5.networking.NetworkCommand;
 import com.badlogic.gdx.InputProcessor;
 
 public class EditorInputProcessor implements InputProcessor {
@@ -19,19 +15,19 @@ public class EditorInputProcessor implements InputProcessor {
 
    @Override
    public boolean keyTyped (char character) {
-	   System.out.println("The char typed was: " + character);
+	   System.out.print("" + character);
       return false;
    }
 
    @Override
    public boolean touchDown (int x, int y, int pointer, int button) {
-	   System.out.println("X: " + x + " Y: " + y);
-	   // GdxChessGame.onClickListener(x, y, pointer, button);
+	   ChessBoardPalette.onClickListener(x, y, pointer, button);
 	   return false;
    }
 
    @Override
    public boolean touchUp (int x, int y, int pointer, int button) {
+	   
       return false;
    }
 
