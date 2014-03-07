@@ -1,6 +1,6 @@
 package com.a7m5.chess.chesspieces;
 
-import com.a7m5.chess.GdxChessGame;
+import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.Vector2;
 
 
@@ -38,7 +38,7 @@ public class King extends ChessPiece {
 		} else {
 			boolean attacked = selectedChessPiece.tryAttack(this);
 			if(attacked) {
-				GdxChessGame.getClient().sendGameOver();
+				ChessGame3D.getClient().sendGameOver();
 			} else {
 				board.setSelectedChessPiece(this);
 			}

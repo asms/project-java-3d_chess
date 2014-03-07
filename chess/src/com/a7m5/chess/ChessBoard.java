@@ -253,7 +253,7 @@ public class ChessBoard implements Serializable {
 	public void setSelectedChessPiece(ChessPiece chessPiece) {
 		if(chessPiece == null) {
 			selectedChessPiece = null;
-		} else if(chessPiece.getOwner() == GdxChessGame.getOwner()) {
+		} else if(chessPiece.getOwner() == ChessGame3D.getOwner()) {
 			this.selectedChessPiece = chessPiece;
 		}
 	}
