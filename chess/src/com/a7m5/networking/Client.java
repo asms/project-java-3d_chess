@@ -9,7 +9,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import com.a7m5.chess.ChessBoard;
-import com.a7m5.chess.GdxChessGame;
+import com.a7m5.chess.ChessGame3D;
+import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.chesspieces.ChessPiece;
 
@@ -63,7 +64,7 @@ public class Client implements Runnable {
 					if(command != null) {
 						switch(command.getCommand()) {
 						case 0: //DEBUG
-							
+
 							break;
 						case 1: //Move
 							Vector2[] vectors = command.getVectorArray();
@@ -85,7 +86,7 @@ public class Client implements Runnable {
 						case 5: //MOUSE_MOVED
 							board.setCursor(command.getOwner(), command.getVectorArray()[0]);
 						}
-				} else {
+					} else {
 						running = false;
 					}
 				} catch (ClassNotFoundException e) {
@@ -98,28 +99,29 @@ public class Client implements Runnable {
 		}
 
 	}
-	
+
 	public void onClickListener(int x, int y, int pointer, int button) {
 		System.out.println(x + ":" + y);
-		if(GdxChessGame.getOwner() == board.getTurnOwner())
-		try {
-			ChessPiece clickedChessPiece = board.getChessPieceByXY(x, y);
-			if(clickedChessPiece != null) {
-				clickedChessPiece.onClick();
-			} else {
-				ChessPiece selectedChessPiece = board.getSelectedChessPiece();
-				if(selectedChessPiece != null) {
-					selectedChessPiece.onNullTileClicked(x, y);
+		if(ChessGame3D.getOwner() == board.getTurnOwner()) {
+			try {
+				ChessPiece clickedChessPiece = board.getChessPieceByXY(x, y);
+				if(clickedChessPiece != null) {
+					clickedChessPiece.onClick();
+				} else {
+					ChessPiece selectedChessPiece = board.getSelectedChessPiece();
+					if(selectedChessPiece != null) {
+						selectedChessPiece.onNullTileClicked(x, y);
+					}
 				}
-			}
-			return;
-		} catch(IndexOutOfBoundsException e) {}
-		
+				return;
+			} catch(IndexOutOfBoundsException e) {}
+		}
+
 		//side menu interaction
 	}
-	
+
 	public void send(NetworkCommand command) {
-		command.setOwner(GdxChessGame.getOwner());
+		command.setOwner(ChessGame3D.getOwner());
 		if(oos != null) {
 			try {
 				oos.writeObject(command);
@@ -133,7 +135,7 @@ public class Client implements Runnable {
 		NetworkCommand command = new NetworkCommand();
 		command.setCommand(NetworkCommand.MOVE);
 		command.setVectorArray(new Vector2[] { oldPosition, newPosition});
-		
+
 		send(command);
 	}
 
@@ -141,16 +143,16 @@ public class Client implements Runnable {
 		NetworkCommand command = new NetworkCommand();
 		command.setCommand(NetworkCommand.ATTACK);
 		command.setVectorArray(new Vector2[] { piece1, piece2});
-		
+
 		send(command);
 	}
 
 	public void sendGameOver() {
 		NetworkCommand command = new NetworkCommand();
 		command.setCommand(NetworkCommand.GAME_OVER);
-		Vector2[] vectorArray = {new Vector2(GdxChessGame.getOwner().ordinal(), 0)};
+		Vector2[] vectorArray = {new Vector2(ChessGame3D.getOwner().ordinal(), 0)};
 		command.setVectorArray(vectorArray);
-		
+
 		send(command);
 	}
 }

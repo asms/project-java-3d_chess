@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.a7m5.chess.ChessBoard;
-import com.a7m5.chess.GdxChessGame;
+import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.editor.ChessBoardPalette;
 
@@ -61,15 +61,15 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public void onClick() {
 		ChessPiece selectedChessPiece= board.getSelectedChessPiece();
 		if(selectedChessPiece == null) {
-			if(getOwner() == GdxChessGame.getOwner()) {
+			if(getOwner() == ChessGame3D.getOwner()) {
 				board.setSelectedChessPiece(this);
 			}
 		} else {
 			boolean attacked = selectedChessPiece.tryAttack(this);
 			if(attacked) {
-				GdxChessGame.getClient().sendAttack(selectedChessPiece.getPosition(), getPosition());
+				ChessGame3D.getClient().sendAttack(selectedChessPiece.getPosition(), getPosition());
 			} else {
-				if(getOwner() == GdxChessGame.getOwner()) {
+				if(getOwner() == ChessGame3D.getOwner()) {
 					board.setSelectedChessPiece(this);
 				}
 			}
@@ -83,7 +83,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 		board.setSelectedChessPiece(null);
 		boolean moved = tryMove(tileClicked);
 		if(moved) {
-			GdxChessGame.getClient().sendMove(getPosition(), tileClicked);
+			ChessGame3D.getClient().sendMove(getPosition(), tileClicked);
 		}
 	}
 
@@ -213,7 +213,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 					try {
 						ChessPiece testPiece = board.getChessPieceByVector(testVector);
 						if(testPiece != null) {
-							if(testPiece.getOwner() != GdxChessGame.getOwner()) {
+							if(testPiece.getOwner() != ChessGame3D.getOwner()) {
 								possibleAttacks.add(testVector);
 							}
 							break;
@@ -234,7 +234,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 				try {
 					ChessPiece testPiece = board.getChessPieceByVector(testVector);
 					if(testPiece != null) {
-						if(testPiece.getOwner() != GdxChessGame.getOwner()) {
+						if(testPiece.getOwner() != ChessGame3D.getOwner()) {
 							possibleAttacks.add(testVector);
 						}
 						
@@ -247,5 +247,10 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 
 	public double getSpeed() {
 		return ChessBoard.tileWidth/4;
+	}
+	
+	@Override
+	public String toString() {
+		return getX() + ", " + getY();
 	}
 }
