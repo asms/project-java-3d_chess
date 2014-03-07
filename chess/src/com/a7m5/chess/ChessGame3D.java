@@ -1,6 +1,12 @@
 package com.a7m5.chess;
 
 
+import java.nio.IntBuffer;
+
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
+import org.lwjgl.input.Mouse;
+
 import com.a7m5.chess.chesspieces.Bishop;
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.King;
@@ -10,10 +16,14 @@ import com.a7m5.chess.chesspieces.Queen;
 import com.a7m5.chess.chesspieces.Rook;
 import com.a7m5.networking.Client;
 import com.a7m5.networking.Server;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL11;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -28,11 +38,18 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.utils.BufferUtils;
 
 public class ChessGame3D implements ApplicationListener {
+	
+	public static int width;
+	public static int height;
+	
 	//3D stuff
 	public static PerspectiveCamera cam;
 	public ModelBatch modelBatch;
@@ -40,7 +57,6 @@ public class ChessGame3D implements ApplicationListener {
 	public ModelInstance instance;
 
 
-	private OrthographicCamera camera;
 	private SpriteBatch batch;
 	private Sprite yourTurnSprite;
 	private Sprite waitSprite;
@@ -48,12 +64,14 @@ public class ChessGame3D implements ApplicationListener {
 	private String address;
 	private Texture yourTurnTexture;
 	private Texture waitTexture;
+	private ChessInputProcessor inputProcessor;
 
 	private static Server server = null;
 	private static Client client = null;
 	private static Thread clientThread = null;
 	private static Thread serverThread = null;
 	private static ChessOwner owner;
+	private static Cursor emptyCursor;
 
 	public ChessGame3D(ChessOwner chessOwner, String address, int port) {
 		setOwner(chessOwner);
@@ -61,8 +79,33 @@ public class ChessGame3D implements ApplicationListener {
 		setPort(port);
 	}
 
+	public static void setHWCursorVisible(boolean visible) throws LWJGLException {
+		if (Gdx.app.getType() != ApplicationType.Desktop && Gdx.app instanceof LwjglApplication)
+			return;
+		if (emptyCursor == null) {
+			if (Mouse.isCreated()) {
+				int min = org.lwjgl.input.Cursor.getMinCursorSize();
+				IntBuffer tmp = BufferUtils.newIntBuffer(min * min);
+				emptyCursor = new org.lwjgl.input.Cursor(min, min, min / 2, min / 2, 1, tmp, null);
+			} else {
+				throw new LWJGLException(
+						"Could not create empty cursor before Mouse object is created");
+			}
+		}
+		if (Mouse.isInsideWindow())
+			Mouse.setNativeCursor(visible ? null : emptyCursor);
+	}
+
 	@Override
 	public void create() {
+		try {
+			setHWCursorVisible(true);
+			Gdx.input.setCursorCatched(true);
+			Gdx.input.setCursorPosition(256, 256);
+		} catch (LWJGLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//3D
 		modelBatch = new ModelBatch();
 
@@ -72,7 +115,7 @@ public class ChessGame3D implements ApplicationListener {
 		cam.near = 0.1f;
 		cam.far = 1024f;
 		cam.update();
-		
+
 		/*
 		 * coordinate system
 		 * x: left (negative) to right (positive)
@@ -81,9 +124,8 @@ public class ChessGame3D implements ApplicationListener {
 		 */
 
 		ModelBuilder modelBuilder = new ModelBuilder();
-		model = modelBuilder.createSphere(1024, 1024, 2, -1, -1, new Material(ColorAttribute.createDiffuse(Color.GREEN)),
-				Usage.Position | Usage.Normal)
-				;
+		model = modelBuilder.createSphere(612f, 612f, 612f, 16, 16,  new Material(ColorAttribute.createDiffuse(Color.GREEN)),
+				Usage.Position | Usage.Normal);
 		instance = new ModelInstance(model);
 
 
@@ -91,11 +133,11 @@ public class ChessGame3D implements ApplicationListener {
 
 		ChessBoard.loadTextures();
 
-		ChessInputProcessor inputProcessor = new ChessInputProcessor();
+		inputProcessor = new ChessInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 
-		//float w = Gdx.graphics.getWidth();
-		//float h = Gdx.graphics.getHeight();
+		width = Gdx.graphics.getWidth();
+		height = Gdx.graphics.getHeight();
 
 		batch = new SpriteBatch();
 
@@ -138,15 +180,20 @@ public class ChessGame3D implements ApplicationListener {
 	@Override
 	public void render() {		
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		Gdx.gl.glClearColor(0.5f, 0.75f, 1f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
+		Gdx.gl.glEnable(GL11.GL_LINE_SMOOTH);
+		Gdx.gl.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 
 		modelBatch.begin(cam);
-		modelBatch.render(instance);
+		//modelBatch.render(instance);
 		modelBatch.end();
 
 
 
 		if(client != null && clientThread.isAlive()) {
+			inputProcessor.move(cam, Gdx.graphics.getRawDeltaTime());
+			
 			ShapeRenderer shapeRenderer = new ShapeRenderer();
 			shapeRenderer.setProjectionMatrix(cam.combined);
 			shapeRenderer.rotate(1, 0, 0, -90);
