@@ -67,11 +67,18 @@ public class ChessGame3D implements ApplicationListener {
 		modelBatch = new ModelBatch();
 
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(256f, 512f, 512f);
-		cam.lookAt(256f,0,0);
+		cam.position.set(256f, 256f, 128f);
+		cam.lookAt(256f,0, -256f);
 		cam.near = 0.1f;
 		cam.far = 1024f;
 		cam.update();
+		
+		/*
+		 * coordinate system
+		 * x: left (negative) to right (positive)
+		 * y: up (positive) and down (negative)
+		 * z: forward (negative) and backward (positive)
+		 */
 
 		ModelBuilder modelBuilder = new ModelBuilder();
 		model = modelBuilder.createSphere(1024, 1024, 2, -1, -1, new Material(ColorAttribute.createDiffuse(Color.GREEN)),
