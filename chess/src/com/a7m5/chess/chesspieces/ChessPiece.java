@@ -10,9 +10,6 @@ import com.a7m5.chess.editor.ChessBoardPalette;
 
 public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6131164911961928291L;
 	protected ChessOwner owner;
 	protected ChessBoard board;
