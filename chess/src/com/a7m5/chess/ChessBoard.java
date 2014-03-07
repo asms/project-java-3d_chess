@@ -177,14 +177,16 @@ public class ChessBoard implements Serializable {
 					int positionX;
 					int positionY;
 					if(chessPiece.isAnimating()) {
-						Vector2 animationPosition = chessPiece.getAnimationPosition();					Vector2 displacementVector = new Vector2(
+						double speed = chessPiece.getSpeed();
+						Vector2 animationPosition = chessPiece.getAnimationPosition();
+						Vector2 differenceVector = new Vector2(
 								x*tileWidth - animationPosition.getX(),
 								y*tileWidth - animationPosition.getY());
-						if(displacementVector.getMagnitude() <= 3) {
+						if(differenceVector.getMagnitude() <= speed) {
 							chessPiece.stopAnimation();
 						} else {
-							Vector2 unitVector = displacementVector.getUnitVector().multiply(chessPiece.getSpeed());
-							animationPosition = animationPosition.add(unitVector);
+							Vector2 movementVector = differenceVector.getUnitVector().multiply(speed);
+							animationPosition = animationPosition.add(movementVector);
 							chessPiece.setAnimationPosition(animationPosition);
 						}
 						positionX = (int) Math.floor(animationPosition.getX());

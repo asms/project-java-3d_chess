@@ -89,7 +89,6 @@ public class ServerThread implements Runnable {
 							break;
 						}
 						
-						System.out.println("Command received: " + command.getCommand());
 					} else {
 						System.out.println("Command was null.");
 						running = false;
