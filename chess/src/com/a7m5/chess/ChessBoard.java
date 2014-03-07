@@ -227,15 +227,12 @@ public class ChessBoard implements Serializable {
 	public void clear() {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
 	}
-	public static int getTileXFromXCoordinate(int x) {
+	public static int getTileFromCoordinate(int x) {
 		return (int) Math.floor((float) x / (float) tileWidth);
 	}
-	public static int getTileYFromYCoordinate(int y) {
-		return (int) Math.floor((float) (actualBoardWidth - y )/ (float) tileWidth);
-	}
 	public ChessPiece getChessPieceByXY(int x, int y) throws IndexOutOfBoundsException {
-		int tileX = getTileXFromXCoordinate(x);
-		int tileY = getTileYFromYCoordinate(y);
+		int tileX = getTileFromCoordinate(x);
+		int tileY = getTileFromCoordinate(y);
 		return chessPieces[tileX][tileY];
 	}
 	public ChessPiece getChessPieceByVector(Vector2 vector) {

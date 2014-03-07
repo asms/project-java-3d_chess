@@ -77,8 +77,8 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	}
 
 	public void onNullTileClicked(int x, int y) {
-		int tileX = ChessBoard.getTileXFromXCoordinate(x);
-		int tileY = ChessBoard.getTileYFromYCoordinate(y);
+		int tileX = ChessBoard.getTileFromCoordinate(x);
+		int tileY = ChessBoard.getTileFromCoordinate(y);
 		Vector2 tileClicked = new Vector2(tileX, tileY);
 		board.setSelectedChessPiece(null);
 		boolean moved = tryMove(tileClicked);
