@@ -1,6 +1,7 @@
 package com.a7m5.chess;
 
 
+import java.awt.Graphics;
 import java.nio.IntBuffer;
 
 import org.lwjgl.LWJGLException;
@@ -25,9 +26,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL11;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -71,7 +74,6 @@ public class ChessGame3D implements ApplicationListener {
 	private static Thread clientThread = null;
 	private static Thread serverThread = null;
 	private static ChessOwner owner;
-	private static Cursor emptyCursor;
 
 	public ChessGame3D(ChessOwner chessOwner, String address, int port) {
 		setOwner(chessOwner);
@@ -79,33 +81,8 @@ public class ChessGame3D implements ApplicationListener {
 		setPort(port);
 	}
 
-	public static void setHWCursorVisible(boolean visible) throws LWJGLException {
-		if (Gdx.app.getType() != ApplicationType.Desktop && Gdx.app instanceof LwjglApplication)
-			return;
-		if (emptyCursor == null) {
-			if (Mouse.isCreated()) {
-				int min = org.lwjgl.input.Cursor.getMinCursorSize();
-				IntBuffer tmp = BufferUtils.newIntBuffer(min * min);
-				emptyCursor = new org.lwjgl.input.Cursor(min, min, min / 2, min / 2, 1, tmp, null);
-			} else {
-				throw new LWJGLException(
-						"Could not create empty cursor before Mouse object is created");
-			}
-		}
-		if (Mouse.isInsideWindow())
-			Mouse.setNativeCursor(visible ? null : emptyCursor);
-	}
-
 	@Override
 	public void create() {
-		try {
-			setHWCursorVisible(true);
-			Gdx.input.setCursorCatched(true);
-			Gdx.input.setCursorPosition(256, 256);
-		} catch (LWJGLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		//3D
 		modelBatch = new ModelBatch();
 
@@ -182,9 +159,7 @@ public class ChessGame3D implements ApplicationListener {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0.5f, 0.75f, 1f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
-		Gdx.gl.glEnable(GL11.GL_LINE_SMOOTH);
-		Gdx.gl.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
-
+		
 		modelBatch.begin(cam);
 		//modelBatch.render(instance);
 		modelBatch.end();
@@ -193,6 +168,9 @@ public class ChessGame3D implements ApplicationListener {
 
 		if(client != null && clientThread.isAlive()) {
 			inputProcessor.move(cam, Gdx.graphics.getRawDeltaTime());
+			
+			
+			
 			
 			ShapeRenderer shapeRenderer = new ShapeRenderer();
 			shapeRenderer.setProjectionMatrix(cam.combined);
@@ -206,6 +184,9 @@ public class ChessGame3D implements ApplicationListener {
 			batch.setProjectionMatrix(shapeRenderer.getProjectionMatrix());
 			batch.setTransformMatrix(shapeRenderer.getTransformMatrix());
 			batch.begin();
+			
+
+			
 			if(getOwner() == getClient().board.getTurnOwner()) {
 				yourTurnSprite.draw(batch);
 			} else {

@@ -14,8 +14,11 @@ import com.a7m5.chess.chesspieces.Queen;
 import com.a7m5.chess.chesspieces.Rook;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -26,7 +29,7 @@ public class ChessBoard implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7954652516619094585L;
-	private static TextureRegion kingTextureRegion;
+	static TextureRegion kingTextureRegion;
 	private static TextureRegion pawnWhiteTextureRegion;
 	private static TextureRegion pawnBlackTextureRegion;
 	private static TextureRegion queenTextureRegion;
@@ -112,7 +115,7 @@ public class ChessBoard implements Serializable {
 				alt = !alt;	// Alternate colors on rows.
 			}
 		}
-
+		
 		if(selectedChessPiece != null) {
 			ArrayList<Vector2> possibleMoves = selectedChessPiece.getPossibleMoves();
 			for(Vector2 possibleMove : possibleMoves) {
