@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ChessGame3D;
-import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.chesspieces.ChessPiece;
 
