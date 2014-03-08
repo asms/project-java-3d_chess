@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.BufferUtils;
 
 public class ChessInputProcessor implements InputProcessor {
 
+	private static Cursor emptyCursor;
 	private int previousMousePositionX = ChessGame3D.width / 2;
 	private int previousMousePositionY = ChessGame3D.height / 2;
 	
@@ -34,10 +35,15 @@ public class ChessInputProcessor implements InputProcessor {
 	private boolean up = false;
 	private boolean down = false;
 	
-	private static Cursor emptyCursor = null;
-	
 	@Override
 	public boolean keyDown (int keycode) {
+		if(keycode == Keys.T){
+			if(ChessGame3D.getOwner() == ChessOwner.BLACK){
+				ChessGame3D.setOwner(ChessOwner.WHITE);
+			} else if (ChessGame3D.getOwner() == ChessOwner.WHITE){
+				ChessGame3D.setOwner(ChessOwner.BLACK);
+			}
+		}
 		if(keycode == Keys.W) {
 			forward = true;
 		}
