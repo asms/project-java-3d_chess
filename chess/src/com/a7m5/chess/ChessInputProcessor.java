@@ -14,6 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
@@ -152,12 +153,17 @@ public class ChessInputProcessor implements InputProcessor {
 		if(Gdx.input.isCursorCatched()) {
 			int deltaY = (screenY-previousMousePositionY);
 			int deltaX = (screenX-previousMousePositionX);
-	
 			PerspectiveCamera cam = ChessGame3D.getCamera();
+			
+			cam.rotateAround(cam.position, Vector3.Y, (float) -deltaX/ 10f);
+			
+			cam.update();
+			
 			Vector3 axis = cam.direction.cpy().crs(cam.up).nor();
 			
-			cam.rotate((float) -deltaX/ 10f, 0, 1, 0);
 			cam.rotate(axis, (float) -deltaY / 10f);
+			
+			
 			
 			previousMousePositionX = screenX;
 			previousMousePositionY = screenY;
@@ -182,28 +188,30 @@ public class ChessInputProcessor implements InputProcessor {
 	
 	public void move(PerspectiveCamera cam, float seconds) {
 
-		float movementFactor = 64f * seconds;
-
+		float movementFactor = 128f * seconds;
+		
 		Vector3 rightDirection = cam.direction.cpy().crs(cam.up).nor().scl(movementFactor);
 
-		if(forward) {
-			ChessGame3D.getCamera().translate(cam.direction.cpy().scl(movementFactor));
-		}
 		if(left) {
 			ChessGame3D.getCamera().translate(rightDirection.scl(-1));
-		}
-		if(backward) {
-			ChessGame3D.getCamera().translate(cam.direction.cpy().scl(-movementFactor));
-		}
-		if(right) {
+		} else if(right) {
 			ChessGame3D.getCamera().translate(rightDirection);
 		}
+		
+		ChessGame3D.getCamera().update();
+		
+		if(forward) {
+			ChessGame3D.getCamera().translate(cam.direction.cpy().scl(movementFactor));
+		} else if(backward) {
+			ChessGame3D.getCamera().translate(cam.direction.cpy().scl(-movementFactor));
+		}
+		
 		if(up) {
 			ChessGame3D.getCamera().translate(0, movementFactor, 0);
-		}
-		if(down) {
+		} else if(down) {
 			ChessGame3D.getCamera().translate(0, -movementFactor, 0);
 		}
+		
 		ChessGame3D.getCamera().update();
 	}
 	
