@@ -2,14 +2,9 @@ package com.a7m5.chess;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import com.a7m5.chess.chesspieces.Bishop;
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
-import com.a7m5.chess.chesspieces.King;
-import com.a7m5.chess.chesspieces.Knight;
-import com.a7m5.chess.chesspieces.Pawn;
-import com.a7m5.chess.chesspieces.Queen;
-import com.a7m5.chess.chesspieces.Rook;
+import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,7 +19,9 @@ public class ChessBoard implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7954652516619094585L;
-	static TextureRegion kingTextureRegion;
+	
+	
+	private static TextureRegion kingTextureRegion;
 	private static TextureRegion pawnWhiteTextureRegion;
 	private static TextureRegion pawnBlackTextureRegion;
 	private static TextureRegion queenTextureRegion;
@@ -33,6 +30,7 @@ public class ChessBoard implements Serializable {
 	private static TextureRegion rookBlackTextureRegion;
 	private static TextureRegion bishopTextureRegion;
 
+	private static ChessPieceSet gamePieceSet;
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
 	private ChessOwner turnOwner;
@@ -43,11 +41,16 @@ public class ChessBoard implements Serializable {
 	public static int boardWidth = 8; //8 (traditional), 16 (large), 32 (extra large)
 	public static int tileWidth = actualBoardWidth / boardWidth;
 
-	public ChessBoard() {
+	public ChessBoard(ChessPieceSet gamePieceSet) {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
+		this.gamePieceSet = gamePieceSet;
 	}
 
 	public static void loadTextures() {
+		for(int i = 0; i < gamePieceSet.getLength(); i++){
+			// TODO: Load in each file.
+		}
+		
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		pawnWhiteTextureRegion = new TextureRegion(pawnWhiteTexture, 0, 0, 64, 64);
@@ -97,7 +100,7 @@ public class ChessBoard implements Serializable {
 			alt =  (1 == y % 2);
 			for(int x = 0; x < boardWidth; x++) {
 				if(alt){
-					shapeRenderer.setColor(new Color(0.9f, 0.9f, 0.9f, 1));
+					shapeRenderer.setColor(new Color(0.84f, 0, 0.18f, 1));
 				} else {
 					shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
 				}
@@ -106,11 +109,11 @@ public class ChessBoard implements Serializable {
 						tileWidth-2,
 						tileWidth-2
 						);
-				
+
 				alt = !alt;	// Alternate colors on rows.
 			}
 		}
-		
+
 		if(selectedChessPiece != null) {
 			ArrayList<Vector2> possibleMoves = selectedChessPiece.getPossibleMoves();
 			for(Vector2 possibleMove : possibleMoves) {
@@ -147,33 +150,40 @@ public class ChessBoard implements Serializable {
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth; x++) {
 				ChessPiece chessPiece = chessPieces[x][y];
-				if(chessPiece != null) {
-					TextureRegion textureRegion;
-					if(chessPiece instanceof Pawn) {
-						if(chessPiece.getOwner() == ChessOwner.WHITE) {
+				TextureRegion textureRegion = new TextureRegion();
+				if(chessPiece != null){
+					if(chessPiece.getPieceName() != null){
+						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
 							textureRegion = pawnWhiteTextureRegion;
+
+							if(chessPiece.getOwner() == ChessOwner.WHITE) {
+								textureRegion = pawnWhiteTextureRegion;
+							} else {
+								textureRegion = pawnBlackTextureRegion;
+							}
+						}else if(chessPiece.getPieceName().compareTo("King") == 0) {
+							textureRegion = kingTextureRegion;
+						} else if(chessPiece.getPieceName().compareTo("Queen") == 0) {
+							textureRegion = queenTextureRegion;
+						} else if(chessPiece.getPieceName().compareTo("Knight") == 0) {
+							textureRegion = knightTextureRegion;
+						} else if(chessPiece.getPieceName().compareTo("Rook") == 0) {
+							if(chessPiece.getOwner() == ChessOwner.WHITE) {
+								textureRegion = rookWhiteTextureRegion;
+							} else {
+								textureRegion = rookBlackTextureRegion;
+							}
+						} else if(chessPiece.getPieceName().compareTo("Bishop") == 0) {
+							textureRegion = bishopTextureRegion;
 						} else {
-							textureRegion = pawnBlackTextureRegion;
+							break;
 						}
-					} else if(chessPiece instanceof King) {
-						textureRegion = kingTextureRegion;
-					} else if(chessPiece instanceof Queen) {
-						textureRegion = queenTextureRegion;
-					} else if(chessPiece instanceof Knight) {
-						textureRegion = knightTextureRegion;
-					} else if(chessPiece instanceof Rook) {
-						if(chessPiece.getOwner() == ChessOwner.WHITE) {
-							textureRegion = rookWhiteTextureRegion;
-						} else {
-							textureRegion = rookBlackTextureRegion;
-						}
-					} else if(chessPiece instanceof Bishop) {
-						textureRegion = bishopTextureRegion;
-					} else {
-						break;
-					}
+					}	
+
+
 					int positionX;
 					int positionY;
+
 					if(chessPiece.isAnimating()) {
 						double speed = chessPiece.getSpeed();
 						Vector2 animationPosition = chessPiece.getAnimationPosition();
@@ -198,6 +208,7 @@ public class ChessBoard implements Serializable {
 			}
 		}
 	}
+
 
 	public void drawCursors(ShapeRenderer shapeRenderer) {
 		if(whiteCursor != null) {

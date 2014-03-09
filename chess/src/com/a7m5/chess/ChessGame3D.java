@@ -1,13 +1,8 @@
 package com.a7m5.chess;
 
-
-import com.a7m5.chess.chesspieces.Bishop;
 import com.a7m5.chess.chesspieces.ChessOwner;
-import com.a7m5.chess.chesspieces.King;
-import com.a7m5.chess.chesspieces.Knight;
-import com.a7m5.chess.chesspieces.Pawn;
-import com.a7m5.chess.chesspieces.Queen;
-import com.a7m5.chess.chesspieces.Rook;
+import com.a7m5.chess.chesspieces.ChessPiece;
+import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.a7m5.networking.Client;
 import com.a7m5.networking.Server;
 import com.badlogic.gdx.ApplicationListener;
@@ -31,10 +26,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class ChessGame3D implements ApplicationListener {
-	
+
 	public static int width;
 	public static int height;
-	
+
 	//3D stuff
 	public static PerspectiveCamera cam;
 	public ModelBatch modelBatch;
@@ -56,11 +51,13 @@ public class ChessGame3D implements ApplicationListener {
 	private static Thread clientThread = null;
 	private static Thread serverThread = null;
 	private static ChessOwner owner;
+	private static ChessPieceSet gamePieceSet;
 
-	public ChessGame3D(ChessOwner chessOwner, String address, int port) {
+	public ChessGame3D(ChessPieceSet gamePieceSet, ChessOwner chessOwner, String address, int port) {
 		setOwner(chessOwner);
 		setAddress(address);
 		setPort(port);
+		setGamePieceSet(gamePieceSet);
 	}
 
 	@Override
@@ -141,19 +138,14 @@ public class ChessGame3D implements ApplicationListener {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0.5f, 0.75f, 1f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
-		
+
 		modelBatch.begin(cam);
 		//modelBatch.render(instance);
 		modelBatch.end();
 
-
-
 		if(client != null && clientThread.isAlive()) {
 			inputProcessor.update(Gdx.graphics.getRawDeltaTime());
-			
-			
-			
-			
+
 			ShapeRenderer shapeRenderer = new ShapeRenderer();
 			shapeRenderer.setProjectionMatrix(cam.combined);
 			shapeRenderer.rotate(1, 0, 0, -90);
@@ -166,9 +158,7 @@ public class ChessGame3D implements ApplicationListener {
 			batch.setProjectionMatrix(shapeRenderer.getProjectionMatrix());
 			batch.setTransformMatrix(shapeRenderer.getTransformMatrix());
 			batch.begin();
-			
 
-			
 			if(getOwner() == getClient().board.getTurnOwner()) {
 				yourTurnSprite.draw(batch);
 			} else {
@@ -191,26 +181,30 @@ public class ChessGame3D implements ApplicationListener {
 	public void resume() {
 	}
 
-	public static void startServer(int port) {
+	public static void startServer(int port, ChessPieceSet gamePieceSet) {
 		if(server == null && serverThread == null) {
-			ChessBoard board = new ChessBoard();
+			// Make the new board
+			ChessBoard board = new ChessBoard(gamePieceSet);
 			board.setTurnOwner(ChessOwner.WHITE);
+			// Add the starting pieces
+			
 			for(int x = 0; x < 2; x++) {
 				ChessOwner owner = (x == 0 ? ChessOwner.BLACK : ChessOwner.WHITE);
-				board.addPiece(0, (x == 0 ? 0 : 7), new Rook(owner));
-				board.addPiece(1, (x == 0 ? 0 : 7), new Knight(owner));
-				board.addPiece(2, (x == 0 ? 0 : 7), new Bishop(owner));
-				board.addPiece(3, (x == 0 ? 0 : 7), new Queen(owner));
-				board.addPiece(4, (x == 0 ? 0 : 7), new King(owner));
-				board.addPiece(5, (x == 0 ? 0 : 7), new Bishop(owner));
-				board.addPiece(6, (x == 0 ? 0 : 7), new Knight(owner));
-				board.addPiece(7, (x == 0 ? 0 : 7), new Rook(owner));
-			}
-
+				board.addPiece(0, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Rook").getClone(owner));
+				board.addPiece(1, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Knight").getClone(owner));
+				board.addPiece(2, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Bishop").getClone(owner));
+				board.addPiece(3, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Queen").getClone(owner));
+				board.addPiece(4, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("King").getClone(owner));
+				board.addPiece(5, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Bishop").getClone(owner));
+				board.addPiece(6, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Knight").getClone(owner));
+				board.addPiece(7, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Rook").getClone(owner));
+			}			
+			
 			for(int x = 0; x < 8; x++) {
-				board.addPiece(x, 1, new Pawn(ChessOwner.BLACK));
-				board.addPiece(x, 6, new Pawn(ChessOwner.WHITE));
+				board.addPiece(x, 1, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.BLACK));
+				board.addPiece(x, 6, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.WHITE));
 			}
+			 
 			server = new Server(port, board);
 			serverThread = new Thread(server);
 			serverThread.start();
@@ -263,6 +257,10 @@ public class ChessGame3D implements ApplicationListener {
 
 	private void setAddress(String address) {
 		this.address = address;
+	}
+
+	private void setGamePieceSet(ChessPieceSet arg) {
+		gamePieceSet = arg;
 	}
 
 	public static PerspectiveCamera getCamera() {

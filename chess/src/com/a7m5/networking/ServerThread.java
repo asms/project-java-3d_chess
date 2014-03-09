@@ -10,8 +10,6 @@ import java.net.Socket;
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.chesspieces.ChessOwner;
-import com.a7m5.chess.chesspieces.ChessPiece;
-import com.a7m5.chess.chesspieces.King;
 
 public class ServerThread implements Runnable {
 
@@ -43,7 +41,7 @@ public class ServerThread implements Runnable {
 						ChessOwner owner = command.getOwner();
 						ChessBoard board = server.getChessBoard();
 						Vector2[] vectors = command.getVectorArray();
-						
+
 						switch(command.getCommand()) {
 						case 0: //DEBUG
 
@@ -52,7 +50,7 @@ public class ServerThread implements Runnable {
 							ChessOwner opponent;
 							boolean canMove;
 							boolean checkedOtherPlayer;
-							
+
 							board.moveChessPiece(vectors[0], vectors[1]);
 							/*
 							check = checkForCheck(board, owner);
@@ -74,7 +72,7 @@ public class ServerThread implements Runnable {
 								board.moveChessPiece(vectors[1], vectors[0]);
 							}
 							server.setChessBoard(board);
-							*/
+							 */
 							doMove(command);
 							//syncClient();
 							break;
@@ -88,7 +86,7 @@ public class ServerThread implements Runnable {
 							server.sendAll(command);
 							break;
 						}
-						
+
 					} else {
 						System.out.println("Command was null.");
 						running = false;
@@ -104,7 +102,8 @@ public class ServerThread implements Runnable {
 			close();
 		}
 	}
-
+	// TODO, now with more abstract gamepeices this will need to be modified.
+	/*
 	private boolean[] checkForCheck(ChessBoard board, ChessOwner owner) {
 		boolean[] check = { false, false };
 		King topKing = null;
@@ -127,7 +126,7 @@ public class ServerThread implements Runnable {
 						if(chessPiece.tryAttack(bottomKing)) {
 							check[0] = true;
 						}
-						
+
 					} else {
 						if(chessPiece.tryAttack(topKing)) {
 							check[1] = true;
@@ -138,7 +137,7 @@ public class ServerThread implements Runnable {
 		}
 		return check;
 	}
-
+	 */
 	private void doAttack(NetworkCommand command) {
 		Vector2[] vectors = command.getVectorArray();
 		server.getChessBoard().attackChessPiece(vectors[0], vectors[1]);

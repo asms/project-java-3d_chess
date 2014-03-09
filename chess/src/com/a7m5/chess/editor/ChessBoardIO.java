@@ -3,6 +3,7 @@ package com.a7m5.chess.editor;
 import java.io.File;
 
 import com.a7m5.chess.ChessBoard;
+import com.a7m5.chess.chesspieces.ChessPieceSet;
 
 public class ChessBoardIO {
 
@@ -16,15 +17,13 @@ public class ChessBoardIO {
 	}
 
 	public ChessBoard loadChessBoard(File inputFile){
-		ChessBoard inBoard = new ChessBoard();
-
 		// TODO: Code to take a xml file and generate a chess board from it.
 		// TODO: Get board size, name, other data like that.
 		// TODO: Get all the white pieces.
 		// TODO: Get all the black pieces.
 		// TODO: Get all the non player pieces.
 
-		return inBoard;
+		return null;
 	}
 
 }

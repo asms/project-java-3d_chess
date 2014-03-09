@@ -31,7 +31,7 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
-		board = new ChessBoard();
+		board = new ChessBoard(null);
 		board.start();
 		try {
 			socket = new Socket(address, port);

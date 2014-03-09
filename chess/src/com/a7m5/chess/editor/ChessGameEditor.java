@@ -9,22 +9,12 @@
 package com.a7m5.chess.editor;
 
 import com.a7m5.chess.ChessBoard;
-import com.a7m5.chess.chesspieces.Bishop;
-import com.a7m5.chess.chesspieces.ChessOwner;
-import com.a7m5.chess.chesspieces.King;
-import com.a7m5.chess.chesspieces.Knight;
-import com.a7m5.chess.chesspieces.Pawn;
-import com.a7m5.chess.chesspieces.Queen;
-import com.a7m5.chess.chesspieces.Rook;
+import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
@@ -33,26 +23,22 @@ public class ChessGameEditor implements ApplicationListener {
 	private SpriteBatch batch;
 	private ChessBoard editingBoard;
 	private ChessBoardPalette editingPalette;
+	private ChessPieceSet pieceSet;
 
-	public ChessGameEditor(int requestedBoardSize) {
-		editingBoard = new ChessBoard();
+	public ChessGameEditor(int requestedBoardSize, ChessPieceSet editorSet) {
+		// Make the editing board of the correct size.
+		pieceSet = editorSet;
+		editingBoard = new ChessBoard(editorSet);
 		editingBoard.setBoardWidth(requestedBoardSize);
-		
+		// Creates the palette in the correct position.
 		editingPalette = new ChessBoardPalette(522,10);
-		editingPalette.addPiece(0, 0, new Pawn(ChessOwner.WHITE));
-		editingPalette.addPiece(1, 0, new Bishop(ChessOwner.WHITE));
-		editingPalette.addPiece(2, 0, new King(ChessOwner.WHITE));
-		editingPalette.addPiece(0, 1, new Queen(ChessOwner.WHITE));
-		editingPalette.addPiece(1, 1, new Rook(ChessOwner.WHITE));
-		editingPalette.addPiece(2, 1, new Knight(ChessOwner.WHITE));
-		editingPalette.addPiece(0, 2, new Pawn(ChessOwner.BLACK));
-		
 	}
 
 	@Override
 	public void create() {
 		ChessBoardPalette.loadTextures();
 		ChessBoard.loadTextures();
+		
 
 		EditorInputProcessor inputProcessor = new EditorInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
@@ -65,7 +51,7 @@ public class ChessGameEditor implements ApplicationListener {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
+		editingPalette.resize(width, height);
 	}
 
 	@Override
@@ -79,13 +65,12 @@ public class ChessGameEditor implements ApplicationListener {
 
 		shapeRenderer.begin(ShapeType.Filled);
 		editingBoard.drawBoard(shapeRenderer);
-		editingPalette.drawPalette(shapeRenderer);
+		editingPalette.drawBackground(shapeRenderer);
 		shapeRenderer.end();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		editingPalette.drawPieces(batch);
-		editingPalette.drawTabs(batch);
+		editingPalette.drawElements(batch);
 		batch.end();
 	}
 

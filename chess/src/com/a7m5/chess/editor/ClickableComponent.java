@@ -18,9 +18,9 @@ public class ClickableComponent {
 		enTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		enTextureRegion = new TextureRegion(enTexture, 0, 0, enTexture.getWidth(), enTexture.getHeight());
 		
-		Texture dnTexture = new Texture(Gdx.files.internal(enabledTexturePath));
+		Texture dnTexture = new Texture(Gdx.files.internal(disabledTexturePath));
 		dnTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		dnTextureRegion = new TextureRegion(dnTexture, 0, 0, enTexture.getWidth(), enTexture.getHeight());
+		dnTextureRegion = new TextureRegion(dnTexture, 0, 0, dnTexture.getWidth(), dnTexture.getHeight());
 		// Set startup fields.
 		xLocation = x;
 		yLocation = y;
@@ -38,8 +38,10 @@ public class ClickableComponent {
 	}
 
 	// Is this point a point in the component location.
-	public boolean compClicked(int x, int y){
-		return ((x >= xLocation) && (x <= xLocation + width)); // && (y >= yLocation) && (y <= yLocation + height));
+	public boolean compClicked(int x, int y, int windowHeight, int windowWidth){
+		y = 512*(windowHeight - y)/windowHeight;	// Y scaling for window resizes
+		x = (int) ((double) x*((((double) 512+400)/((double) windowWidth))));	// X scaling for window resizes
+		return (x > xLocation)&&(x < xLocation + width)&&(y > yLocation)&&(y < yLocation + height);	
 	}
 
 	public Boolean getComponentSelected() {
@@ -48,5 +50,5 @@ public class ClickableComponent {
 
 	public void setComponentSelected(Boolean componentSelected) {
 		this.componentSelected = componentSelected;
-	}	
+	}
 }
