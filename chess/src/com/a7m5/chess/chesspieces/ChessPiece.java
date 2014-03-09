@@ -8,10 +8,13 @@ import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.editor.ChessBoardPalette;
 
-public abstract class ChessPiece implements Serializable, ChessPieceInterface {
+public class ChessPiece implements Serializable, ChessPieceInterface {
 
 	private static final long serialVersionUID = 6131164911961928291L;
+	protected String pieceName;
+	protected int uniquePieceID;
 	protected ChessOwner owner;
+
 	protected ChessBoard board;
 	protected ChessBoardPalette palette;
 	private Vector2 position;
@@ -22,38 +25,70 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	protected Vector2[] specialMovementVectors = null;
 	protected Vector2[] movementVectors = null;
 	protected Vector2[] attackVectors = null;
-
+	protected String blackArtFile = "";
+	protected String whiteArtFile = "";
+	protected String NPCArtFile = "";
+	
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
 	}
-	
+
+	public ChessPiece(String pieceName, int uniquePieceID,
+			Vector2[] attackDirectionVectors,
+			Vector2[] movementDirectionVectors,
+			Vector2[] specialMovementVectors, Vector2[] movementVectors,
+			Vector2[] attackVectors,
+			String blackArtFile,
+			String whiteArtFile,
+			String NPCArtFile) {
+		super();
+		this.pieceName = pieceName;
+		this.uniquePieceID = uniquePieceID;
+		this.attackDirectionVectors = attackDirectionVectors;
+		this.movementDirectionVectors = movementDirectionVectors;
+		this.specialMovementVectors = specialMovementVectors;
+		this.movementVectors = movementVectors;
+		this.attackVectors = attackVectors;
+		this.blackArtFile = blackArtFile;
+		this.whiteArtFile = whiteArtFile;
+		this.NPCArtFile = NPCArtFile;
+	}
+
+	public String getPieceName() {
+		return pieceName;
+	}
+
+	public int getUniquePieceID() {
+		return uniquePieceID;
+	}
+
 	public void register(ChessBoard chessBoard, Vector2 position) {
 		this.board = chessBoard;
 		this.position = position;
 	}
-	
+
 	public void register(ChessBoardPalette chessPalette, Vector2 position) {
 		this.palette = chessPalette;
 		this.position = position;
 	}
-	
+
 	public boolean isAnimating() {
 		return animating;
 	}
-	
+
 	public void animate(Vector2 animationPosition) {
 		animating = true;
 		this.animationPosition = animationPosition;
 	}
-	
+
 	public void setAnimationPosition(Vector2 animationPosition) {
 		this.animationPosition = animationPosition;
 	}
-	
+
 	public Vector2 getAnimationPosition() {
 		return animationPosition;
 	}
-	
+
 	public void stopAnimation() {
 		this.animating = false;
 	}
@@ -109,6 +144,10 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 
 	public void setPosition(Vector2 newPosition) {
 		this.position = newPosition;
+	}
+	
+	public void setOwner(ChessOwner owner) {
+		this.owner = owner;
 	}
 
 	public ChessOwner getOwner() {
@@ -237,7 +276,7 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 						if(testPiece.getOwner() != ChessGame3D.getOwner()) {
 							possibleAttacks.add(testVector);
 						}
-						
+
 					}
 				} catch(Exception e) {}
 			}
@@ -248,9 +287,51 @@ public abstract class ChessPiece implements Serializable, ChessPieceInterface {
 	public double getSpeed() {
 		return ChessBoard.tileWidth/4;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getX() + ", " + getY();
 	}
+	
+
+	public String getBlackArtFile() {
+		return blackArtFile;
+	}
+
+	public String getWhiteArtFile() {
+		return whiteArtFile;
+	}
+
+	public String getNPCArtFile() {
+		return NPCArtFile;
+	}
+
+	public Vector2[] getAttackDirectionVectors() {
+		return attackDirectionVectors;
+	}
+
+	public Vector2[] getMovementDirectionVectors() {
+		return movementDirectionVectors;
+	}
+
+	public Vector2[] getSpecialMovementVectors() {
+		return specialMovementVectors;
+	}
+
+	public Vector2[] getMovementVectors() {
+		return movementVectors;
+	}
+
+	public Vector2[] getAttackVectors() {
+		return attackVectors;
+	}
+	// Copies all the info in this to create an independent clone that is not a pointer.
+	public ChessPiece getClone(ChessOwner owner){
+		ChessPiece temp = new ChessPiece(pieceName, uniquePieceID, attackDirectionVectors,
+				movementDirectionVectors, specialMovementVectors, movementVectors,
+				attackVectors, blackArtFile, whiteArtFile, NPCArtFile);
+		temp.setOwner(owner);
+		return temp;
+	}
+
 }
