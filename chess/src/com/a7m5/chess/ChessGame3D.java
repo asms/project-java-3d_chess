@@ -92,7 +92,7 @@ public class ChessGame3D implements ApplicationListener {
 
 		ChessBoard.loadTextures();
 
-		inputProcessor = new ChessInputProcessor();
+		inputProcessor = new ChessInputProcessor(cam);
 		Gdx.input.setInputProcessor(inputProcessor);
 
 		width = Gdx.graphics.getWidth();
@@ -149,7 +149,7 @@ public class ChessGame3D implements ApplicationListener {
 
 
 		if(client != null && clientThread.isAlive()) {
-			inputProcessor.move(cam, Gdx.graphics.getRawDeltaTime());
+			inputProcessor.update(Gdx.graphics.getRawDeltaTime());
 			
 			
 			
