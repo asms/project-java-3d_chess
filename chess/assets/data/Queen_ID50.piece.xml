@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<chessPiece uniquePieceID="50">
+	<pieceName>Queen</pieceName>
+	<blackArtFile>data/queen.png</blackArtFile>
+	<whiteArtFile>data/queen.png</whiteArtFile>
+	<NPCArtFile />
+	<movementDirectionVectors>
+		<vector x="0" y="1" />
+		<vector x="0" y="-1" />
+		<vector x="1" y="0" />
+		<vector x="-1" y="0" />
+		<vector x="1" y="1" />
+		<vector x="-1" y="-1" />
+		<vector x="-1" y="1" />
+		<vector x="1" y="-1" />
+	</movementDirectionVectors>
+	<attackDirectionVectors>
+		<vector x="0" y="1" />
+		<vector x="0" y="-1" />
+		<vector x="1" y="0" />
+		<vector x="-1" y="0" />
+		<vector x="1" y="1" />
+		<vector x="-1" y="-1" />
+		<vector x="-1" y="1" />
+		<vector x="1" y="-1" />
+	</attackDirectionVectors>
+</chessPiece>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<chessPiece uniquePieceID="0007450">
+
+	<pieceName>Pawn</pieceName>
+	<blackArtFile>pawn-black.png</blackArtFile>
+	<whiteArtFile>pawn-white.png</whiteArtFile>
+	<NPCArtFile></NPCArtFile>
+	
+	<movementVectors>
+		<vector x="0" y="1">BOB</vector>
+	</movementVectors>
+	
+	<movementDirectionVectors>
+	</movementDirectionVectors>
+	
+	<specialMovementVectors>
+		<vector x="0" y="2">THIS DATA</vector>
+	</specialMovementVectors>
+	
+	<attackVectors>
+		<vector x="-1" y="1">this</vector>
+		<vector x="1" y="1">that</vector>
+	</attackVectors>
+	
+	<attackDirectionVectors>
+			<vector x="123" y="321">this</vector>
+		<vector x="10" y="-10">that</vector>
+	</attackDirectionVectors>
+	
+</chessPiece>
