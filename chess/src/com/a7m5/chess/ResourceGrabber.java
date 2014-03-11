@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,18 +21,19 @@ import org.xml.sax.SAXException;
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessTile;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 
 public class ResourceGrabber {
 
-	String resourceDirectoryPath;
 	File[] resourceFileList;
 	ArrayList<ChessPiece> grabbedPieces = new ArrayList<ChessPiece>();
 	ArrayList<ChessTile> grabbedTiles = new ArrayList<ChessTile>();
 	ChessBoard grabbedChessBoard;
 
-	public ResourceGrabber(String resourceDirectoryPath) {
-		this.resourceDirectoryPath = resourceDirectoryPath;
-		File directoryIn = new File(resourceDirectoryPath);
+	public ResourceGrabber() throws URISyntaxException {
+		File directoryIn = new File(getClass().getResource("/data/").toURI());
+		
 		resourceFileList = directoryIn.listFiles();
 		for(int i = 0; i < resourceFileList.length; i++){
 			try {

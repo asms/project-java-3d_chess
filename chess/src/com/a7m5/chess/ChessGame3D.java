@@ -1,5 +1,7 @@
 package com.a7m5.chess;
 
+import java.net.URISyntaxException;
+
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
@@ -181,7 +183,11 @@ public class ChessGame3D implements ApplicationListener {
 	public void resume() {
 	}
 
-	public static void startServer(int port, ChessPieceSet gamePieceSet) {
+	public static void startServer(int port) throws URISyntaxException {
+		// Grab the set of chess pieces before starting the server.
+		ResourceGrabber myGrab;
+		myGrab = new ResourceGrabber();
+		gamePieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
 		if(server == null && serverThread == null) {
 			// Make the new board
 			ChessBoard board = new ChessBoard(gamePieceSet);
