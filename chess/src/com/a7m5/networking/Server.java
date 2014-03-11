@@ -13,7 +13,6 @@ public class Server implements Runnable {
 	private int port;
 	private boolean running = true;
 	private ServerSocket serverSocket = null;
-	private ArrayList<Thread> clientThreads = new ArrayList<Thread>();
 	private ArrayList<Runnable> clientRunnables = new ArrayList<Runnable>();
 	private ChessBoard chessBoard;
 	
@@ -43,7 +42,6 @@ public class Server implements Runnable {
 					clientRunnables.add(client);
 					
 					Thread clientThread = new Thread(client);
-					clientThreads.add(clientThread);
 					clientThread.start();
 
 
@@ -84,9 +82,16 @@ public class Server implements Runnable {
 	}
 
 	public void sendAll(NetworkCommand command) {
-		for(Runnable runnable : clientRunnables) {
-			ServerThread client = (ServerThread) runnable;
-			client.send(command);
+		for(int i = 0 ; i < clientRunnables.size(); i++) {
+			Runnable runnable = clientRunnables.get(i);
+			if(runnable != null) {
+				ServerThread client = (ServerThread) runnable;
+				client.send(command);
+			} else {
+				clientRunnables.remove(i);
+			}
+			
+			
 		}
 	}
 	

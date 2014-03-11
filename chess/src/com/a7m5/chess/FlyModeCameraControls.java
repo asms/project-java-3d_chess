@@ -22,16 +22,16 @@ public class FlyModeCameraControls implements InputProcessor {
 	private int previousMousePositionX;
 	private int previousMousePositionY;
 	
-	private boolean forward = false;
-	private boolean backward = false;
-	private boolean left = false;
-	private boolean right = false;
-	private boolean up = false;
-	private boolean down = false;
+	protected boolean forward = false;
+	protected boolean backward = false;
+	protected boolean left = false;
+	protected boolean right = false;
+	protected boolean up = false;
+	protected boolean down = false;
 	
 	protected Camera camera;
-	private int width;
-	private int height;
+	protected int width;
+	protected int height;
 	
 	public FlyModeCameraControls(PerspectiveCamera camera) {
 		this.camera = camera;

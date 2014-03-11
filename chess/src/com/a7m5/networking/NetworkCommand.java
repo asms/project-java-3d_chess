@@ -18,12 +18,24 @@ public class NetworkCommand implements Serializable {
 	public static final int ATTACK = 3;
 	public static final int GAME_OVER = 4;
 	public static final int MOUSE_MOVE = 5;
+	public static final int CAMERA_MOVED = 6;
+	
+	public NetworkCommand(int command) {
+		this.command = command;
+	}
+	
 	
 	public int command;
 	private Vector2[] vectors;
 
 	private ChessBoard chessBoard;
 	private ChessOwner owner;
+
+
+
+	private float[][] float2D;
+
+	
 	
 	public void setCommand(int command) {
 		this.command = command;
@@ -55,6 +67,14 @@ public class NetworkCommand implements Serializable {
 
 	public void setChessBoard(ChessBoard chessBoard) {
 		this.chessBoard = chessBoard;
+	}
+
+	public void setFloat2DArray(float[][] args) {
+		this.float2D = args;
+	}
+
+	public float[][] getFloat2DArray() {
+		return this.float2D;
 	}
 
 }

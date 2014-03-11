@@ -159,7 +159,7 @@ public class ChessGame3D implements ApplicationListener {
 			inputProcessor.update(Gdx.graphics.getRawDeltaTime());
 
 			modelBatch.begin(cam);
-			if(opponentCameraModelInstance != null && opponentCamera.length != 0) {
+			if(!loadingAssets && opponentCamera.length != 0) {
 
 				opponentCameraModelInstance.transform.setToWorld(
 						new com.badlogic.gdx.math.Vector3(

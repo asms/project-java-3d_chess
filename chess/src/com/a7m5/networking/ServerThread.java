@@ -85,6 +85,9 @@ public class ServerThread implements Runnable {
 						case 5: //MOUSE_MOVED
 							server.sendAll(command);
 							break;
+						case 6: //CAMERA_MOVED
+							server.sendAll(command);
+							break;
 						}
 
 					} else {
@@ -149,8 +152,7 @@ public class ServerThread implements Runnable {
 	}
 
 	private void syncClient() {
-		NetworkCommand command = new NetworkCommand();
-		command.setCommand(NetworkCommand.SYNC);
+		NetworkCommand command = new NetworkCommand(NetworkCommand.SYNC);
 		command.setChessBoard(server.getChessBoard());
 		send(command);
 	}
@@ -159,21 +161,26 @@ public class ServerThread implements Runnable {
 		System.out.println("Client thread is closing.");
 		running = false;
 		if(socket != null) {
-			try {
-				socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if(!socket.isClosed()) {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-
 		}
 	}
 
 	public void send(NetworkCommand command) {
-		try {
-			oos.writeObject(command);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(oos != null) {
+			try {
+				oos.writeObject(command);
+			} catch(Exception e){
+				System.out.println("Client output stream failed. Nullifying stream.");
+				oos = null;
+			}
 		}
+		
 	}
 
 }

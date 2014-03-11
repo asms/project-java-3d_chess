@@ -84,6 +84,11 @@ public class Client implements Runnable {
 							board.gameOver(winner);
 						case 5: //MOUSE_MOVED
 							board.setCursor(command.getOwner(), command.getVectorArray()[0]);
+						case 6: //CAMERA_MOVED
+							if(command.getOwner() != ChessGame3D.getOwner()) {
+								float[][] args = command.getFloat2DArray();
+								ChessGame3D.setOpponentCamera(args);
+							}
 						}
 					} else {
 						running = false;
@@ -124,31 +129,29 @@ public class Client implements Runnable {
 		if(oos != null) {
 			try {
 				oos.writeObject(command);
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				System.out.println("[Client] The output stream failed to write. Nullifying stream.");
+				oos = null;
 			}
 		}
 	}
 
 	public void sendMove(Vector2 oldPosition, Vector2 newPosition) {
-		NetworkCommand command = new NetworkCommand();
-		command.setCommand(NetworkCommand.MOVE);
+		NetworkCommand command = new NetworkCommand(NetworkCommand.MOVE);
 		command.setVectorArray(new Vector2[] { oldPosition, newPosition});
 
 		send(command);
 	}
 
 	public void sendAttack(Vector2 piece1, Vector2 piece2) {
-		NetworkCommand command = new NetworkCommand();
-		command.setCommand(NetworkCommand.ATTACK);
+		NetworkCommand command = new NetworkCommand(NetworkCommand.ATTACK);
 		command.setVectorArray(new Vector2[] { piece1, piece2});
 
 		send(command);
 	}
 
 	public void sendGameOver() {
-		NetworkCommand command = new NetworkCommand();
-		command.setCommand(NetworkCommand.GAME_OVER);
+		NetworkCommand command = new NetworkCommand(NetworkCommand.GAME_OVER);
 		Vector2[] vectorArray = {new Vector2(ChessGame3D.getOwner().ordinal(), 0)};
 		command.setVectorArray(vectorArray);
 
