@@ -3,29 +3,24 @@ package com.a7m5.chess;
 import java.net.URISyntaxException;
 
 import com.a7m5.chess.chesspieces.ChessOwner;
-import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.a7m5.networking.Client;
 import com.a7m5.networking.Server;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.utils.Array;
 
 public class ChessGame3D implements ApplicationListener {
 
@@ -47,6 +42,13 @@ public class ChessGame3D implements ApplicationListener {
 	private Texture yourTurnTexture;
 	private Texture waitTexture;
 	private ChessInputProcessor inputProcessor;
+	private AssetManager assets;
+	private ModelInstance opponentCameraModelInstance = null;
+	private Array<ModelInstance> modelInstances;
+	private boolean loadingAssets;
+	private Environment environment;
+	private float[][] opponentCamera = new float[0][0];
+	private static ChessGame3D self;
 
 	private static Server server = null;
 	private static Client client = null;
@@ -56,6 +58,7 @@ public class ChessGame3D implements ApplicationListener {
 	private static ChessPieceSet gamePieceSet;
 
 	public ChessGame3D(ChessPieceSet gamePieceSet, ChessOwner chessOwner, String address, int port) {
+		self = this;
 		setOwner(chessOwner);
 		setAddress(address);
 		setPort(port);
@@ -81,14 +84,6 @@ public class ChessGame3D implements ApplicationListener {
 		 * z: forward (negative) and backward (positive)
 		 */
 
-		ModelBuilder modelBuilder = new ModelBuilder();
-		model = modelBuilder.createSphere(612f, 612f, 612f, 16, 16,  new Material(ColorAttribute.createDiffuse(Color.GREEN)),
-				Usage.Position | Usage.Normal);
-		instance = new ModelInstance(model);
-
-
-
-
 		ChessBoard.loadTextures();
 
 		inputProcessor = new ChessInputProcessor(cam);
@@ -98,6 +93,7 @@ public class ChessGame3D implements ApplicationListener {
 		height = Gdx.graphics.getHeight();
 
 		batch = new SpriteBatch();
+		batch.getTransformMatrix().rotate(1, 0, 0, -90);
 
 		//Your Turn
 		yourTurnTexture = new Texture(Gdx.files.internal("data/your_turn.png"));
@@ -120,6 +116,21 @@ public class ChessGame3D implements ApplicationListener {
 		waitSprite.setOrigin(waitSprite.getWidth()/2, waitSprite.getHeight()/2);
 		waitSprite.setPosition(612-64, 412-64-128-32);
 
+		/*
+		 * 3D Assets
+		 */
+		modelInstances = new Array<ModelInstance>();
+		assets = new AssetManager();
+
+		/* Enemy Camera
+		 * Model: models/bishop.g3dj
+		 * Note: Currently, the bishop model is loaded for testing purposes.
+		 */
+		assets.load("models/bishop.g3dj", Model.class);
+
+		loadingAssets = true;
+
+
 		client = new Client(address, port);
 		clientThread = new Thread(client);
 		clientThread.start();
@@ -132,7 +143,6 @@ public class ChessGame3D implements ApplicationListener {
 		waitTexture.dispose();
 
 		modelBatch.dispose();
-		model.dispose();
 	}
 
 	@Override
@@ -141,24 +151,46 @@ public class ChessGame3D implements ApplicationListener {
 		Gdx.gl.glClearColor(0.5f, 0.75f, 1f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling?GL20.GL_COVERAGE_BUFFER_BIT_NV:0));
 
-		modelBatch.begin(cam);
-		//modelBatch.render(instance);
-		modelBatch.end();
+		if (loadingAssets && assets.update()) {
+			onAssetsLoaded();
+		}
 
 		if(client != null && clientThread.isAlive()) {
 			inputProcessor.update(Gdx.graphics.getRawDeltaTime());
 
-			ShapeRenderer shapeRenderer = new ShapeRenderer();
-			shapeRenderer.setProjectionMatrix(cam.combined);
-			shapeRenderer.rotate(1, 0, 0, -90);
+			modelBatch.begin(cam);
+			if(opponentCameraModelInstance != null && opponentCamera.length != 0) {
 
-			shapeRenderer.begin(ShapeType.Filled);
-			client.board.drawBoard(shapeRenderer);
-			client.board.drawCursors(shapeRenderer);
-			shapeRenderer.end();
+				opponentCameraModelInstance.transform.setToWorld(
+						new com.badlogic.gdx.math.Vector3(
+								opponentCamera[0][0],
+								opponentCamera[0][1],
+								opponentCamera[0][2]),
+						new com.badlogic.gdx.math.Vector3(
+								opponentCamera[1][0],
+								opponentCamera[1][1],
+								opponentCamera[1][2]),
+						new com.badlogic.gdx.math.Vector3(
+								opponentCamera[2][0],
+								opponentCamera[2][1],
+								opponentCamera[2][2])
+						);
 
-			batch.setProjectionMatrix(shapeRenderer.getProjectionMatrix());
-			batch.setTransformMatrix(shapeRenderer.getTransformMatrix());
+				modelBatch.render(opponentCameraModelInstance, environment);
+			}
+			/*
+			 * Draws Board Tiles in 3D
+			 * Note: This is more efficient and allows drawing the rectangles in 3d,
+			 * 		 which resolves conflicts with 3D models.
+			 */
+			client.board.drawBoard(modelBatch, environment);
+
+			client.board.drawCursors(modelBatch, environment, cam);
+			if(!loadingAssets) {
+				modelBatch.render(modelInstances, environment);
+			}
+			modelBatch.end();
+			batch.setProjectionMatrix(cam.combined);
 			batch.begin();
 
 			if(getOwner() == getClient().board.getTurnOwner()) {
@@ -183,17 +215,27 @@ public class ChessGame3D implements ApplicationListener {
 	public void resume() {
 	}
 
+	public void onAssetsLoaded() {
+		Model opponentCameraModel = assets.get("models/bishop.g3dj", Model.class);
+		opponentCameraModelInstance = new ModelInstance(opponentCameraModel);
+		opponentCameraModelInstance.transform.scl(1f);
+		opponentCameraModelInstance.calculateTransforms();
+		loadingAssets = false;
+	}
+
 	public static void startServer(int port) throws URISyntaxException {
+
 		// Grab the set of chess pieces before starting the server.
 		ResourceGrabber myGrab;
 		myGrab = new ResourceGrabber();
 		gamePieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
+
 		if(server == null && serverThread == null) {
 			// Make the new board
 			ChessBoard board = new ChessBoard(gamePieceSet);
 			board.setTurnOwner(ChessOwner.WHITE);
 			// Add the starting pieces
-			
+
 			for(int x = 0; x < 2; x++) {
 				ChessOwner owner = (x == 0 ? ChessOwner.BLACK : ChessOwner.WHITE);
 				board.addPiece(0, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Rook").getClone(owner));
@@ -205,12 +247,12 @@ public class ChessGame3D implements ApplicationListener {
 				board.addPiece(6, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Knight").getClone(owner));
 				board.addPiece(7, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Rook").getClone(owner));
 			}			
-			
+
 			for(int x = 0; x < 8; x++) {
 				board.addPiece(x, 1, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.BLACK));
 				board.addPiece(x, 6, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.WHITE));
 			}
-			 
+
 			server = new Server(port, board);
 			serverThread = new Thread(server);
 			serverThread.start();
@@ -271,5 +313,14 @@ public class ChessGame3D implements ApplicationListener {
 
 	public static PerspectiveCamera getCamera() {
 		return cam;
+	}
+
+	public static void setOpponentCamera(float[][] oc) {
+		PerspectiveCamera cam= getInstance().getCamera();
+		getInstance().opponentCamera = oc;
+	}
+
+	private static ChessGame3D getInstance() {
+		return self;
 	}
 }
