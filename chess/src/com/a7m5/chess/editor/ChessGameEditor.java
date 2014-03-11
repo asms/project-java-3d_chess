@@ -54,6 +54,7 @@ public class ChessGameEditor implements ApplicationListener {
 		editingPalette.resize(width, height);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
