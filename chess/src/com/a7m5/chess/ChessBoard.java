@@ -66,9 +66,11 @@ public class ChessBoard implements Serializable {
 	}
 
 	public static void loadTextures() {
+		/*
 		for(int i = 0; i < gamePieceSet.getLength(); i++){
 			// TODO: Load in each file.
 		}
+		*/
 
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("data/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
