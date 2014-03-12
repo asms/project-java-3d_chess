@@ -72,11 +72,12 @@ public class ChessBoard implements Serializable {
 	}
 
 	public static void loadTextures() {
-		/*
-		for(int i = 0; i < gamePieceSet.getLength(); i++){
-			// TODO: Load in each file.
+/*
+		System.out.println("Textures Loading.");
+		for(int i = 0; i < gamePieceSet.getLength()-1; i++){
+			gamePieceSet.getPieceByIndex(i).loadTextures();
 		}
-		 */
+	*/	 
 
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("chess-textures/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -256,6 +257,15 @@ public class ChessBoard implements Serializable {
 				TextureRegion textureRegion = new TextureRegion();
 				if(chessPiece != null){
 					if(chessPiece.getPieceName() != null){
+						/*
+						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
+							textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureReigon();
+						} else {
+							textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureReigon();
+						}
+						*/
+					
+					
 						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
 							if(chessPiece.getOwner() == ChessOwner.WHITE) {
 								textureRegion = pawnWhiteTextureRegion;
@@ -292,9 +302,12 @@ public class ChessBoard implements Serializable {
 							} else {
 								textureRegion = bishopBlackTextureRegion;
 							}
+							
+							
 						} else {
 							break;
 						}
+						
 					}	
 
 

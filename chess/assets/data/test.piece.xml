@@ -2,8 +2,8 @@
 <chessPiece uniquePieceID="0007450">
 
 	<pieceName>Pawn</pieceName>
-	<blackArtFile>pawn-black.png</blackArtFile>
-	<whiteArtFile>pawn-white.png</whiteArtFile>
+	<blackArtFile>chess-textures/pawn-black.png</blackArtFile>
+	<whiteArtFile>chess-textures/pawn-white.png</whiteArtFile>
 	<NPCArtFile></NPCArtFile>
 	
 	<movementVectors>

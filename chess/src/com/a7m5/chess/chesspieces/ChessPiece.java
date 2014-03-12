@@ -7,6 +7,10 @@ import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.editor.ChessBoardPalette;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class ChessPiece implements Serializable, ChessPieceInterface {
 
@@ -28,6 +32,11 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	protected String blackArtFile = "";
 	protected String whiteArtFile = "";
 	protected String NPCArtFile = "";
+	
+	protected Texture whiteTexture;
+	protected Texture blackTexture;
+	protected TextureRegion whiteTextureReigon;
+	protected TextureRegion blackTextureReigon;
 	
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
@@ -334,5 +343,24 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 		temp.setOwner(owner);
 		return temp;
 	}
+	public void loadTextures(){
+	//	System.out.println("A whiteArtFile: " + whiteArtFile);
+		whiteTexture = new Texture(Gdx.files.internal(whiteArtFile));
+		whiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		whiteTextureReigon = new TextureRegion(whiteTexture, 0, 0, 64, 64);
+		
+		//System.out.println("A blackArtFile: " + blackArtFile);
+		blackTexture = new Texture(Gdx.files.internal(blackArtFile));
+		blackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		blackTextureReigon = new TextureRegion(blackTexture, 0, 0, 64, 64);
+//	System.out.println("A Piece loaded. Name: " + pieceName + "\n");
+	}
+	
+	public TextureRegion getWhiteTextureReigon() {
+		return whiteTextureReigon;
+	}
 
+	public TextureRegion getBlackTextureReigon() {
+		return blackTextureReigon;
+	}
 }
