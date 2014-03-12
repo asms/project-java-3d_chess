@@ -76,16 +76,17 @@ public class ChessBoardPalette implements Serializable{
 		clickableComponents.add(tabTiles);
 		// Load all the resources from file (Pieces, NPC's, and tiles), this
 		//includes the pieces themselves and their associated artwork.
-		
+
 		// TODO: Load all GamePiece files from a folder.
 		// TODO: Create an array for white, black, NPC, and tile pieces respectively. Fill arrays.
 		// TODO: Create panes to hold pieces and pass in arrays of the pieces.
-		
+		/*
 		// Panel textures.
 		paneWhite.loadTextures();
 		paneBlack.loadTextures();
 		paneNPC.loadTextures();
 		paneTiles.loadTextures();
+		 */
 	}
 
 	public void drawBackground(ShapeRenderer shapeRenderer) {
@@ -108,7 +109,7 @@ public class ChessBoardPalette implements Serializable{
 			clickableComponents.get(i).drawComponent(batch);
 		}
 		// Draw the current pane.
-//		paneSelected.drawPane(batch);	
+		//		paneSelected.drawPane(batch);	
 
 
 	}
