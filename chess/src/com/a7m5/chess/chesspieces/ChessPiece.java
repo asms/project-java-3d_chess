@@ -104,6 +104,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 			if(attacked) {
 				ChessGame3D.getClient().sendAttack(selectedChessPiece.getPosition(), getPosition());
 			} else {
+				
 				if(getOwner() == ChessGame3D.getOwner()) {
 					board.setSelectedChessPiece(this);
 				}

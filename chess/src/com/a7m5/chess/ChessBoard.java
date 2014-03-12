@@ -76,7 +76,7 @@ public class ChessBoard implements Serializable {
 		for(int i = 0; i < gamePieceSet.getLength(); i++){
 			// TODO: Load in each file.
 		}
-		*/
+		 */
 
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("chess-textures/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -122,11 +122,11 @@ public class ChessBoard implements Serializable {
 		Texture bishopWhiteTexture = new Texture(Gdx.files.internal("chess-textures/bishop-white.png"));
 		bishopWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bishopWhiteTextureRegion = new TextureRegion(bishopWhiteTexture, 0, 0, 64, 64);
-		
+
 		Texture bishopBlackTexture = new Texture(Gdx.files.internal("chess-textures/bishop-black.png"));
 		bishopBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bishopBlackTextureRegion = new TextureRegion(bishopBlackTexture, 0, 0, 64, 64);
-	
+
 	}
 
 
@@ -164,39 +164,26 @@ public class ChessBoard implements Serializable {
 		modelBatch.render(tileInstances, environment);
 
 		if(selectedChessPiece != null) {
-			if(specialTileInstances == null) {
-				specialTileInstances = new Array<ModelInstance>();
-				ArrayList<Vector2> possibleMoves = selectedChessPiece.getPossibleMoves();
-				for(Vector2 possibleMove : possibleMoves) {
-					ModelInstance tileInstance = new ModelInstance(tileModel);
-					tileInstance.transform.setToTranslation((float) (possibleMove.getX()*tileWidth), 0, (float) (-possibleMove.getY()*tileWidth));
-					tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(0, 0.5f, 1, 1)));
-					specialTileInstances.add(tileInstance);
-				}
-				ArrayList<Vector2> possibleAttacks = selectedChessPiece.getPossibleAttacks();
-				for(Vector2 possibleAttack : possibleAttacks) {
-					ModelInstance tileInstance = new ModelInstance(tileModel);
-					tileInstance.transform.setToTranslation((float) (possibleAttack.getX()*tileWidth), 0, (float) (-possibleAttack.getY()*tileWidth));
-					tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(1f, 0.5f, 0, 1)));
-					specialTileInstances.add(tileInstance);
+			specialTileInstances = new Array<ModelInstance>();
+			ArrayList<Vector2> possibleMoves = selectedChessPiece.getPossibleMoves();
+			for(Vector2 possibleMove : possibleMoves) {
+				ModelInstance tileInstance = new ModelInstance(tileModel);
+				tileInstance.transform.setToTranslation((float) (possibleMove.getX()*tileWidth), 0, (float) (-possibleMove.getY()*tileWidth));
+				tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(0, 0.5f, 1, 1)));
+				specialTileInstances.add(tileInstance);
+			}
+			ArrayList<Vector2> possibleAttacks = selectedChessPiece.getPossibleAttacks();
+			for(Vector2 possibleAttack : possibleAttacks) {
+				ModelInstance tileInstance = new ModelInstance(tileModel);
+				tileInstance.transform.setToTranslation((float) (possibleAttack.getX()*tileWidth), 0, (float) (-possibleAttack.getY()*tileWidth));
+				tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(1f, 0.5f, 0, 1)));
+				specialTileInstances.add(tileInstance);
 
-				}
 			}
 			modelBatch.render(specialTileInstances, environment);
 		} else {
 			specialTileInstances = null;
 		}
-		/*
-		shapeRenderer.rect(512,
-				0,
-				400,
-				512,
-				Color.LIGHT_GRAY,
-				Color.LIGHT_GRAY,
-				Color.WHITE,
-				Color.WHITE
-				);
-		 */
 	}
 
 	@Deprecated
