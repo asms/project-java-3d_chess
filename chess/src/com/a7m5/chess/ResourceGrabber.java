@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -30,67 +31,71 @@ public class ResourceGrabber {
 	ArrayList<ChessPiece> grabbedPieces = new ArrayList<ChessPiece>();
 	ArrayList<ChessTile> grabbedTiles = new ArrayList<ChessTile>();
 	ChessBoard grabbedChessBoard;
+	String[] fileNameList = {
+			"Bishop_ID10.piece.xml",
+			"King_ID20.piece.xml",
+			"Knight_ID30.piece.xml",
+			"Pawn_ID40.piece.xml",
+			"Queen_ID50.piece.xml",
+			"Rook_ID60.piece.xml",
+			"test.piece.xml"
+	};
 
-	public ResourceGrabber() throws URISyntaxException {
-		File directoryIn = new File(getClass().getResource("/data/").toURI());
-		
-		resourceFileList = directoryIn.listFiles();
-		for(int i = 0; i < resourceFileList.length; i++){
+	public ResourceGrabber() {
+
+		for(int i = 0; i < fileNameList.length; i++){
 			try {
+				InputStream fileStream = ResourceGrabber.class.getResourceAsStream("/data/" + fileNameList[i]);
 
-				if(resourceFileList[i].getName().endsWith(".piece.xml")){
-					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-					Document pieceDoc = dBuilder.parse(resourceFileList[i]);
-					pieceDoc.getDocumentElement().normalize();
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document pieceDoc = dBuilder.parse(fileStream);
+				pieceDoc.getDocumentElement().normalize();
 
-					// Get the piece ID
-					int tempID = -1;
-					String tempIDString = pieceDoc.getDocumentElement().getAttribute("uniquePieceID").toString();
-					if(tempIDString != null){
-						try{
-							tempID = Integer.parseInt(tempIDString);
-						} catch(NumberFormatException e){
-							System.out.println("Number Format in XML Read!!!");
-						}
+				// Get the piece ID
+				int tempID = -1;
+				String tempIDString = pieceDoc.getDocumentElement().getAttribute("uniquePieceID").toString();
+				if(tempIDString != null){
+					try{
+						tempID = Integer.parseInt(tempIDString);
+					} catch(NumberFormatException e){
+						System.out.println("Number Format in XML Read!!!");
 					}
-					//System.out.println("pieceID: " + tempID);
-
-					// Get the pieceName
-					String tempName = grabFirstString(pieceDoc, "pieceName");
-					//System.out.println("pieceName: " + tempName);
-
-					// Get the blackArtFile
-					String tempBlackArtFile = grabFirstString(pieceDoc, "blackArtFile");
-					//System.out.println("blackArtFile: " + tempBlackArtFile);
-
-					// Get the whiteArtFile
-					String tempWhiteArtFile = grabFirstString(pieceDoc, "whiteArtFile");
-					//System.out.println("whiteArtFile: " + tempWhiteArtFile);
-
-					// Get the NPCArtFile
-					String tempNPCArtFile = grabFirstString(pieceDoc, "NPCArtFile");
-					//System.out.println("NPCArtFile: " + tempNPCArtFile);
-
-					// Get all the vectors.
-					Vector2[] tempAttackDirectionVectors = grabVectors(pieceDoc, "attackDirectionVectors");
-					Vector2[] tempMovementDirectionVectors = grabVectors(pieceDoc, "movementDirectionVectors");
-					Vector2[] tempSpecialMovementVectors = grabVectors(pieceDoc, "specialMovementVectors");
-					Vector2[] tempMovementVectors = grabVectors(pieceDoc, "movementVectors");
-					Vector2[] tempAttackVectors = grabVectors(pieceDoc, "attackVectors");
-
-					// Create the piece and add it to the array of pieces.
-					ChessPiece tempChessPiece = new ChessPiece(tempName, tempID, tempAttackDirectionVectors,
-							tempMovementDirectionVectors, tempSpecialMovementVectors, tempMovementVectors,
-							tempAttackVectors, tempBlackArtFile, tempWhiteArtFile, tempNPCArtFile);
-					tempChessPiece.setOwner(ChessOwner.WHITE);	// TODO: correct settings for the chess piece owner.
-					grabbedPieces.add(tempChessPiece);
-
-				} else if(resourceFileList[i].getName().endsWith(".tile.xml")){
-					// TODO: Import tiles from files.
-				} else if(resourceFileList[i].getName().endsWith(".board.xml")){
-					// TODO: Import boards from files.
 				}
+				//System.out.println("pieceID: " + tempID);
+
+				// Get the pieceName
+				String tempName = grabFirstString(pieceDoc, "pieceName");
+				//System.out.println("pieceName: " + tempName);
+
+				// Get the blackArtFile
+				String tempBlackArtFile = grabFirstString(pieceDoc, "blackArtFile");
+				//System.out.println("blackArtFile: " + tempBlackArtFile);
+
+				// Get the whiteArtFile
+				String tempWhiteArtFile = grabFirstString(pieceDoc, "whiteArtFile");
+				//System.out.println("whiteArtFile: " + tempWhiteArtFile);
+
+				// Get the NPCArtFile
+				String tempNPCArtFile = grabFirstString(pieceDoc, "NPCArtFile");
+				//System.out.println("NPCArtFile: " + tempNPCArtFile);
+
+				// Get all the vectors.
+				Vector2[] tempAttackDirectionVectors = grabVectors(pieceDoc, "attackDirectionVectors");
+				Vector2[] tempMovementDirectionVectors = grabVectors(pieceDoc, "movementDirectionVectors");
+				Vector2[] tempSpecialMovementVectors = grabVectors(pieceDoc, "specialMovementVectors");
+				Vector2[] tempMovementVectors = grabVectors(pieceDoc, "movementVectors");
+				Vector2[] tempAttackVectors = grabVectors(pieceDoc, "attackVectors");
+
+				// Create the piece and add it to the array of pieces.
+				ChessPiece tempChessPiece = new ChessPiece(tempName, tempID, tempAttackDirectionVectors,
+						tempMovementDirectionVectors, tempSpecialMovementVectors, tempMovementVectors,
+						tempAttackVectors, tempBlackArtFile, tempWhiteArtFile, tempNPCArtFile);
+				tempChessPiece.setOwner(ChessOwner.WHITE);	// TODO: correct settings for the chess piece owner.
+				grabbedPieces.add(tempChessPiece);
+
+				// TODO: Import tiles from files.
+				// TODO: Import boards from files.
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

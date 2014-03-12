@@ -223,7 +223,7 @@ public class ChessGame3D implements ApplicationListener {
 		loadingAssets = false;
 	}
 
-	public static void startServer(int port) throws URISyntaxException {
+	public static void startServer(int port) {
 
 		// Grab the set of chess pieces before starting the server.
 		ResourceGrabber myGrab;

@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import com.a7m5.chess.Check;
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.chesspieces.ChessOwner;
@@ -47,11 +48,16 @@ public class ServerThread implements Runnable {
 
 							break;
 						case 1: //MOVE
-							ChessOwner opponent;
+							ChessOwner player = command.getOwner();
+							ChessOwner opponent = command.getOwner() == ChessOwner.WHITE ? ChessOwner.BLACK : ChessOwner.WHITE;
 							boolean canMove;
 							boolean checkedOtherPlayer;
+							Vector2 moveFrom = vectors[0];
+							Vector2 moveTo = vectors[1];
 
-							board.moveChessPiece(vectors[0], vectors[1]);
+							board.moveChessPiece(moveFrom, moveTo);
+							Check checker = new Check();
+							checker.check(board, player, opponent, moveFrom, moveTo);
 							/*
 							check = checkForCheck(board, owner);
 							if(owner == ChessOwner.BLACK) {
