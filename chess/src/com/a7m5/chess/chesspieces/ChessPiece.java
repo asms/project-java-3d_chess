@@ -32,12 +32,12 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	protected String blackArtFile = "";
 	protected String whiteArtFile = "";
 	protected String NPCArtFile = "";
-	
+
 	protected Texture whiteTexture;
 	protected Texture blackTexture;
 	protected TextureRegion whiteTextureReigon;
 	protected TextureRegion blackTextureReigon;
-	
+
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
 	}
@@ -113,7 +113,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 			if(attacked) {
 				ChessGame3D.getClient().sendAttack(selectedChessPiece.getPosition(), getPosition());
 			} else {
-				
+
 				if(getOwner() == ChessGame3D.getOwner()) {
 					board.setSelectedChessPiece(this);
 				}
@@ -155,7 +155,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	public void setPosition(Vector2 newPosition) {
 		this.position = newPosition;
 	}
-	
+
 	public void setOwner(ChessOwner owner) {
 		this.owner = owner;
 	}
@@ -302,7 +302,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	public String toString() {
 		return getX() + ", " + getY();
 	}
-	
+
 
 	public String getBlackArtFile() {
 		return blackArtFile;
@@ -343,19 +343,20 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 		temp.setOwner(owner);
 		return temp;
 	}
+
 	public void loadTextures(){
-	//	System.out.println("A whiteArtFile: " + whiteArtFile);
+		System.out.println("A whiteArtFile: " + whiteArtFile);
 		whiteTexture = new Texture(Gdx.files.internal(whiteArtFile));
 		whiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		whiteTextureReigon = new TextureRegion(whiteTexture, 0, 0, 64, 64);
-		
-		//System.out.println("A blackArtFile: " + blackArtFile);
+
+		System.out.println("A blackArtFile: " + blackArtFile);
 		blackTexture = new Texture(Gdx.files.internal(blackArtFile));
 		blackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		blackTextureReigon = new TextureRegion(blackTexture, 0, 0, 64, 64);
-//	System.out.println("A Piece loaded. Name: " + pieceName + "\n");
+		System.out.println("A Piece loaded. Name: " + pieceName + "\n");
 	}
-	
+
 	public TextureRegion getWhiteTextureReigon() {
 		return whiteTextureReigon;
 	}

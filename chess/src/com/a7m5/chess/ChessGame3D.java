@@ -252,7 +252,7 @@ public class ChessGame3D implements ApplicationListener {
 				board.addPiece(x, 1, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.BLACK));
 				board.addPiece(x, 6, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.WHITE));
 			}
-
+			
 			server = new Server(port, board);
 			serverThread = new Thread(server);
 			serverThread.start();

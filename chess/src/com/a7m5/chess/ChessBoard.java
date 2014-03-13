@@ -64,21 +64,27 @@ public class ChessBoard implements Serializable {
 	public static int boardWidth = 8; //8 (traditional), 16 (large), 32 (extra large)
 	public static int tileWidth = actualBoardWidth / boardWidth;
 
-
+	public ChessBoard(){
+		System.out.println("NEW CHESSBOARD INSTANCE!!! empty const, " + toString());
+	}
 
 	public ChessBoard(ChessPieceSet gamePieceSet) {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
 		this.gamePieceSet = gamePieceSet;
+		System.out.println("NEW CHESSBOARD INSTANCE!!! gamePieceSet const, " + toString());
 	}
 
 	public static void loadTextures() {
-/*
+
 		System.out.println("Textures Loading.");
+		//	System.out.println("???: " + gamePieceSet.getLength() + " " + gamePieceSet.toString());
+		/*
+		// Load from xml defined paths.
 		for(int i = 0; i < gamePieceSet.getLength()-1; i++){
 			gamePieceSet.getPieceByIndex(i).loadTextures();
-		}
-	*/	 
-
+		} 
+		 */
+		// Old loading from software defined paths.
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("chess-textures/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		pawnWhiteTextureRegion = new TextureRegion(pawnWhiteTexture, 0, 0, 64, 64);
@@ -132,6 +138,7 @@ public class ChessBoard implements Serializable {
 
 
 	public void drawBoard(ModelBatch modelBatch, Environment environment) {
+		System.out.println("Draw board, new.");
 		boolean alt = true;
 		ModelBuilder modelBuilder = new ModelBuilder();
 		if(tileInstances == null) {
@@ -189,6 +196,7 @@ public class ChessBoard implements Serializable {
 
 	@Deprecated
 	public void drawBoard(ShapeRenderer shapeRenderer) {
+		System.out.println("Draw board, old");
 		boolean alt = true;
 		shapeRenderer.setColor(Color.BLACK);
 		shapeRenderer.rect(0,
@@ -251,21 +259,33 @@ public class ChessBoard implements Serializable {
 
 
 	public void drawPieces(SpriteBatch batch) {
+		System.out.println("Draw Peices.");
+		/*
+		try{	
+			System.out.println("Pawn image:" + gamePieceSet.getPieceByName("Pawn").getBlackArtFile());
+			//System.out.println("Pawn image:" + gamePieceSet.getPieceByName("Pawn").getBlackTextureReigon());
+		} catch (Exception e){
+			System.out.println("ERROR: ");
+			e.printStackTrace();
+		}
+		 */
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth; x++) {
 				ChessPiece chessPiece = chessPieces[x][y];
 				TextureRegion textureRegion = new TextureRegion();
 				if(chessPiece != null){
 					if(chessPiece.getPieceName() != null){
+						
+						// Test for rendering from piece defined files.
 						/*
 						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
 							textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureReigon();
 						} else {
 							textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureReigon();
 						}
-						*/
-					
-					
+						 */
+
+
 						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
 							if(chessPiece.getOwner() == ChessOwner.WHITE) {
 								textureRegion = pawnWhiteTextureRegion;
@@ -302,12 +322,11 @@ public class ChessBoard implements Serializable {
 							} else {
 								textureRegion = bishopBlackTextureRegion;
 							}
-							
-							
+
+
 						} else {
 							break;
 						}
-						
 					}	
 
 
@@ -378,19 +397,23 @@ public class ChessBoard implements Serializable {
 
 
 	public void addPiece(int x, int y, ChessPiece chessPiece) {
+		System.out.println("Add piece.");
 		chessPiece.register(this, new Vector2(x, y));
 		chessPieces[x][y] = chessPiece;
 	}
 
 	public void start() {
+		System.out.println("Start");
 		clear();
 	}
 
 	public void restart() {
+		System.out.println("restart");
 		start();
 	}
 
 	public void clear() {
+		System.out.println("Clear");
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
 	}
 	public static int getTileFromCoordinate(int x) {
