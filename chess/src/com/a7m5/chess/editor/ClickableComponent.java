@@ -39,9 +39,7 @@ public class ClickableComponent {
 
 	// Is this point a point in the component location.
 	public boolean compClicked(int x, int y, int windowHeight, int windowWidth){
-		y = 512*(windowHeight - y)/windowHeight;	// Y scaling for window resizes
-		x = (int) ((double) x*((((double) 512+400)/((double) windowWidth))));	// X scaling for window resizes
-		return (x > xLocation)&&(x < xLocation + width)&&(y > yLocation)&&(y < yLocation + height);	
+		return (x > xLocation)&&(x < xLocation + width)&&(y > yLocation)&&(y < yLocation + height);
 	}
 
 	public Boolean getComponentSelected() {

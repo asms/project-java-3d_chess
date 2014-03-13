@@ -36,6 +36,7 @@ public class ChessBoardPalette implements Serializable{
 	private static ChessPieceSet editorPieceSet;
 	private static ChessPiece[][] whiteTabPieces = new ChessPiece[paletteWidth][paletteHeight];
 	private static ChessPiece[][] blackTabPieces = new ChessPiece[paletteWidth][paletteHeight];
+	private static ChessPiece selectedPiece;
 
 	public ChessBoardPalette(int bottomLeftX, int bottomLeftY) {
 		paletteBottomLeftX = bottomLeftX;
@@ -196,6 +197,9 @@ public class ChessBoardPalette implements Serializable{
 	}
 
 	public static void onClickListener(int x, int y, int pointer, int button) {
+		// Scaling & inversion.
+		y = 512*(windowHeight - y)/windowHeight;	// Y scaling for window resizes
+		x = (int) ((double) x*((((double) 512+400)/((double) windowWidth))));	// X scaling for window resizes
 		// Get the selected tab (check for change and change if click on a tab).
 		if(tabWhite.compClicked(x, y, windowHeight, windowWidth)){
 			tabSelected = tabWhite;
@@ -212,6 +216,42 @@ public class ChessBoardPalette implements Serializable{
 				clickableComponents.get(i).setComponentSelected(false);
 			}
 		}
+		// Check for clicks on the tiles.
+		if((y > paletteBottomLeftY)&&(y < paletteBottomLeftY + actualPaletteHeight)&&(x > paletteBottomLeftX)&&(x < paletteBottomLeftX + actualPaletteWidth)){
+			try{
+				selectedPiece = getChessPieceByXY(x, y);
+				System.out.println("Selected Piece: " + selectedPiece.getPieceName() + " - Team: " + selectedPiece.getOwner());
+			} catch(IndexOutOfBoundsException e){
+				e.printStackTrace();
+			}			
+		}
+		
+	}
+
+
+	public static ChessPiece getChessPieceByXY(int x, int y) throws IndexOutOfBoundsException {
+		ChessPiece tempSelectedPiece;
+		int tileX = getTileFromXCoordinate(x);
+		int tileY = getTileFromYCoordinate(y) - 1;
+		System.out.println("Click on tile - X: " + tileX + " Y: " + tileY);
+		if(tabSelected == tabWhite){
+			tempSelectedPiece = whiteTabPieces[tileX][tileY];
+		} else if(tabSelected == tabBlack){
+			tempSelectedPiece = blackTabPieces[tileX][tileY];
+		} else {
+			tempSelectedPiece = null; // TODO: How to handle?
+		}
+		
+		return tempSelectedPiece;
+
+	}
+
+	private static int getTileFromXCoordinate(int x) {
+		return Math.abs((int) Math.floor((float) (x - paletteBottomLeftX) / (float) tileWidth));
+	}
+
+	private static int getTileFromYCoordinate(int y) {
+		return Math.abs((int) Math.floor((float) (paletteBottomLeftY - y) / (float) tileWidth));
 	}
 
 	public void resize(int width, int height) {
