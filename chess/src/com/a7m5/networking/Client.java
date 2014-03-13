@@ -12,6 +12,7 @@ import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.Vector2;
 import com.a7m5.chess.chesspieces.ChessPiece;
+import com.a7m5.chess.chesspieces.ChessPieceSet;
 
 public class Client implements Runnable {
 
@@ -31,7 +32,7 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
-		board = new ChessBoard(null);
+		board = new ChessBoard();
 		board.start();
 		try {
 			socket = new Socket(address, port);

@@ -23,12 +23,10 @@ public class ChessGameEditor implements ApplicationListener {
 	private SpriteBatch batch;
 	private ChessBoard editingBoard;
 	private ChessBoardPalette editingPalette;
-	private ChessPieceSet pieceSet;
 
-	public ChessGameEditor(int requestedBoardSize, ChessPieceSet editorSet) {
+	public ChessGameEditor(int requestedBoardSize) {
 		// Make the editing board of the correct size.
-		pieceSet = editorSet;
-		editingBoard = new ChessBoard(editorSet);
+		editingBoard = new ChessBoard();
 		editingBoard.setBoardWidth(requestedBoardSize);
 		// Creates the palette in the correct position.
 		editingPalette = new ChessBoardPalette(522,10);

@@ -5,6 +5,7 @@ import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.a7m5.networking.Client;
 import com.a7m5.networking.Server;
 import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -54,17 +55,15 @@ public class ChessGame3D implements ApplicationListener {
 	private static Thread clientThread = null;
 	private static Thread serverThread = null;
 	private static ChessOwner owner;
-	private static ChessPieceSet gamePieceSet;
 	
 	//Opimization Testing
 	private FPSLogger fpsLogger;
 
-	public ChessGame3D(ChessPieceSet gamePieceSet, ChessOwner chessOwner, String address, int port) {
+	public ChessGame3D(ChessOwner chessOwner, String address, int port) {
 		self = this;
 		setOwner(chessOwner);
 		setAddress(address);
 		setPort(port);
-		setGamePieceSet(gamePieceSet);
 	}
 
 	@Override
@@ -233,7 +232,7 @@ public class ChessGame3D implements ApplicationListener {
 		// Grab the set of chess pieces before starting the server.
 		ResourceGrabber myGrab;
 		myGrab = new ResourceGrabber();
-		gamePieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
+		ChessPieceSet gamePieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
 
 		if(server == null && serverThread == null) {
 			// Make the new board
@@ -318,10 +317,6 @@ public class ChessGame3D implements ApplicationListener {
 
 	private void setAddress(String address) {
 		this.address = address;
-	}
-
-	private void setGamePieceSet(ChessPieceSet arg) {
-		gamePieceSet = arg;
 	}
 
 	public static PerspectiveCamera getCamera() {
