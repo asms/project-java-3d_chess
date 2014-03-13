@@ -29,11 +29,19 @@ public class ChessGame3D implements ApplicationListener {
 
 	//3D stuff
 	public static PerspectiveCamera cam;
+	private Environment environment;
 	public ModelBatch modelBatch;
 	public Model model;
-	public ModelInstance instance;
-
-
+	private AssetManager assets;
+	private Array<ModelInstance> modelInstances;
+	private boolean loadingAssets;
+	
+	private ModelInstance skyDomeModelInstance = null;
+	
+	private ModelInstance opponentCameraModelInstance = null;
+	private float[][] opponentCamera = new float[0][0];
+	
+	//End 3D Stuff
 	private SpriteBatch batch;
 	private Sprite yourTurnSprite;
 	private Sprite waitSprite;
@@ -42,12 +50,6 @@ public class ChessGame3D implements ApplicationListener {
 	private Texture yourTurnTexture;
 	private Texture waitTexture;
 	private ChessInputProcessor inputProcessor;
-	private AssetManager assets;
-	private ModelInstance opponentCameraModelInstance = null;
-	private Array<ModelInstance> modelInstances;
-	private boolean loadingAssets;
-	private Environment environment;
-	private float[][] opponentCamera = new float[0][0];
 	private static ChessGame3D self;
 
 	private static Server server = null;
@@ -76,7 +78,7 @@ public class ChessGame3D implements ApplicationListener {
 		cam.position.set(256f, 256f, 128f);
 		cam.lookAt(256f,0, -256f);
 		cam.near = 0.1f;
-		cam.far = 1024f;
+		cam.far = 1536f;
 		cam.update();
 
 		/*
@@ -129,7 +131,7 @@ public class ChessGame3D implements ApplicationListener {
 		 * Note: Currently, the bishop model is loaded for testing purposes.
 		 */
 		assets.load("models/camera.g3db", Model.class);
-
+		assets.load("models/skydome.g3db", Model.class);
 		loadingAssets = true;
 
 
@@ -224,6 +226,10 @@ public class ChessGame3D implements ApplicationListener {
 	public void onAssetsLoaded() {
 		Model opponentCameraModel = assets.get("models/camera.g3db", Model.class);
 		opponentCameraModelInstance = new ModelInstance(opponentCameraModel);
+		Model skyDomeModel = assets.get("models/skydome.g3db", Model.class);
+		skyDomeModelInstance = new ModelInstance(skyDomeModel);
+		skyDomeModelInstance.transform.translate(ChessBoard.actualBoardWidth/2, 0, -ChessBoard.actualBoardWidth/2).scl(4f);
+		modelInstances.add(skyDomeModelInstance);
 		loadingAssets = false;
 	}
 
