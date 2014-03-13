@@ -242,27 +242,9 @@ public class ChessGame3D implements ApplicationListener {
 
 		if(server == null && serverThread == null) {
 			// Make the new board
-			ChessBoard board = new ChessBoard(gamePieceSet);
+			ChessBoard board = myGrab.getGrabbedChessBoard();	// Starting pieces from grabbed chess board.
 			board.setTurnOwner(ChessOwner.WHITE);
-			// Add the starting pieces
 
-			for(int x = 0; x < 2; x++) {
-				ChessOwner owner = (x == 0 ? ChessOwner.BLACK : ChessOwner.WHITE);
-				board.addPiece(0, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Rook").getClone(owner));
-				board.addPiece(1, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Knight").getClone(owner));
-				board.addPiece(2, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Bishop").getClone(owner));
-				board.addPiece(3, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Queen").getClone(owner));
-				board.addPiece(4, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("King").getClone(owner));
-				board.addPiece(5, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Bishop").getClone(owner));
-				board.addPiece(6, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Knight").getClone(owner));
-				board.addPiece(7, (x == 0 ? 0 : 7), gamePieceSet.getPieceByName("Rook").getClone(owner));
-			}			
-
-			for(int x = 0; x < 8; x++) {
-				board.addPiece(x, 1, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.BLACK));
-				board.addPiece(x, 6, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.WHITE));
-			}
-			
 			server = new Server(port, board);
 			serverThread = new Thread(server);
 			serverThread.start();

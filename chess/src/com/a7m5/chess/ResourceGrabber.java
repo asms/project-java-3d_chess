@@ -33,7 +33,8 @@ public class ResourceGrabber {
 	ChessPieceSet grabbedChessPieceSet;
 	ArrayList<ChessTile> grabbedTiles = new ArrayList<ChessTile>();
 	ChessBoard grabbedChessBoard;
-	
+
+
 	String[] fileNameList = {
 			"Bishop_ID10.piece.xml",
 			"King_ID20.piece.xml",
@@ -47,7 +48,7 @@ public class ResourceGrabber {
 	public ResourceGrabber() {
 		grabPieces();	// Need to get the pieces to populate boards.
 		getGrabbedChessPieceSet(); // Used by grabBoard.
-		grabBoard();	// Gets the board.
+		grabStandardBoard();	// Gets the standard board.
 	}
 	
 	public void grabPieces(){
@@ -120,9 +121,13 @@ public class ResourceGrabber {
 		}
 	}
 // TODO make it take a filepath
-	public ChessBoard grabBoard(){
+	public ChessBoard grabStandardBoard(){
+	 return grabBoard("/data/standardChess.board.xml");
+	}
+	
+	public ChessBoard grabBoard(String filePath){
 			try {
-				InputStream fileStream = ResourceGrabber.class.getResourceAsStream("/data/standardChess.board.xml");
+				InputStream fileStream = ResourceGrabber.class.getResourceAsStream(filePath);
 
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -141,40 +146,8 @@ public class ResourceGrabber {
 				}
 				System.out.println("Temp Width: " + tempWidth);
 				
-				grabBoardPieces(boardDoc, tempWidth);
-				
-				
-/*
-				// Get the pieceName
-				String tempName = grabFirstString(pieceDoc, "pieceName");
-				//System.out.println("pieceName: " + tempName);
-
-				// Get the blackArtFile
-				String tempBlackArtFile = grabFirstString(pieceDoc, "blackArtFile");
-				//System.out.println("blackArtFile: " + tempBlackArtFile);
-
-				// Get the whiteArtFile
-				String tempWhiteArtFile = grabFirstString(pieceDoc, "whiteArtFile");
-				//System.out.println("whiteArtFile: " + tempWhiteArtFile);
-
-				// Get the NPCArtFile
-				String tempNPCArtFile = grabFirstString(pieceDoc, "NPCArtFile");
-				//System.out.println("NPCArtFile: " + tempNPCArtFile);
-
-				// Get all the vectors.
-				Vector2[] tempAttackDirectionVectors = grabVectors(pieceDoc, "attackDirectionVectors");
-				Vector2[] tempMovementDirectionVectors = grabVectors(pieceDoc, "movementDirectionVectors");
-				Vector2[] tempSpecialMovementVectors = grabVectors(pieceDoc, "specialMovementVectors");
-				Vector2[] tempMovementVectors = grabVectors(pieceDoc, "movementVectors");
-				Vector2[] tempAttackVectors = grabVectors(pieceDoc, "attackVectors");
-
-				// Create the piece and add it to the array of pieces.
-				ChessPiece tempChessPiece = new ChessPiece(tempName, tempID, tempAttackDirectionVectors,
-						tempMovementDirectionVectors, tempSpecialMovementVectors, tempMovementVectors,
-						tempAttackVectors, tempBlackArtFile, tempWhiteArtFile, tempNPCArtFile);
-				tempChessPiece.setOwner(ChessOwner.WHITE);	// TODO: correct settings for the chess piece owner.
-				grabbedPieces.add(tempChessPiece);
-*/
+				grabBoardPieces(boardDoc, tempWidth);	// Creates the board 'grabbedChessBoard' of correct size and with pieces added in all their positions.
+			
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -232,6 +205,7 @@ public class ResourceGrabber {
 		return temp;
 	}
 
+	
 	private ChessBoard grabBoardPieces(Document inDoc, int boardWidth){
 		grabbedChessBoard = new ChessBoard(grabbedChessPieceSet);
 		grabbedChessBoard.setBoardWidth(boardWidth);
@@ -246,19 +220,19 @@ public class ResourceGrabber {
 					yTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("y").getNodeValue());
 					tempName = tempNodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
 					tempOwner = tempNodeList.item(i).getAttributes().getNamedItem("owner").getNodeValue();	// TODO parse owner.
-					ChessPiece tempPiece = grabbedChessPieceSet.getPieceByName(tempName).getClone(ChessOwner.BLACK);
+					ChessOwner tempPieceOwner;
+					if(tempOwner.compareTo("BLACK") == 0){
+						tempPieceOwner = ChessOwner.BLACK;
+					} else if(tempOwner.compareTo("WHITE") == 0){
+						tempPieceOwner = ChessOwner.WHITE;
+					} else {
+						tempPieceOwner = ChessOwner.NC;
+					}
+					ChessPiece tempPiece = grabbedChessPieceSet.getPieceByName(tempName).getClone(tempPieceOwner);
 					grabbedChessBoard.addPiece(xTemp, yTemp, tempPiece);
-					
-					System.out.println("Name: " + grabbedChessBoard.getChessPieceByXYTile(xTemp, yTemp).getPieceName()
-							+ " X: " + grabbedChessBoard.getChessPieceByXYTile(xTemp, yTemp).getX()
-							+ " Y: " + grabbedChessBoard.getChessPieceByXYTile(xTemp, yTemp).getY());
-					
 				} catch(NumberFormatException e){
-					// TODO: NumberFormatException handling.
-					System.out.println("Number Format Error in XML Read!!!");
+					System.out.println("Number Format Error in XML Read!!! 'grabBoardPieces' method.");
 				}
-				
-			
 		}
 		return grabbedChessBoard;
 	}
@@ -267,5 +241,8 @@ public class ResourceGrabber {
 		grabbedChessPieceSet = new ChessPieceSet(getGrabbedPieces());
 		return grabbedChessPieceSet;
 	}
-
+	
+	public ChessBoard getGrabbedChessBoard() {
+		return grabbedChessBoard;
+	}
 }
