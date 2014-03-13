@@ -238,7 +238,7 @@ public class ChessGame3D implements ApplicationListener {
 		// Grab the set of chess pieces before starting the server.
 		ResourceGrabber myGrab;
 		myGrab = new ResourceGrabber();
-		ChessPieceSet gamePieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
+		ChessPieceSet gamePieceSet = myGrab.getGrabbedChessPieceSet();
 
 		if(server == null && serverThread == null) {
 			// Make the new board
@@ -262,14 +262,6 @@ public class ChessGame3D implements ApplicationListener {
 				board.addPiece(x, 1, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.BLACK));
 				board.addPiece(x, 6, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.WHITE));
 			}
-			
-			System.out.println("Board Loader launch:");
-			ResourceGrabber boardGrab = new ResourceGrabber();
-			boardGrab.grabBoard(gamePieceSet);
-			System.out.println("Board Loader end.");
-			
-		//	ResourceThrower boardThrow = new ResourceThrower("C:\\Users\\Peter\\git\\weird-chess\\chess\\assets\\data");
-		//	boardThrow.createBoardFile(board);
 			
 			server = new Server(port, board);
 			serverThread = new Thread(server);

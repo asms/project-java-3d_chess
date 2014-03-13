@@ -30,8 +30,10 @@ public class ResourceGrabber {
 
 	File[] resourceFileList;
 	ArrayList<ChessPiece> grabbedPieces = new ArrayList<ChessPiece>();
+	ChessPieceSet grabbedChessPieceSet;
 	ArrayList<ChessTile> grabbedTiles = new ArrayList<ChessTile>();
 	ChessBoard grabbedChessBoard;
+	
 	String[] fileNameList = {
 			"Bishop_ID10.piece.xml",
 			"King_ID20.piece.xml",
@@ -43,7 +45,9 @@ public class ResourceGrabber {
 	};
 
 	public ResourceGrabber() {
-		grabPieces();
+		grabPieces();	// Need to get the pieces to populate boards.
+		getGrabbedChessPieceSet(); // Used by grabBoard.
+		grabBoard();	// Gets the board.
 	}
 	
 	public void grabPieces(){
@@ -116,18 +120,18 @@ public class ResourceGrabber {
 		}
 	}
 // TODO make it take a filepath
-	public ChessBoard grabBoard(ChessPieceSet gamePieceSet){
+	public ChessBoard grabBoard(){
 			try {
 				InputStream fileStream = ResourceGrabber.class.getResourceAsStream("/data/standardChess.board.xml");
 
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document pieceDoc = dBuilder.parse(fileStream);
-				pieceDoc.getDocumentElement().normalize();
+				Document boardDoc = dBuilder.parse(fileStream);
+				boardDoc.getDocumentElement().normalize();
 
 				// Get the piece ID
 				int tempWidth = -1;
-				String tempWidthStr = pieceDoc.getDocumentElement().getAttribute("width").toString();
+				String tempWidthStr = boardDoc.getDocumentElement().getAttribute("width").toString();
 				if(tempWidthStr != null){
 					try{
 						tempWidth = Integer.parseInt(tempWidthStr);
@@ -136,6 +140,10 @@ public class ResourceGrabber {
 					}
 				}
 				System.out.println("Temp Width: " + tempWidth);
+				
+				grabBoardPieces(boardDoc, tempWidth);
+				
+				
 /*
 				// Get the pieceName
 				String tempName = grabFirstString(pieceDoc, "pieceName");
@@ -223,9 +231,11 @@ public class ResourceGrabber {
 		}
 		return temp;
 	}
-	/*
-	private ChessPiece[] grabBoardPieces(Document inDoc){
-		NodeList tempNodeList = inDoc.getElementsByTagName("piece");	// Get all the vectors in the file.
+
+	private ChessBoard grabBoardPieces(Document inDoc, int boardWidth){
+		grabbedChessBoard = new ChessBoard(grabbedChessPieceSet);
+		grabbedChessBoard.setBoardWidth(boardWidth);
+		NodeList tempNodeList = inDoc.getElementsByTagName("piece");	// Get all the pieces
 		ArrayList<ChessPiece> ourPieces = new ArrayList<ChessPiece>();
 		for(int i = 0; i < tempNodeList.getLength(); i++){
 				String tempName, tempOwner;
@@ -235,20 +245,27 @@ public class ResourceGrabber {
 					xTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("x").getNodeValue());
 					yTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("y").getNodeValue());
 					tempName = tempNodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
-					tempOwner = tempNodeList.item(i).getAttributes().getNamedItem("owner").getNodeValue();
+					tempOwner = tempNodeList.item(i).getAttributes().getNamedItem("owner").getNodeValue();	// TODO parse owner.
+					ChessPiece tempPiece = grabbedChessPieceSet.getPieceByName(tempName).getClone(ChessOwner.BLACK);
+					grabbedChessBoard.addPiece(xTemp, yTemp, tempPiece);
+					
+					System.out.println("Name: " + grabbedChessBoard.getChessPieceByXYTile(xTemp, yTemp).getPieceName()
+							+ " X: " + grabbedChessBoard.getChessPieceByXYTile(xTemp, yTemp).getX()
+							+ " Y: " + grabbedChessBoard.getChessPieceByXYTile(xTemp, yTemp).getY());
+					
 				} catch(NumberFormatException e){
 					// TODO: NumberFormatException handling.
 					System.out.println("Number Format Error in XML Read!!!");
 				}
-				ourPieces.add(new ChessPiece());
+				
 			
 		}
-		Vector2[] tempVectorArray = new Vector2[ourVectors.size()];
-		for( int i = 0; i < ourVectors.size(); i++){
-			tempVectorArray[i] = ourVectors.get(i);
-		}
-		return tempVectorArray;
+		return grabbedChessBoard;
 	}
-*/
+
+	public ChessPieceSet getGrabbedChessPieceSet() {
+		grabbedChessPieceSet = new ChessPieceSet(getGrabbedPieces());
+		return grabbedChessPieceSet;
+	}
 
 }
