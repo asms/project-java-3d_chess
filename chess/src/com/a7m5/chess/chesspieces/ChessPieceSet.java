@@ -6,17 +6,11 @@ public class ChessPieceSet {
 	public ChessPieceSet(ChessPiece[] set) {
 		this.set = set;
 	}
-	/*	UNTESTED!
-	public ChessPiece getPieceByID(int id){
-		ChessPiece temp = new ChessPiece(null);
-		for(int i = 0; i < set.length; i++){
-			if(set[i].getUniquePieceID() == id){
-				temp = set[i];
-			}
-		}
-		return temp;	
+	
+	public ChessPiece getPieceByIndex(int i){
+		return set[i];
 	}
-	 */
+	
 	public ChessPiece getPieceByName(String name){
 		ChessPiece temp = new ChessPiece(null);
 		for(int i = 0; i < set.length; i++){

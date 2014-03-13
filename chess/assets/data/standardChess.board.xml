@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<chessBoard width="8">
+	<pieces>
+		<piece name="Rook" owner="BLACK" x="0" y="0" />
+		<piece name="Pawn" owner="BLACK" x="0" y="1" />
+		<piece name="Pawn" owner="WHITE" x="0" y="6" />
+		<piece name="Rook" owner="WHITE" x="0" y="7" />
+		<piece name="Knight" owner="BLACK" x="1" y="0" />
+		<piece name="Pawn" owner="BLACK" x="1" y="1" />
+		<piece name="Pawn" owner="WHITE" x="1" y="6" />
+		<piece name="Knight" owner="WHITE" x="1" y="7" />
+		<piece name="Bishop" owner="BLACK" x="2" y="0" />
+		<piece name="Pawn" owner="BLACK" x="2" y="1" />
+		<piece name="Pawn" owner="WHITE" x="2" y="6" />
+		<piece name="Bishop" owner="WHITE" x="2" y="7" />
+		<piece name="Queen" owner="BLACK" x="3" y="0" />
+		<piece name="Pawn" owner="BLACK" x="3" y="1" />
+		<piece name="Pawn" owner="WHITE" x="3" y="6" />
+		<piece name="Queen" owner="WHITE" x="3" y="7" />
+		<piece name="King" owner="BLACK" x="4" y="0" />
+		<piece name="Pawn" owner="BLACK" x="4" y="1" />
+		<piece name="Pawn" owner="WHITE" x="4" y="6" />
+		<piece name="King" owner="WHITE" x="4" y="7" />
+		<piece name="Bishop" owner="BLACK" x="5" y="0" />
+		<piece name="Pawn" owner="BLACK" x="5" y="1" />
+		<piece name="Pawn" owner="WHITE" x="5" y="6" />
+		<piece name="Bishop" owner="WHITE" x="5" y="7" />
+		<piece name="Knight" owner="BLACK" x="6" y="0" />
+		<piece name="Pawn" owner="BLACK" x="6" y="1" />
+		<piece name="Pawn" owner="WHITE" x="6" y="6" />
+		<piece name="Knight" owner="WHITE" x="6" y="7" />
+		<piece name="Rook" owner="BLACK" x="7" y="0" />
+		<piece name="Pawn" owner="BLACK" x="7" y="1" />
+		<piece name="Pawn" owner="WHITE" x="7" y="6" />
+		<piece name="Rook" owner="WHITE" x="7" y="7" />
+	</pieces>
+</chessBoard>

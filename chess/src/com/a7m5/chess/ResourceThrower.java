@@ -1,6 +1,8 @@
 package com.a7m5.chess;
 
 import java.io.File;
+
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,7 +38,7 @@ public class ResourceThrower {
 			Element rootElement = doc.createElement("chessPiece");
 			rootElement.setAttribute("uniquePieceID", Integer.toString(outgoingPiece.getUniquePieceID()));
 			doc.appendChild(rootElement);
-
+			
 			// Add all the standalone tags.
 			addStandaloneStr("pieceName", outgoingPiece.getPieceName(), doc, rootElement);
 			addStandaloneStr("blackArtFile", outgoingPiece.getBlackArtFile(), doc, rootElement);
@@ -87,6 +89,62 @@ public class ResourceThrower {
 		}
 	}
 
+	public void createBoardFile(ChessBoard outgoingBoard){
+		String tempName = JOptionPane.showInputDialog(null, "Whats a good name for your Board?\nBe careful not to overwrite another board save.", "");
+		if(!tempName.isEmpty()){
+			File tempFile = new File(resourceDirectoryPath + "\\" + tempName + ".board.xml");
 
+			try {
+
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+				// root element, sets ID
+				Document doc = docBuilder.newDocument();
+				Element rootElement = doc.createElement("chessBoard");
+				rootElement.setAttribute("width", Integer.toString(outgoingBoard.getBoardWidth()));
+				doc.appendChild(rootElement);
+				
+				// Piece element
+				Element pieceElement = doc.createElement("pieces");
+				rootElement.appendChild(pieceElement);
+				
+				// Add all the pieces on the board.
+				for(int x =0; x < outgoingBoard.getBoardWidth(); x++){
+					for(int y =0; y < outgoingBoard.getBoardWidth(); y++){	
+						addPiece(outgoingBoard.getChessPieceByXYTile(x, y),  doc, pieceElement);
+					}
+				}
+				
+				// write the content into xml file
+				TransformerFactory transformerFactory = TransformerFactory.newInstance();
+				Transformer transformer = transformerFactory.newTransformer();
+				DOMSource source = new DOMSource(doc);
+				StreamResult result = new StreamResult(tempFile);
+				transformer.transform(source, result);
+
+				System.out.println("File saved: " + tempFile.getAbsolutePath());
+
+			} catch (ParserConfigurationException pce) {
+				pce.printStackTrace();
+			} catch (TransformerException tfe) {
+				tfe.printStackTrace();
+			}
+		}
+	}
+
+
+	private void addPiece(ChessPiece pieceIn, Document docIn, Element root){
+		// Add the tag/string
+		if(pieceIn != null){
+			Element temp = docIn.createElement("piece");
+			temp.setAttribute("x", Integer.toString(pieceIn.getX()));
+			temp.setAttribute("y", Integer.toString(pieceIn.getY()));
+			temp.setAttribute("name", pieceIn.getPieceName());
+			temp.setAttribute("owner", pieceIn.getOwner().toString());
+
+			root.appendChild(temp);
+		}
+	}
 
 }

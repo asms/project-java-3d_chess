@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <chessPiece uniquePieceID="30">
 	<pieceName>Knight</pieceName>
-	<blackArtFile>data/king.png</blackArtFile>
-	<whiteArtFile>data/king.png</whiteArtFile>
+	<blackArtFile>chess-textures/king-black.png</blackArtFile>
+	<whiteArtFile>chess-textures/king-white.png</whiteArtFile>
 	<NPCArtFile />
 	<movementVectors>
 		<vector x="2" y="-1" />

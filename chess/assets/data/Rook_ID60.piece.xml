@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <chessPiece uniquePieceID="60">
 	<pieceName>Rook</pieceName>
-	<blackArtFile>data/rook-black.png</blackArtFile>
-	<whiteArtFile>data/rook-white.png</whiteArtFile>
+	<blackArtFile>chess-textures/rook-black.png</blackArtFile>
+	<whiteArtFile>chess-textures/rook-white.png</whiteArtFile>
 	<NPCArtFile />
 	<movementDirectionVectors>
 		<vector x="0" y="1" />
