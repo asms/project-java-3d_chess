@@ -51,6 +51,7 @@ public class ChessBoard implements Serializable {
 	public static int boardWidth = 8; //8 (traditional), 16 (large), 32 (extra large)
 	public static int tileWidth = actualBoardWidth / boardWidth;
 
+
 	public ChessBoard(){
 		System.out.println("NEW CHESSBOARD INSTANCE, empty constructor: " + toString());
 	}
@@ -420,5 +421,9 @@ public class ChessBoard implements Serializable {
 	public static void setBoardWidth(int boardWidth) {
 		ChessBoard.boardWidth = boardWidth;
 		tileWidth = actualBoardWidth / boardWidth;
+	}
+
+	public static int getTileWidth() {
+		return tileWidth;
 	}
 }

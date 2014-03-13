@@ -21,7 +21,7 @@ public class EditorInputProcessor implements InputProcessor {
 
    @Override
    public boolean touchDown (int x, int y, int pointer, int button) {
-	   ChessBoardPalette.onClickListener(x, y, pointer, button);
+	   ChessGameEditor.onClickListener(x, y, pointer, button);
 	   return false;
    }
 

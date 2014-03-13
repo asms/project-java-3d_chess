@@ -38,9 +38,10 @@ public class ChessBoardPalette implements Serializable{
 	private static ChessPiece[][] blackTabPieces = new ChessPiece[paletteWidth][paletteHeight];
 	private static ChessPiece selectedPiece;
 
-	public ChessBoardPalette(int bottomLeftX, int bottomLeftY) {
+	public ChessBoardPalette(int bottomLeftX, int bottomLeftY, ChessPieceSet pieceSet) {
 		paletteBottomLeftX = bottomLeftX;
 		paletteBottomLeftY = bottomLeftY;
+		editorPieceSet = pieceSet;
 	}
 
 	public static void loadTextures() {
@@ -70,11 +71,6 @@ public class ChessBoardPalette implements Serializable{
 				"data/en_tabTiles.png",
 				"data/dn_tabTiles.png");
 		clickableComponents.add(tabTiles);
-
-		// Grab the piece set. 
-		ResourceGrabber myGrab;
-		myGrab = new ResourceGrabber();
-		editorPieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
 
 		// Load textures from xml defined paths.
 		for(int i = 0; i < editorPieceSet.getLength()-1; i++){
@@ -237,6 +233,9 @@ public class ChessBoardPalette implements Serializable{
 				System.out.println("Selected Piece: " + selectedPiece.getPieceName() + " - Team: " + selectedPiece.getOwner());
 			} catch(IndexOutOfBoundsException e){
 				e.printStackTrace();
+			} catch(NullPointerException e){
+				System.out.println("Not a piece... threw an exception.");
+				//e.printStackTrace();
 			}			
 		}
 
@@ -271,5 +270,19 @@ public class ChessBoardPalette implements Serializable{
 	public void resize(int width, int height) {
 		windowHeight = height;
 		windowWidth = width;
+	}
+
+	public static ChessPiece getSelectedPiece() {
+		ChessOwner tempGameOwner = ChessOwner.NC;
+		if(tabSelected == tabWhite){
+			tempGameOwner = ChessOwner.WHITE;
+		} else if(tabSelected == tabBlack){
+			tempGameOwner = ChessOwner.BLACK;
+		}
+		
+		if(selectedPiece != null){
+			return selectedPiece.getClone(tempGameOwner);
+		}
+		return null;
 	}
 }

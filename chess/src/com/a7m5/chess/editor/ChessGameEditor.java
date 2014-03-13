@@ -9,6 +9,10 @@
 package com.a7m5.chess.editor;
 
 import com.a7m5.chess.ChessBoard;
+import com.a7m5.chess.ChessGame3D;
+import com.a7m5.chess.ResourceGrabber;
+import com.a7m5.chess.chesspieces.ChessOwner;
+import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -21,22 +25,25 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 public class ChessGameEditor implements ApplicationListener {
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	private ChessBoard editingBoard;
-	private ChessBoardPalette editingPalette;
+	private static ChessBoard editingBoard;
+	private static ChessBoardPalette editingPalette;
+	private static ChessPieceSet editorPieceSet;
 
 	public ChessGameEditor(int requestedBoardSize) {
+		ResourceGrabber myGrab;
+		myGrab = new ResourceGrabber();
+		editorPieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
 		// Make the editing board of the correct size.
-		editingBoard = new ChessBoard();
-		editingBoard.setBoardWidth(requestedBoardSize);
+		editingBoard = new ChessBoard(editorPieceSet);
+		ChessBoard.setBoardWidth(requestedBoardSize);
 		// Creates the palette in the correct position.
-		editingPalette = new ChessBoardPalette(522,10);
+		editingPalette = new ChessBoardPalette(522,10,editorPieceSet);
 	}
 
 	@Override
 	public void create() {
 		ChessBoardPalette.loadTextures();
 		ChessBoard.loadTextures();
-		
 
 		EditorInputProcessor inputProcessor = new EditorInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
@@ -70,6 +77,7 @@ public class ChessGameEditor implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		editingPalette.drawElements(batch);
+		editingBoard.drawPieces(batch);
 		batch.end();
 	}
 
@@ -88,6 +96,19 @@ public class ChessGameEditor implements ApplicationListener {
 	@Override
 	public void dispose() {
 		batch.dispose();
+	}
+
+
+	public static void onClickListener(int x, int y, int pointer, int button) {
+		System.out.println(x + ":" + y);
+		// Palette Clicks.
+		ChessBoardPalette.onClickListener(x, y, pointer, button);
+		// Board Clicks.
+		if((ChessBoardPalette.getSelectedPiece() != null)&&(x < editingBoard.getBoardWidth()*ChessBoard.getTileWidth())){
+			ChessOwner tempOwner =  ChessBoardPalette.getSelectedPiece().getOwner();
+			editingBoard.addPiece(ChessBoard.getTileFromCoordinate(x), ChessBoard.boardWidth - ChessBoard.getTileFromCoordinate(y) - 1, ChessBoardPalette.getSelectedPiece().getClone(tempOwner));
+		}
+
 	}
 
 }
