@@ -3,29 +3,28 @@ package com.a7m5.chess.editor;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.a7m5.chess.ResourceGrabber;
+import com.a7m5.chess.Vector2;
+import com.a7m5.chess.chesspieces.ChessOwner;
+import com.a7m5.chess.chesspieces.ChessPiece;
+import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class ChessBoardPalette implements Serializable{
 	private static ArrayList<ClickableComponent> clickableComponents = new ArrayList<ClickableComponent>();
 	private static ClickableComponent tabWhite;
 	private static ClickableComponent tabBlack;
-	private static ClickableComponent tabNPC;
 	private static ClickableComponent tabTiles;
 	private static ClickableComponent tabSelected;
-
-	private static TabPane paneWhite;
-	private static TabPane paneBlack;
-	private static TabPane paneNPC;
-	private static TabPane paneTiles;
-	private static TabPane paneSelected;
 
 	private static int windowHeight;
 	private static int windowWidth;
 
 	private final static int TILE_SIZE = 62;
-	private static int paletteWidth = 6;
+	private static int paletteWidth = 5;
 	private static int actualPaletteWidth = TILE_SIZE*paletteWidth;
 	private static int paletteHeight = 7;
 	private static int actualPaletteHeight = TILE_SIZE*paletteHeight;
@@ -33,6 +32,10 @@ public class ChessBoardPalette implements Serializable{
 	private static int tileHeight = actualPaletteHeight / paletteHeight;
 	private static int paletteBottomLeftX;
 	private static int paletteBottomLeftY;
+
+	private static ChessPieceSet editorPieceSet;
+	private static ChessPiece[][] whiteTabPieces = new ChessPiece[paletteWidth][paletteHeight];
+	private static ChessPiece[][] blackTabPieces = new ChessPiece[paletteWidth][paletteHeight];
 
 	public ChessBoardPalette(int bottomLeftX, int bottomLeftY) {
 		paletteBottomLeftX = bottomLeftX;
@@ -59,39 +62,48 @@ public class ChessBoardPalette implements Serializable{
 				"data/dn_tabBlackTeam.png");
 		clickableComponents.add(tabBlack);
 
-		tabNPC = new ClickableComponent(paletteBottomLeftX + tabWidth*2,
-				paletteBottomLeftY + actualPaletteHeight,
-				tabWidth,
-				tabHeight,
-				"data/en_tabNPC.png",
-				"data/dn_tabNPC.png");
-		clickableComponents.add(tabNPC);
-
-		tabTiles = new ClickableComponent(paletteBottomLeftX + tabWidth*3,
+		tabTiles = new ClickableComponent(paletteBottomLeftX + tabWidth*2,
 				paletteBottomLeftY + actualPaletteHeight,
 				tabWidth,
 				tabHeight,
 				"data/en_tabTiles.png",
 				"data/dn_tabTiles.png");
 		clickableComponents.add(tabTiles);
-		// Load all the resources from file (Pieces, NPC's, and tiles), this
-		//includes the pieces themselves and their associated artwork.
 
-		// TODO: Load all GamePiece files from a folder.
-		// TODO: Create an array for white, black, NPC, and tile pieces respectively. Fill arrays.
-		// TODO: Create panes to hold pieces and pass in arrays of the pieces.
-		/*
-		// Panel textures.
-		paneWhite.loadTextures();
-		paneBlack.loadTextures();
-		paneNPC.loadTextures();
-		paneTiles.loadTextures();
-		 */
+		// Grab the piece set. 
+		ResourceGrabber myGrab;
+		myGrab = new ResourceGrabber();
+		editorPieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
+
+		// Load textures from xml defined paths.
+		for(int i = 0; i < editorPieceSet.getLength()-1; i++){
+			editorPieceSet.getPieceByIndex(i).loadTextures();
+		}
+
+		// Fill up the chess piece arrays with the loaded pieces.
+		int deltaX = 0;
+		int deltaY = 0;
+		for(int k = 0; k < editorPieceSet.getLength()-1; k++){
+			whiteTabPieces[deltaX][deltaY] = editorPieceSet.getPieceByIndex(k).getClone(ChessOwner.WHITE);
+			System.out.println("WHITE: " + deltaX + ":" + deltaY + " " + editorPieceSet.getPieceByIndex(k).getPieceName());
+			blackTabPieces[deltaX][deltaY] = editorPieceSet.getPieceByIndex(k).getClone(ChessOwner.BLACK);
+
+			if(deltaX == paletteWidth - 1){
+				deltaX = 0;
+				deltaY++;
+			} else {
+				deltaX++;
+			}
+		}
+
+		// Set the starting tab.
+		tabSelected = tabWhite;
+		tabWhite.setComponentSelected(true);
 	}
 
 	public void drawBackground(ShapeRenderer shapeRenderer) {
 		// Background
-		shapeRenderer.setColor(Color.RED);
+		shapeRenderer.setColor(new Color(0.84f, 0.84f, 0.84f, 1));
 		shapeRenderer.rect(paletteBottomLeftX, paletteBottomLeftY, actualPaletteWidth, actualPaletteHeight);
 
 		// Tiles
@@ -108,8 +120,65 @@ public class ChessBoardPalette implements Serializable{
 		for(int i = 0; i < clickableComponents.size(); i++){
 			clickableComponents.get(i).drawComponent(batch);
 		}
-		// Draw the current pane.
-		//		paneSelected.drawPane(batch);	
+
+		for(int y = 0; y < paletteHeight; y++) {
+			for(int x = 0; x < paletteWidth; x++) {
+				ChessPiece chessPiece = whiteTabPieces[x][y];
+
+				TextureRegion textureRegion = new TextureRegion();
+				if(chessPiece != null){
+					if(chessPiece.getPieceName() != null){
+
+						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
+							if(tabSelected == tabWhite){
+								textureRegion = editorPieceSet.getPieceByName("Pawn").getWhiteTextureRegion();
+							} else if(tabSelected == tabBlack) {
+								textureRegion = editorPieceSet.getPieceByName("Pawn").getBlackTextureRegion();
+							}
+						} else if(chessPiece.getPieceName().compareTo("King") == 0) {
+							if(tabSelected == tabWhite) {
+								textureRegion = editorPieceSet.getPieceByName("King").getWhiteTextureRegion();
+							} else if(tabSelected == tabBlack){
+								textureRegion = editorPieceSet.getPieceByName("King").getBlackTextureRegion();
+							}
+						} else if(chessPiece.getPieceName().compareTo("Queen") == 0) {
+							if(tabSelected == tabWhite) {
+								textureRegion = editorPieceSet.getPieceByName("Queen").getWhiteTextureRegion();
+							} else if(tabSelected == tabBlack){
+								textureRegion = editorPieceSet.getPieceByName("Queen").getBlackTextureRegion();
+							}
+						} else if(chessPiece.getPieceName().compareTo("Knight") == 0) {
+							if(tabSelected == tabWhite) {
+								textureRegion = editorPieceSet.getPieceByName("Knight").getWhiteTextureRegion();
+							} else if(tabSelected == tabBlack){
+								textureRegion = editorPieceSet.getPieceByName("Knight").getBlackTextureRegion();
+							}
+						} else if(chessPiece.getPieceName().compareTo("Rook") == 0) {
+							if(tabSelected == tabWhite) {
+								textureRegion = editorPieceSet.getPieceByName("Rook").getWhiteTextureRegion();
+							} else if(tabSelected == tabBlack){
+								textureRegion = editorPieceSet.getPieceByName("Rook").getBlackTextureRegion();
+							}
+						} else if(chessPiece.getPieceName().compareTo("Bishop") == 0) {
+							if(tabSelected == tabWhite) {
+								textureRegion = editorPieceSet.getPieceByName("Bishop").getWhiteTextureRegion();
+							} else if(tabSelected == tabBlack){
+								textureRegion = editorPieceSet.getPieceByName("Bishop").getBlackTextureRegion();
+							}
+						} else {
+							break;
+						}
+					}	
+					// Check that we are in the correct tab before rendering the pieces.
+					if(tabSelected == tabWhite || tabSelected == tabBlack){
+						batch.draw(textureRegion, paletteBottomLeftX + x*tileWidth, paletteBottomLeftY + y*tileHeight, tileWidth, tileHeight);
+					}
+				}
+			}
+		}
+
+
+
 
 
 	}
@@ -126,16 +195,12 @@ public class ChessBoardPalette implements Serializable{
 		//	chessPieces = new ChessPiece[paletteWidth][paletteHeight];
 	}
 
-
-
 	public static void onClickListener(int x, int y, int pointer, int button) {
 		// Get the selected tab (check for change and change if click on a tab).
 		if(tabWhite.compClicked(x, y, windowHeight, windowWidth)){
 			tabSelected = tabWhite;
 		} else if(tabBlack.compClicked(x, y, windowHeight, windowWidth)) {
 			tabSelected = tabBlack;
-		} else if(tabNPC.compClicked(x, y, windowHeight, windowWidth)){
-			tabSelected = tabNPC;
 		} else if (tabTiles.compClicked(x, y, windowHeight, windowWidth)){
 			tabSelected = tabTiles;
 		}
@@ -147,11 +212,6 @@ public class ChessBoardPalette implements Serializable{
 				clickableComponents.get(i).setComponentSelected(false);
 			}
 		}
-
-		// TODO: Make each tab render independently
-		//  - The selected tab should render it's palette segment
-		//	- The selected tab should setup it's mouse/piece selection interface.
-		//	- TODO: How to deal with tabs that might be overloaded with pieces from the file load or standard set????
 	}
 
 	public void resize(int width, int height) {
