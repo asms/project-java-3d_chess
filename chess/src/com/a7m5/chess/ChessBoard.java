@@ -452,4 +452,7 @@ public class ChessBoard implements Serializable {
 	public static void toggleTile(int x, int y){
 		tileArray[x][y] = !tileArray[x][y];
 	}
+	public static boolean getTile(int x, int y){
+		return tileArray[x][y];
+	}
 }

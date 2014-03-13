@@ -126,7 +126,12 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 		int tileY = ChessBoard.getTileFromCoordinate(y);
 		Vector2 tileClicked = new Vector2(tileX, tileY);
 		board.setSelectedChessPiece(null);
-		boolean moved = tryMove(tileClicked);
+		boolean moved;
+		if(board.getTile(tileX, tileY)){
+			moved = tryMove(tileClicked);
+		} else {
+			moved = false;
+		}
 		if(moved) {
 			ChessGame3D.getClient().sendMove(getPosition(), tileClicked);
 		}

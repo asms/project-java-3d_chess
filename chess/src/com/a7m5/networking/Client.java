@@ -115,7 +115,7 @@ public class Client implements Runnable {
 				} else {
 					ChessPiece selectedChessPiece = board.getSelectedChessPiece();
 					if(selectedChessPiece != null) {
-						selectedChessPiece.onNullTileClicked(x, y);
+							selectedChessPiece.onNullTileClicked(x, y);
 					}
 				}
 				return;
