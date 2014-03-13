@@ -257,11 +257,11 @@ public class ChessGame3D implements ApplicationListener {
 				board.addPiece(x, 6, gamePieceSet.getPieceByName("Pawn").getClone(ChessOwner.WHITE));
 			}
 			
-		/*	System.out.println("Board Loader launch:");
+			System.out.println("Board Loader launch:");
 			ResourceGrabber boardGrab = new ResourceGrabber();
 			boardGrab.grabBoard(gamePieceSet);
 			System.out.println("Board Loader end.");
-		*/	
+			
 		//	ResourceThrower boardThrow = new ResourceThrower("C:\\Users\\Peter\\git\\weird-chess\\chess\\assets\\data");
 		//	boardThrow.createBoardFile(board);
 			
