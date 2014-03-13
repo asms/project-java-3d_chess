@@ -72,18 +72,23 @@ public class ChessBoard implements Serializable {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
 		this.gamePieceSet = gamePieceSet;
 		System.out.println("NEW CHESSBOARD INSTANCE!!! gamePieceSet const, " + toString());
+		
 	}
 
 	public static void loadTextures() {
 
 		System.out.println("Textures Loading.");
-		//	System.out.println("???: " + gamePieceSet.getLength() + " " + gamePieceSet.toString());
-		/*
+			System.out.println("???: " + gamePieceSet.getLength() + " " + gamePieceSet.toString());
+		
+		ResourceGrabber myGrab;
+		myGrab = new ResourceGrabber();
+		gamePieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
+
 		// Load from xml defined paths.
 		for(int i = 0; i < gamePieceSet.getLength()-1; i++){
 			gamePieceSet.getPieceByIndex(i).loadTextures();
 		} 
-		*/
+		
 		 
 		// Old loading from software defined paths.
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("chess-textures/pawn-white.png"));
@@ -260,31 +265,25 @@ public class ChessBoard implements Serializable {
 
 
 	public void drawPieces(SpriteBatch batch) {
-	//	System.out.println("Draw Peices.");
-		/*
-		try{	
-			System.out.println("Pawn image:" + gamePieceSet.getPieceByName("Pawn").getBlackArtFile());
-			//System.out.println("Pawn image:" + gamePieceSet.getPieceByName("Pawn").getBlackTextureReigon());
-		} catch (Exception e){
-			System.out.println("ERROR: ");
-			e.printStackTrace();
-		}
-		 */
+		 
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth; x++) {
 				ChessPiece chessPiece = chessPieces[x][y];
 				TextureRegion textureRegion = new TextureRegion();
 				if(chessPiece != null){
 					if(chessPiece.getPieceName() != null){
-						
+						if(gamePieceSet != null) {
 						// Test for rendering from piece defined files.
-						/*
-						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
-							textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureReigon();
+						
+							if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
+								textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureReigon();
+							} else {
+								textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureReigon();
+							}
 						} else {
-							textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureReigon();
+							System.out.println("game piece set is null");
 						}
-						 */
+						 
 
 
 						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
