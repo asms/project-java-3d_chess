@@ -26,6 +26,7 @@ public class ChessGameEditor implements ApplicationListener {
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
 	private static ChessBoard editingBoard;
+
 	private static ChessBoardPalette editingPalette;
 	private static ChessPieceSet editorPieceSet;
 
@@ -111,4 +112,7 @@ public class ChessGameEditor implements ApplicationListener {
 
 	}
 
+	public static ChessBoard getEditingBoard() {
+		return editingBoard;
+	}
 }

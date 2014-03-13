@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<chessBoard width="8">
+	<pieces>
+		<piece name="Rook" owner="WHITE" x="2" y="2" />
+		<piece name="Rook" owner="WHITE" x="3" y="5" />
+		<piece name="Rook" owner="WHITE" x="4" y="3" />
+		<piece name="Rook" owner="WHITE" x="6" y="2" />
+	</pieces>
+</chessBoard>
