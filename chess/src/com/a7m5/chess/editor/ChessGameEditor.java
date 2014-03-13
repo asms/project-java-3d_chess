@@ -49,7 +49,7 @@ public class ChessGameEditor implements ApplicationListener {
 		EditorInputProcessor inputProcessor = new EditorInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 
-		camera = new OrthographicCamera(512, 512);
+		camera = new OrthographicCamera(512, 512+330);
 		camera.setToOrtho(false);
 
 		batch = new SpriteBatch();
@@ -105,9 +105,17 @@ public class ChessGameEditor implements ApplicationListener {
 		// Palette Clicks.
 		ChessBoardPalette.onClickListener(x, y, pointer, button);
 		// Board Clicks.
-		if((ChessBoardPalette.getSelectedPiece() != null)&&(x < editingBoard.getBoardWidth()*ChessBoard.getTileWidth())){
-			ChessOwner tempOwner =  ChessBoardPalette.getSelectedPiece().getOwner();
-			editingBoard.addPiece(ChessBoard.getTileFromCoordinate(x), ChessBoard.boardWidth - ChessBoard.getTileFromCoordinate(y) - 1, ChessBoardPalette.getSelectedPiece().getClone(tempOwner));
+		// Adding pieces.
+		if(ChessBoardPalette.getTabSelected() == ChessBoardPalette.tabWhite || ChessBoardPalette.getTabSelected() == ChessBoardPalette.tabBlack){
+			if((ChessBoardPalette.getSelectedPiece() != null)&&(x < editingBoard.getBoardWidth()*ChessBoard.getTileWidth())){
+				// Adding the selected peice.
+				ChessOwner tempOwner =  ChessBoardPalette.getSelectedPiece().getOwner();
+				editingBoard.addPiece(ChessBoard.getTileFromCoordinate(x), ChessBoard.boardWidth - ChessBoard.getTileFromCoordinate(y) - 1, ChessBoardPalette.getSelectedPiece().getClone(tempOwner));
+			}
+			// TODO: some way to remove chess peices.
+		} else if((ChessBoardPalette.getTabSelected() == ChessBoardPalette.tabTiles)&&(x < editingBoard.getBoardWidth()*ChessBoard.getTileWidth())){
+		// Toggling tiles.
+			editingBoard.toggleTile(ChessBoard.getTileFromCoordinate(x),  ChessBoard.boardWidth - ChessBoard.getTileFromCoordinate(y) - 1);
 		}
 
 	}

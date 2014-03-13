@@ -9,15 +9,16 @@ import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class ChessBoardPalette implements Serializable{
 	private static ArrayList<ClickableComponent> clickableComponents = new ArrayList<ClickableComponent>();
-	private static ClickableComponent tabWhite;
-	private static ClickableComponent tabBlack;
-	private static ClickableComponent tabTiles;
+	public static ClickableComponent tabWhite;
+	public static ClickableComponent tabBlack;
+	public static ClickableComponent tabTiles;
 	private static ClickableComponent tabSelected;
 
 	private static int windowHeight;
@@ -104,91 +105,96 @@ public class ChessBoardPalette implements Serializable{
 		// Background
 		shapeRenderer.setColor(new Color(0.84f, 0.84f, 0.84f, 1));
 		shapeRenderer.rect(paletteBottomLeftX, paletteBottomLeftY, actualPaletteWidth, actualPaletteHeight);
+		// If in the tabs for pieces.
+		if(tabSelected == tabWhite || tabSelected == tabBlack){
+			// Tiles
+			for(int y = 0; y < paletteHeight; y++) {
+				for(int x = 0; x < paletteWidth; x++) {
+					shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
+					shapeRenderer.rect(paletteBottomLeftX + x*tileWidth + 2, paletteBottomLeftY + y*tileHeight + 2, tileWidth-4, tileHeight-4);
+				}
+			}
 
-		// Tiles
-		for(int y = 0; y < paletteHeight; y++) {
-			for(int x = 0; x < paletteWidth; x++) {
-				shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
-				shapeRenderer.rect(paletteBottomLeftX + x*tileWidth + 2, paletteBottomLeftY + y*tileHeight + 2, tileWidth-4, tileHeight-4);
+			// Highlighting selected Pieces
+			if(selectedPiece != null) {
+				int xHighlight = selectedPiece.getX();
+				int yHighlight = selectedPiece.getY();
+				shapeRenderer.setColor(Color.RED);
+				shapeRenderer.rect(paletteBottomLeftX + xHighlight*tileWidth + 2, paletteBottomLeftY + yHighlight*tileHeight + 2, tileWidth-4, tileHeight-4);
 			}
 		}
-
-		// Highlighting selected Pieces
-		if(selectedPiece != null) {
-			int xHighlight = selectedPiece.getX();
-			int yHighlight = selectedPiece.getY();
-			shapeRenderer.setColor(Color.RED);
-			shapeRenderer.rect(paletteBottomLeftX + xHighlight*tileWidth + 2, paletteBottomLeftY + yHighlight*tileHeight + 2, tileWidth-4, tileHeight-4);
-		}
-
-
 	}
 
 	public void drawElements(SpriteBatch batch) {
+		// Render the tabs.
 		for(int i = 0; i < clickableComponents.size(); i++){
 			clickableComponents.get(i).drawComponent(batch);
 		}
+		// If in WHITE or BLACK tab render the tab... with the pieces in it... If tab is Tiles print out a message.
+		if(tabSelected == tabWhite || tabSelected == tabBlack){
+			for(int y = 0; y < paletteHeight; y++) {
+				for(int x = 0; x < paletteWidth; x++) {
+					ChessPiece chessPiece = whiteTabPieces[x][y];
 
-		for(int y = 0; y < paletteHeight; y++) {
-			for(int x = 0; x < paletteWidth; x++) {
-				ChessPiece chessPiece = whiteTabPieces[x][y];
+					TextureRegion textureRegion = new TextureRegion();
+					if(chessPiece != null){
+						if(chessPiece.getPieceName() != null){
 
-				TextureRegion textureRegion = new TextureRegion();
-				if(chessPiece != null){
-					if(chessPiece.getPieceName() != null){
+							if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
+								if(tabSelected == tabWhite){
+									textureRegion = editorPieceSet.getPieceByName("Pawn").getWhiteTextureRegion();
+								} else if(tabSelected == tabBlack) {
+									textureRegion = editorPieceSet.getPieceByName("Pawn").getBlackTextureRegion();
+								}
+							} else if(chessPiece.getPieceName().compareTo("King") == 0) {
+								if(tabSelected == tabWhite) {
+									textureRegion = editorPieceSet.getPieceByName("King").getWhiteTextureRegion();
+								} else if(tabSelected == tabBlack){
+									textureRegion = editorPieceSet.getPieceByName("King").getBlackTextureRegion();
+								}
+							} else if(chessPiece.getPieceName().compareTo("Queen") == 0) {
+								if(tabSelected == tabWhite) {
+									textureRegion = editorPieceSet.getPieceByName("Queen").getWhiteTextureRegion();
+								} else if(tabSelected == tabBlack){
+									textureRegion = editorPieceSet.getPieceByName("Queen").getBlackTextureRegion();
+								}
+							} else if(chessPiece.getPieceName().compareTo("Knight") == 0) {
+								if(tabSelected == tabWhite) {
+									textureRegion = editorPieceSet.getPieceByName("Knight").getWhiteTextureRegion();
+								} else if(tabSelected == tabBlack){
+									textureRegion = editorPieceSet.getPieceByName("Knight").getBlackTextureRegion();
+								}
+							} else if(chessPiece.getPieceName().compareTo("Rook") == 0) {
+								if(tabSelected == tabWhite) {
+									textureRegion = editorPieceSet.getPieceByName("Rook").getWhiteTextureRegion();
+								} else if(tabSelected == tabBlack){
+									textureRegion = editorPieceSet.getPieceByName("Rook").getBlackTextureRegion();
+								}
+							} else if(chessPiece.getPieceName().compareTo("Bishop") == 0) {
+								if(tabSelected == tabWhite) {
+									textureRegion = editorPieceSet.getPieceByName("Bishop").getWhiteTextureRegion();
+								} else if(tabSelected == tabBlack){
+									textureRegion = editorPieceSet.getPieceByName("Bishop").getBlackTextureRegion();
+								}
+							} else {
+								break;
+							}
+						}	
 
-						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
-							if(tabSelected == tabWhite){
-								textureRegion = editorPieceSet.getPieceByName("Pawn").getWhiteTextureRegion();
-							} else if(tabSelected == tabBlack) {
-								textureRegion = editorPieceSet.getPieceByName("Pawn").getBlackTextureRegion();
-							}
-						} else if(chessPiece.getPieceName().compareTo("King") == 0) {
-							if(tabSelected == tabWhite) {
-								textureRegion = editorPieceSet.getPieceByName("King").getWhiteTextureRegion();
-							} else if(tabSelected == tabBlack){
-								textureRegion = editorPieceSet.getPieceByName("King").getBlackTextureRegion();
-							}
-						} else if(chessPiece.getPieceName().compareTo("Queen") == 0) {
-							if(tabSelected == tabWhite) {
-								textureRegion = editorPieceSet.getPieceByName("Queen").getWhiteTextureRegion();
-							} else if(tabSelected == tabBlack){
-								textureRegion = editorPieceSet.getPieceByName("Queen").getBlackTextureRegion();
-							}
-						} else if(chessPiece.getPieceName().compareTo("Knight") == 0) {
-							if(tabSelected == tabWhite) {
-								textureRegion = editorPieceSet.getPieceByName("Knight").getWhiteTextureRegion();
-							} else if(tabSelected == tabBlack){
-								textureRegion = editorPieceSet.getPieceByName("Knight").getBlackTextureRegion();
-							}
-						} else if(chessPiece.getPieceName().compareTo("Rook") == 0) {
-							if(tabSelected == tabWhite) {
-								textureRegion = editorPieceSet.getPieceByName("Rook").getWhiteTextureRegion();
-							} else if(tabSelected == tabBlack){
-								textureRegion = editorPieceSet.getPieceByName("Rook").getBlackTextureRegion();
-							}
-						} else if(chessPiece.getPieceName().compareTo("Bishop") == 0) {
-							if(tabSelected == tabWhite) {
-								textureRegion = editorPieceSet.getPieceByName("Bishop").getWhiteTextureRegion();
-							} else if(tabSelected == tabBlack){
-								textureRegion = editorPieceSet.getPieceByName("Bishop").getBlackTextureRegion();
-							}
-						} else {
-							break;
-						}
-					}	
-					// Check that we are in the correct tab before rendering the pieces.
-					if(tabSelected == tabWhite || tabSelected == tabBlack){
 						batch.draw(textureRegion, paletteBottomLeftX + x*tileWidth, paletteBottomLeftY + y*tileHeight, tileWidth, tileHeight);
 					}
 				}
 			}
+		} else if(tabSelected == tabTiles){
+		        BitmapFont font;
+		        CharSequence str = "Click a tile to delete set it as enabled (steppable)/nor disabled (not steppable). This will allow for/ncustom board shapes.";
+		        font = new BitmapFont();
+		        font.setColor(Color.RED);
+		        font.draw(batch, "Click a tile to toggle it on/off.",			paletteBottomLeftX + actualPaletteWidth/20, paletteBottomLeftY + actualPaletteHeight*3/4 + font.getCapHeight()*6);
+		        font.draw(batch, "If you click a tile with a piece on",			paletteBottomLeftX + actualPaletteWidth/20, paletteBottomLeftY + actualPaletteHeight*3/4 + font.getCapHeight()*4);
+		        font.draw(batch, "it that piece will be orphaned.",				paletteBottomLeftX + actualPaletteWidth/20, paletteBottomLeftY + actualPaletteHeight*3/4 + font.getCapHeight()*2);
+		        font.draw(batch, "This allows for custom board shapes.", 		paletteBottomLeftX + actualPaletteWidth/20, paletteBottomLeftY + actualPaletteHeight*3/4 - font.getCapHeight()*2);   
 		}
-
-
-
-
-
 	}
 
 	public void start() {
@@ -206,7 +212,8 @@ public class ChessBoardPalette implements Serializable{
 	public static void onClickListener(int x, int y, int pointer, int button) {
 		// Scaling & inversion.
 		y = 512*(windowHeight - y)/windowHeight;	// Y scaling for window resizes
-		x = (int) ((double) x*((((double) 512+400)/((double) windowWidth))));	// X scaling for window resizes
+		x = (int) ((double) x*((((double) 512+330)/((double) windowWidth))));	// X scaling for window resizes
+		
 		// Get the selected tab (check for change and change if click on a tab).
 		if(tabWhite.compClicked(x, y, windowHeight, windowWidth)){
 			tabSelected = tabWhite;
@@ -218,6 +225,7 @@ public class ChessBoardPalette implements Serializable{
 			tabSelected = tabTiles;
 			selectedPiece = null;
 		}
+		
 		// Apply the tab change
 		for(int i = 0; i < clickableComponents.size(); i++){
 			if(clickableComponents.get(i) == tabSelected){	
@@ -226,6 +234,7 @@ public class ChessBoardPalette implements Serializable{
 				clickableComponents.get(i).setComponentSelected(false);
 			}
 		}
+		
 		// Check for clicks on the tiles.
 		if((y > paletteBottomLeftY)&&(y < paletteBottomLeftY + actualPaletteHeight)&&(x > paletteBottomLeftX)&&(x < paletteBottomLeftX + actualPaletteWidth)){
 			try{
@@ -279,10 +288,15 @@ public class ChessBoardPalette implements Serializable{
 		} else if(tabSelected == tabBlack){
 			tempGameOwner = ChessOwner.BLACK;
 		}
-		
+
 		if(selectedPiece != null){
 			return selectedPiece.getClone(tempGameOwner);
 		}
 		return null;
+	}
+	
+
+	public static ClickableComponent getTabSelected() {
+		return tabSelected;
 	}
 }

@@ -37,6 +37,7 @@ public class ChessBoard implements Serializable {
 
 	private static ChessPieceSet gamePieceSet;
 	private ChessPiece[][] chessPieces;
+	private static Boolean[][] tileArray;
 	private ChessPiece selectedChessPiece = null;
 	private ChessOwner turnOwner;
 	private ChessOwner checkedPlayer = null;
@@ -58,6 +59,19 @@ public class ChessBoard implements Serializable {
 
 	public ChessBoard(ChessPieceSet gamePieceSet) {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
+		// Create an array of tile conditions.
+		tileArray = new Boolean[boardWidth][boardWidth];
+		for(int y = 0; y < boardWidth; y++) {
+			for(int x = 0; x < boardWidth; x++) {
+				tileArray[x][y] = true;
+			}
+		}
+		// TODO: fix.. only a test...
+		tileArray[4][2] = false;
+		tileArray[4][3] = false;
+		tileArray[4][4] = false;
+		
+
 		this.gamePieceSet = gamePieceSet;
 		System.out.println("NEW CHESSBOARD INSTANCE, gamePieceSet constructor: " + toString());
 	}
@@ -92,15 +106,16 @@ public class ChessBoard implements Serializable {
 			for(int y = 0; y < boardWidth; y++) {
 				alt =  (1 == y % 2);
 				for(int x = 0; x < boardWidth; x++) {
-					ModelInstance tileInstance = new ModelInstance(tileModel);
-					tileInstance.transform.setToTranslation(x*tileWidth, 0, -y*tileWidth);
-					if(alt){
-						tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(0.84f, 0.84f, 0.84f, 1)));
-					} else {
-						tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(0, 0.84f, 0.18f, 1)));
+					if(tileArray[x][y]){
+						ModelInstance tileInstance = new ModelInstance(tileModel);
+						tileInstance.transform.setToTranslation(x*tileWidth, 0, -y*tileWidth);
+						if(alt){
+							tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(0.84f, 0.84f, 0.84f, 1)));
+						} else {
+							tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(0, 0.84f, 0.18f, 1)));
+						}
+						tileInstances.add(tileInstance);
 					}
-					tileInstances.add(tileInstance);
-
 					alt = !alt;	// Alternate colors on rows.
 				}
 			}
@@ -145,42 +160,47 @@ public class ChessBoard implements Serializable {
 		for(int y = 0; y < boardWidth; y++) {
 			alt =  (1 == y % 2);
 			for(int x = 0; x < boardWidth; x++) {
-				if(alt){
-					shapeRenderer.setColor(new Color(0.84f, 0.84f, 0.84f, 1));
-				} else {
-					shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
+				if(tileArray[x][y]){
+					if(alt){
+						shapeRenderer.setColor(new Color(0.84f, 0.84f, 0.84f, 1));
+					} else {
+						shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
+					}
+					shapeRenderer.rect(x*tileWidth + 1,
+							y*tileWidth + 1,
+							tileWidth-2,
+							tileWidth-2
+							);
 				}
-				shapeRenderer.rect(x*tileWidth + 1,
-						y*tileWidth + 1,
-						tileWidth-2,
-						tileWidth-2
-						);
-
 				alt = !alt;	// Alternate colors on rows.
 			}
 		}
-
+		/* Not used in the chess board editor.
 		if(selectedChessPiece != null) {
 			ArrayList<Vector2> possibleMoves = selectedChessPiece.getPossibleMoves();
 			for(Vector2 possibleMove : possibleMoves) {
 				shapeRenderer.setColor(Color.BLUE);
+				if(tileArray[(int) possibleMove.getX()][(int) possibleMove.getY()]){
 				shapeRenderer.rect((float) (possibleMove.getX() * tileWidth + 1),
 						(float) (possibleMove.getY()*tileWidth + 1),
 						tileWidth-2,
 						tileWidth-2
 						);
+				}
 			}
 			ArrayList<Vector2> possibleAttacks = selectedChessPiece.getPossibleAttacks();
 			for(Vector2 possibleAttack : possibleAttacks) {
 				shapeRenderer.setColor(Color.RED);
+				if(tileArray[(int) possibleAttack.getX()][(int) possibleAttack.getY()]){
 				shapeRenderer.rect((float) (possibleAttack.getX() * tileWidth + 1),
 						(float) (possibleAttack.getY()*tileWidth + 1),
 						tileWidth-2,
 						tileWidth-2
 						);
+				}
 			}
 		}
-
+		 */
 		shapeRenderer.rect(512,
 				0,
 				400,
@@ -196,76 +216,78 @@ public class ChessBoard implements Serializable {
 	public void drawPieces(SpriteBatch batch) {
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth; x++) {
-				ChessPiece chessPiece = chessPieces[x][y];
-				TextureRegion textureRegion = new TextureRegion();
-				if(chessPiece != null){
-					if(chessPiece.getPieceName() != null){
+				if(tileArray[x][y]){
+					ChessPiece chessPiece = chessPieces[x][y];
+					TextureRegion textureRegion = new TextureRegion();
+					if(chessPiece != null){
+						if(chessPiece.getPieceName() != null){
 
-						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
-							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureRegion();;
+							if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
+								if(chessPiece.getOwner() == ChessOwner.WHITE) {
+									textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureRegion();;
+								} else {
+									textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureRegion();;
+								}
+							} else if(chessPiece.getPieceName().compareTo("King") == 0) {
+								if(chessPiece.getOwner() == ChessOwner.WHITE) {
+									textureRegion = gamePieceSet.getPieceByName("King").getWhiteTextureRegion();;
+								} else {
+									textureRegion = gamePieceSet.getPieceByName("King").getBlackTextureRegion();;
+								}
+							} else if(chessPiece.getPieceName().compareTo("Queen") == 0) {
+								if(chessPiece.getOwner() == ChessOwner.WHITE) {
+									textureRegion = gamePieceSet.getPieceByName("Queen").getWhiteTextureRegion();;
+								} else {
+									textureRegion = gamePieceSet.getPieceByName("Queen").getBlackTextureRegion();;
+								}
+							} else if(chessPiece.getPieceName().compareTo("Knight") == 0) {
+								if(chessPiece.getOwner() == ChessOwner.WHITE) {
+									textureRegion = gamePieceSet.getPieceByName("Knight").getWhiteTextureRegion();;
+								} else {
+									textureRegion = gamePieceSet.getPieceByName("Knight").getBlackTextureRegion();;
+								}
+							} else if(chessPiece.getPieceName().compareTo("Rook") == 0) {
+								if(chessPiece.getOwner() == ChessOwner.WHITE) {
+									textureRegion = gamePieceSet.getPieceByName("Rook").getWhiteTextureRegion();;
+								} else {
+									textureRegion = gamePieceSet.getPieceByName("Rook").getBlackTextureRegion();;
+								}
+							} else if(chessPiece.getPieceName().compareTo("Bishop") == 0) {
+								if(chessPiece.getOwner() == ChessOwner.WHITE) {
+									textureRegion = gamePieceSet.getPieceByName("Bishop").getWhiteTextureRegion();;
+								} else {
+									textureRegion = gamePieceSet.getPieceByName("Bishop").getBlackTextureRegion();;
+								}
 							} else {
-								textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureRegion();;
+								break;
 							}
-						} else if(chessPiece.getPieceName().compareTo("King") == 0) {
-							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = gamePieceSet.getPieceByName("King").getWhiteTextureRegion();;
+						}	
+
+
+						int positionX;
+						int positionY;
+
+						if(chessPiece.isAnimating()) {
+							double speed = chessPiece.getSpeed();
+							Vector2 animationPosition = chessPiece.getAnimationPosition();
+							Vector2 differenceVector = new Vector2(
+									x*tileWidth - animationPosition.getX(),
+									y*tileWidth - animationPosition.getY());
+							if(differenceVector.getMagnitude() <= speed) {
+								chessPiece.stopAnimation();
 							} else {
-								textureRegion = gamePieceSet.getPieceByName("King").getBlackTextureRegion();;
+								Vector2 movementVector = differenceVector.getUnitVector().multiply(speed);
+								animationPosition = animationPosition.add(movementVector);
+								chessPiece.setAnimationPosition(animationPosition);
 							}
-						} else if(chessPiece.getPieceName().compareTo("Queen") == 0) {
-							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = gamePieceSet.getPieceByName("Queen").getWhiteTextureRegion();;
-							} else {
-								textureRegion = gamePieceSet.getPieceByName("Queen").getBlackTextureRegion();;
-							}
-						} else if(chessPiece.getPieceName().compareTo("Knight") == 0) {
-							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = gamePieceSet.getPieceByName("Knight").getWhiteTextureRegion();;
-							} else {
-								textureRegion = gamePieceSet.getPieceByName("Knight").getBlackTextureRegion();;
-							}
-						} else if(chessPiece.getPieceName().compareTo("Rook") == 0) {
-							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = gamePieceSet.getPieceByName("Rook").getWhiteTextureRegion();;
-							} else {
-								textureRegion = gamePieceSet.getPieceByName("Rook").getBlackTextureRegion();;
-							}
-						} else if(chessPiece.getPieceName().compareTo("Bishop") == 0) {
-							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = gamePieceSet.getPieceByName("Bishop").getWhiteTextureRegion();;
-							} else {
-								textureRegion = gamePieceSet.getPieceByName("Bishop").getBlackTextureRegion();;
-							}
+							positionX = (int) Math.floor(animationPosition.getX());
+							positionY = (int) Math.floor(animationPosition.getY());
 						} else {
-							break;
+							positionX = x*tileWidth;
+							positionY = y*tileWidth;
 						}
-					}	
-
-
-					int positionX;
-					int positionY;
-
-					if(chessPiece.isAnimating()) {
-						double speed = chessPiece.getSpeed();
-						Vector2 animationPosition = chessPiece.getAnimationPosition();
-						Vector2 differenceVector = new Vector2(
-								x*tileWidth - animationPosition.getX(),
-								y*tileWidth - animationPosition.getY());
-						if(differenceVector.getMagnitude() <= speed) {
-							chessPiece.stopAnimation();
-						} else {
-							Vector2 movementVector = differenceVector.getUnitVector().multiply(speed);
-							animationPosition = animationPosition.add(movementVector);
-							chessPiece.setAnimationPosition(animationPosition);
-						}
-						positionX = (int) Math.floor(animationPosition.getX());
-						positionY = (int) Math.floor(animationPosition.getY());
-					} else {
-						positionX = x*tileWidth;
-						positionY = y*tileWidth;
+						batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 					}
-					batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 				}
 			}
 		}
@@ -310,7 +332,7 @@ public class ChessBoard implements Serializable {
 
 
 	public void addPiece(int x, int y, ChessPiece chessPiece) {
-//		System.out.println("Add piece.");
+		//		System.out.println("Add piece.");
 		chessPiece.register(this, new Vector2(x, y));
 		chessPieces[x][y] = chessPiece;
 	}
@@ -340,7 +362,7 @@ public class ChessBoard implements Serializable {
 	public ChessPiece getChessPieceByXYTile(int x, int y) throws IndexOutOfBoundsException {
 		return chessPieces[x][y];
 	}
-		public ChessPiece getChessPieceByVector(Vector2 vector) {
+	public ChessPiece getChessPieceByVector(Vector2 vector) {
 		return chessPieces[(int) vector.getX()][(int) vector.getY()];
 	}
 	public void moveChessPiece(int tileX0, int tileY0, int tileX1, int tileY1) {
@@ -425,5 +447,9 @@ public class ChessBoard implements Serializable {
 
 	public static int getTileWidth() {
 		return tileWidth;
+	}
+
+	public static void toggleTile(int x, int y){
+		tileArray[x][y] = !tileArray[x][y];
 	}
 }
