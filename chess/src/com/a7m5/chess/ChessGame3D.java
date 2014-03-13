@@ -1,7 +1,5 @@
 package com.a7m5.chess;
 
-import java.net.URISyntaxException;
-
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.a7m5.networking.Client;
@@ -9,6 +7,7 @@ import com.a7m5.networking.Server;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -56,6 +55,9 @@ public class ChessGame3D implements ApplicationListener {
 	private static Thread serverThread = null;
 	private static ChessOwner owner;
 	private static ChessPieceSet gamePieceSet;
+	
+	//Opimization Testing
+	private FPSLogger fpsLogger;
 
 	public ChessGame3D(ChessPieceSet gamePieceSet, ChessOwner chessOwner, String address, int port) {
 		self = this;
@@ -67,6 +69,7 @@ public class ChessGame3D implements ApplicationListener {
 
 	@Override
 	public void create() {
+		fpsLogger = new FPSLogger();
 		//3D
 		modelBatch = new ModelBatch();
 
@@ -126,7 +129,7 @@ public class ChessGame3D implements ApplicationListener {
 		 * Model: models/bishop.g3dj
 		 * Note: Currently, the bishop model is loaded for testing purposes.
 		 */
-		assets.load("models/bishop.g3dj", Model.class);
+		assets.load("models/camera.g3db", Model.class);
 
 		loadingAssets = true;
 
@@ -134,6 +137,7 @@ public class ChessGame3D implements ApplicationListener {
 		client = new Client(address, port);
 		clientThread = new Thread(client);
 		clientThread.start();
+		
 	}
 
 	@Override
@@ -160,22 +164,22 @@ public class ChessGame3D implements ApplicationListener {
 
 			modelBatch.begin(cam);
 			if(!loadingAssets && opponentCamera.length != 0) {
-
+				com.badlogic.gdx.math.Vector3 position = new com.badlogic.gdx.math.Vector3(
+						opponentCamera[0][0],
+						opponentCamera[0][1],
+						opponentCamera[0][2]);
+				com.badlogic.gdx.math.Vector3 direction = new com.badlogic.gdx.math.Vector3(
+						-opponentCamera[1][0],
+						opponentCamera[1][1],
+						opponentCamera[1][2]);
+				com.badlogic.gdx.math.Vector3 up = new com.badlogic.gdx.math.Vector3(
+						opponentCamera[2][0],
+						opponentCamera[2][1],
+						opponentCamera[2][2]);
 				opponentCameraModelInstance.transform.setToWorld(
-						new com.badlogic.gdx.math.Vector3(
-								opponentCamera[0][0],
-								opponentCamera[0][1],
-								opponentCamera[0][2]),
-						new com.badlogic.gdx.math.Vector3(
-								opponentCamera[1][0],
-								opponentCamera[1][1],
-								opponentCamera[1][2]),
-						new com.badlogic.gdx.math.Vector3(
-								opponentCamera[2][0],
-								opponentCamera[2][1],
-								opponentCamera[2][2])
-						);
-
+						position,
+						direction,
+						up).scale(8f, 8f, 8f);
 				modelBatch.render(opponentCameraModelInstance, environment);
 			}
 			/*
@@ -201,6 +205,9 @@ public class ChessGame3D implements ApplicationListener {
 			client.board.drawPieces(batch);
 			batch.end();
 		}
+		
+		// output the current FPS
+        fpsLogger.log();
 	}
 
 	@Override
@@ -216,10 +223,8 @@ public class ChessGame3D implements ApplicationListener {
 	}
 
 	public void onAssetsLoaded() {
-		Model opponentCameraModel = assets.get("models/bishop.g3dj", Model.class);
+		Model opponentCameraModel = assets.get("models/camera.g3db", Model.class);
 		opponentCameraModelInstance = new ModelInstance(opponentCameraModel);
-		opponentCameraModelInstance.transform.scl(1f);
-		opponentCameraModelInstance.calculateTransforms();
 		loadingAssets = false;
 	}
 
@@ -316,7 +321,6 @@ public class ChessGame3D implements ApplicationListener {
 	}
 
 	public static void setOpponentCamera(float[][] oc) {
-		PerspectiveCamera cam= getInstance().getCamera();
 		getInstance().opponentCamera = oc;
 	}
 
