@@ -85,10 +85,12 @@ public class ChessBoardPalette implements Serializable{
 		int deltaX = 0;
 		int deltaY = 0;
 		for(int k = 0; k < editorPieceSet.getLength()-1; k++){
+
 			whiteTabPieces[deltaX][deltaY] = editorPieceSet.getPieceByIndex(k).getClone(ChessOwner.WHITE);
+			whiteTabPieces[deltaX][deltaY].setPosition(new Vector2(deltaX, deltaY));
 			System.out.println("WHITE: " + deltaX + ":" + deltaY + " " + editorPieceSet.getPieceByIndex(k).getPieceName());
 			blackTabPieces[deltaX][deltaY] = editorPieceSet.getPieceByIndex(k).getClone(ChessOwner.BLACK);
-
+			blackTabPieces[deltaX][deltaY].setPosition(new Vector2(deltaX, deltaY));
 			if(deltaX == paletteWidth - 1){
 				deltaX = 0;
 				deltaY++;
@@ -114,6 +116,15 @@ public class ChessBoardPalette implements Serializable{
 				shapeRenderer.rect(paletteBottomLeftX + x*tileWidth + 2, paletteBottomLeftY + y*tileHeight + 2, tileWidth-4, tileHeight-4);
 			}
 		}
+
+		// Highlighting selected Pieces
+		if(selectedPiece != null) {
+			int xHighlight = selectedPiece.getX();
+			int yHighlight = selectedPiece.getY();
+			shapeRenderer.setColor(Color.RED);
+			shapeRenderer.rect(paletteBottomLeftX + xHighlight*tileWidth + 2, paletteBottomLeftY + yHighlight*tileHeight + 2, tileWidth-4, tileHeight-4);
+		}
+
 
 	}
 
@@ -203,10 +214,13 @@ public class ChessBoardPalette implements Serializable{
 		// Get the selected tab (check for change and change if click on a tab).
 		if(tabWhite.compClicked(x, y, windowHeight, windowWidth)){
 			tabSelected = tabWhite;
+			selectedPiece = null;
 		} else if(tabBlack.compClicked(x, y, windowHeight, windowWidth)) {
 			tabSelected = tabBlack;
+			selectedPiece = null;
 		} else if (tabTiles.compClicked(x, y, windowHeight, windowWidth)){
 			tabSelected = tabTiles;
+			selectedPiece = null;
 		}
 		// Apply the tab change
 		for(int i = 0; i < clickableComponents.size(); i++){
@@ -225,7 +239,7 @@ public class ChessBoardPalette implements Serializable{
 				e.printStackTrace();
 			}			
 		}
-		
+
 	}
 
 
@@ -241,7 +255,7 @@ public class ChessBoardPalette implements Serializable{
 		} else {
 			tempSelectedPiece = null; // TODO: How to handle?
 		}
-		
+
 		return tempSelectedPiece;
 
 	}
