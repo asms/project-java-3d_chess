@@ -35,8 +35,8 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 
 	static Texture whiteTexture;
 	protected Texture blackTexture;
-	protected TextureRegion whiteTextureReigon;
-	protected TextureRegion blackTextureReigon;
+	protected TextureRegion whiteTextureRegion;
+	protected TextureRegion blackTextureRegion;
 
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
@@ -349,20 +349,20 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 		
 		whiteTexture = new Texture(Gdx.files.internal(whiteArtFile));
 		whiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		whiteTextureReigon = new TextureRegion(whiteTexture, 0, 0, 64, 64);
+		whiteTextureRegion = new TextureRegion(whiteTexture, 0, 0, 64, 64);
 
 		System.out.println("A blackArtFile: " + blackArtFile);
 		blackTexture = new Texture(Gdx.files.internal(blackArtFile));
 		blackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		blackTextureReigon = new TextureRegion(blackTexture, 0, 0, 64, 64);
+		blackTextureRegion = new TextureRegion(blackTexture, 0, 0, 64, 64);
 		System.out.println("A Piece loaded. Name: " + pieceName + "\n");
 	}
 
-	public TextureRegion getWhiteTextureReigon() {
-		return whiteTextureReigon;
+	public TextureRegion getWhiteTextureRegion() {
+		return whiteTextureRegion;
 	}
 
-	public TextureRegion getBlackTextureReigon() {
-		return blackTextureReigon;
+	public TextureRegion getBlackTextureRegion() {
+		return blackTextureRegion;
 	}
 }

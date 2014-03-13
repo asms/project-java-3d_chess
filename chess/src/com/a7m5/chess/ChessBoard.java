@@ -35,19 +35,6 @@ public class ChessBoard implements Serializable {
 	private static final long serialVersionUID = 7954652516619094585L;
 
 
-	private static TextureRegion pawnWhiteTextureRegion;
-	private static TextureRegion pawnBlackTextureRegion;
-	private static TextureRegion rookWhiteTextureRegion;
-	private static TextureRegion rookBlackTextureRegion;
-	private static TextureRegion kingWhiteTextureRegion;
-	private static TextureRegion kingBlackTextureRegion;
-	private static TextureRegion queenWhiteTextureRegion;
-	private static TextureRegion queenBlackTextureRegion;
-	private static TextureRegion knightWhiteTextureRegion;
-	private static TextureRegion knightBlackTextureRegion;
-	private static TextureRegion bishopWhiteTextureRegion;
-	private static TextureRegion bishopBlackTextureRegion;
-
 	private static ChessPieceSet gamePieceSet;
 	private ChessPiece[][] chessPieces;
 	private ChessPiece selectedChessPiece = null;
@@ -76,10 +63,6 @@ public class ChessBoard implements Serializable {
 	}
 
 	public static void loadTextures() {
-
-		System.out.println("Textures Loading.");
-			System.out.println("???: " + gamePieceSet.getLength() + " " + gamePieceSet.toString());
-		
 		ResourceGrabber myGrab;
 		myGrab = new ResourceGrabber();
 		gamePieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
@@ -88,58 +71,6 @@ public class ChessBoard implements Serializable {
 		for(int i = 0; i < gamePieceSet.getLength()-1; i++){
 			gamePieceSet.getPieceByIndex(i).loadTextures();
 		} 
-		
-		 
-		// Old loading from software defined paths.
-		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("chess-textures/pawn-white.png"));
-		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		pawnWhiteTextureRegion = new TextureRegion(pawnWhiteTexture, 0, 0, 64, 64);
-
-		Texture pawnBlackTexture = new Texture(Gdx.files.internal("chess-textures/pawn-black.png"));
-		pawnBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		pawnBlackTextureRegion = new TextureRegion(pawnBlackTexture, 0, 0, 64, 64);
-
-
-		Texture kingWhiteTexture = new Texture(Gdx.files.internal("chess-textures/king-white.png"));
-		kingWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		kingWhiteTextureRegion = new TextureRegion(kingWhiteTexture, 0, 0, 64, 64);
-
-		Texture kingBlackTexture = new Texture(Gdx.files.internal("chess-textures/king-black.png"));
-		kingBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		kingBlackTextureRegion = new TextureRegion(kingBlackTexture, 0, 0, 64, 64);
-
-		Texture queenWhiteTexture = new Texture(Gdx.files.internal("chess-textures/queen-white.png"));
-		queenWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		queenWhiteTextureRegion = new TextureRegion(queenWhiteTexture, 0, 0, 64, 64);
-
-		Texture queenBlackTexture = new Texture(Gdx.files.internal("chess-textures/queen-black.png"));
-		queenBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		queenBlackTextureRegion = new TextureRegion(queenBlackTexture, 0, 0, 64, 64);
-
-		Texture knightWhiteTexture = new Texture(Gdx.files.internal("chess-textures/knight-white.png"));
-		knightWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		knightWhiteTextureRegion = new TextureRegion(knightWhiteTexture, 0, 0, 64, 64);
-
-		Texture knightBlackTexture = new Texture(Gdx.files.internal("chess-textures/knight-black.png"));
-		knightBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		knightBlackTextureRegion = new TextureRegion(knightBlackTexture, 0, 0, 64, 64);
-
-		Texture rookWhiteTexture = new Texture(Gdx.files.internal("chess-textures/rook-white.png"));
-		rookWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		rookWhiteTextureRegion = new TextureRegion(rookWhiteTexture, 0, 0, 64, 64);
-
-		Texture rookBlackTexture = new Texture(Gdx.files.internal("chess-textures/rook-black.png"));
-		rookBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		rookBlackTextureRegion = new TextureRegion(rookBlackTexture, 0, 0, 64, 64);
-
-		Texture bishopWhiteTexture = new Texture(Gdx.files.internal("chess-textures/bishop-white.png"));
-		bishopWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bishopWhiteTextureRegion = new TextureRegion(bishopWhiteTexture, 0, 0, 64, 64);
-
-		Texture bishopBlackTexture = new Texture(Gdx.files.internal("chess-textures/bishop-black.png"));
-		bishopBlackTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bishopBlackTextureRegion = new TextureRegion(bishopBlackTexture, 0, 0, 64, 64);
-
 	}
 
 
@@ -265,65 +196,49 @@ public class ChessBoard implements Serializable {
 
 
 	public void drawPieces(SpriteBatch batch) {
-		 
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth; x++) {
 				ChessPiece chessPiece = chessPieces[x][y];
 				TextureRegion textureRegion = new TextureRegion();
 				if(chessPiece != null){
 					if(chessPiece.getPieceName() != null){
-						if(gamePieceSet != null) {
-						// Test for rendering from piece defined files.
-						
-							if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
-								textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureReigon();
-							} else {
-								textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureReigon();
-							}
-						} else {
-							System.out.println("game piece set is null");
-						}
-						 
-
 
 						if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
 							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = pawnWhiteTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureRegion();;
 							} else {
-								textureRegion = pawnBlackTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureRegion();;
 							}
 						} else if(chessPiece.getPieceName().compareTo("King") == 0) {
 							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = kingWhiteTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("King").getWhiteTextureRegion();;
 							} else {
-								textureRegion = kingBlackTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("King").getBlackTextureRegion();;
 							}
 						} else if(chessPiece.getPieceName().compareTo("Queen") == 0) {
 							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = queenWhiteTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Queen").getWhiteTextureRegion();;
 							} else {
-								textureRegion = queenBlackTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Queen").getBlackTextureRegion();;
 							}
 						} else if(chessPiece.getPieceName().compareTo("Knight") == 0) {
 							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = knightWhiteTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Knight").getWhiteTextureRegion();;
 							} else {
-								textureRegion = knightBlackTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Knight").getBlackTextureRegion();;
 							}
 						} else if(chessPiece.getPieceName().compareTo("Rook") == 0) {
 							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = rookWhiteTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Rook").getWhiteTextureRegion();;
 							} else {
-								textureRegion = rookBlackTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Rook").getBlackTextureRegion();;
 							}
 						} else if(chessPiece.getPieceName().compareTo("Bishop") == 0) {
 							if(chessPiece.getOwner() == ChessOwner.WHITE) {
-								textureRegion = bishopWhiteTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Bishop").getWhiteTextureRegion();;
 							} else {
-								textureRegion = bishopBlackTextureRegion;
+								textureRegion = gamePieceSet.getPieceByName("Bishop").getBlackTextureRegion();;
 							}
-
-
 						} else {
 							break;
 						}

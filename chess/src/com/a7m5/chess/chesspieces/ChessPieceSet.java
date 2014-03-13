@@ -1,7 +1,7 @@
 package com.a7m5.chess.chesspieces;
 
 public class ChessPieceSet {
-	ChessPiece[] set;
+	private ChessPiece[] set;
 
 	public ChessPieceSet(ChessPiece[] set) {
 		this.set = set;
@@ -13,9 +13,10 @@ public class ChessPieceSet {
 	
 	public ChessPiece getPieceByName(String name){
 		ChessPiece temp = new ChessPiece(null);
+		
 		for(int i = 0; i < set.length; i++){
 			if(set[i].getPieceName().compareTo(name) == 0){
-				temp = set[i];
+				return set[i];
 			}
 		}
 		return temp;
