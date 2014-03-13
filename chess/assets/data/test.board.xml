@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<chessBoard width="8">
+
+	<Pieces>
+		<Piece x="4" y="4" name="Pawn" owner="WHITE" />
+		<Piece x="4" y="4" name="Pawn" owner="BLACK" />
+	</Pieces>
+	
+	<Tiles>
+		<Tile x="0" y="0" type="" />
+		<Tile x="0" y="0" type="" />
+		<Tile x="0" y="0" type="" />
+		<Tile x="0" y="0" type="" />
+	</Tiles>
+
+</chessBoard>

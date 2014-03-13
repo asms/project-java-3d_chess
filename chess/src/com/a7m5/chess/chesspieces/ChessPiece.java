@@ -33,7 +33,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	protected String whiteArtFile = "";
 	protected String NPCArtFile = "";
 
-	protected Texture whiteTexture;
+	static Texture whiteTexture;
 	protected Texture blackTexture;
 	protected TextureRegion whiteTextureReigon;
 	protected TextureRegion blackTextureReigon;
@@ -346,6 +346,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 
 	public void loadTextures(){
 		System.out.println("A whiteArtFile: " + whiteArtFile);
+		
 		whiteTexture = new Texture(Gdx.files.internal(whiteArtFile));
 		whiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		whiteTextureReigon = new TextureRegion(whiteTexture, 0, 0, 64, 64);

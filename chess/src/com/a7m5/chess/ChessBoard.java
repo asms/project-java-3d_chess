@@ -83,7 +83,8 @@ public class ChessBoard implements Serializable {
 		for(int i = 0; i < gamePieceSet.getLength()-1; i++){
 			gamePieceSet.getPieceByIndex(i).loadTextures();
 		} 
-		 */
+		*/
+		 
 		// Old loading from software defined paths.
 		Texture pawnWhiteTexture = new Texture(Gdx.files.internal("chess-textures/pawn-white.png"));
 		pawnWhiteTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -138,7 +139,7 @@ public class ChessBoard implements Serializable {
 
 
 	public void drawBoard(ModelBatch modelBatch, Environment environment) {
-		System.out.println("Draw board, new.");
+	//	System.out.println("Draw board, new.");
 		boolean alt = true;
 		ModelBuilder modelBuilder = new ModelBuilder();
 		if(tileInstances == null) {
@@ -196,7 +197,7 @@ public class ChessBoard implements Serializable {
 
 	@Deprecated
 	public void drawBoard(ShapeRenderer shapeRenderer) {
-		System.out.println("Draw board, old");
+	//	System.out.println("Draw board, old");
 		boolean alt = true;
 		shapeRenderer.setColor(Color.BLACK);
 		shapeRenderer.rect(0,
@@ -259,7 +260,7 @@ public class ChessBoard implements Serializable {
 
 
 	public void drawPieces(SpriteBatch batch) {
-		System.out.println("Draw Peices.");
+	//	System.out.println("Draw Peices.");
 		/*
 		try{	
 			System.out.println("Pawn image:" + gamePieceSet.getPieceByName("Pawn").getBlackArtFile());
@@ -424,7 +425,10 @@ public class ChessBoard implements Serializable {
 		int tileY = getTileFromCoordinate(y);
 		return chessPieces[tileX][tileY];
 	}
-	public ChessPiece getChessPieceByVector(Vector2 vector) {
+	public ChessPiece getChessPieceByXYTile(int x, int y) throws IndexOutOfBoundsException {
+		return chessPieces[x][y];
+	}
+		public ChessPiece getChessPieceByVector(Vector2 vector) {
 		return chessPieces[(int) vector.getX()][(int) vector.getY()];
 	}
 	public void moveChessPiece(int tileX0, int tileY0, int tileX1, int tileY1) {

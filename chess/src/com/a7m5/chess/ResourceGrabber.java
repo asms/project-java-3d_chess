@@ -21,6 +21,7 @@ import org.xml.sax.SAXException;
 
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
+import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.a7m5.chess.chesspieces.ChessTile;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -42,7 +43,10 @@ public class ResourceGrabber {
 	};
 
 	public ResourceGrabber() {
-
+		grabPieces();
+	}
+	
+	public void grabPieces(){
 		for(int i = 0; i < fileNameList.length; i++){
 			try {
 				InputStream fileStream = ResourceGrabber.class.getResourceAsStream("/data/" + fileNameList[i]);
@@ -111,6 +115,74 @@ public class ResourceGrabber {
 			}	
 		}
 	}
+// TODO make it take a filepath
+	public ChessBoard grabBoard(ChessPieceSet gamePieceSet){
+			try {
+				InputStream fileStream = ResourceGrabber.class.getResourceAsStream("/data/standardChess.board.xml");
+
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document pieceDoc = dBuilder.parse(fileStream);
+				pieceDoc.getDocumentElement().normalize();
+
+				// Get the piece ID
+				int tempWidth = -1;
+				String tempWidthStr = pieceDoc.getDocumentElement().getAttribute("width").toString();
+				if(tempWidthStr != null){
+					try{
+						tempWidth = Integer.parseInt(tempWidthStr);
+					} catch(NumberFormatException e){
+						System.out.println("Number Format in XML Read!!!");
+					}
+				}
+				System.out.println("Temp Width: " + tempWidth);
+/*
+				// Get the pieceName
+				String tempName = grabFirstString(pieceDoc, "pieceName");
+				//System.out.println("pieceName: " + tempName);
+
+				// Get the blackArtFile
+				String tempBlackArtFile = grabFirstString(pieceDoc, "blackArtFile");
+				//System.out.println("blackArtFile: " + tempBlackArtFile);
+
+				// Get the whiteArtFile
+				String tempWhiteArtFile = grabFirstString(pieceDoc, "whiteArtFile");
+				//System.out.println("whiteArtFile: " + tempWhiteArtFile);
+
+				// Get the NPCArtFile
+				String tempNPCArtFile = grabFirstString(pieceDoc, "NPCArtFile");
+				//System.out.println("NPCArtFile: " + tempNPCArtFile);
+
+				// Get all the vectors.
+				Vector2[] tempAttackDirectionVectors = grabVectors(pieceDoc, "attackDirectionVectors");
+				Vector2[] tempMovementDirectionVectors = grabVectors(pieceDoc, "movementDirectionVectors");
+				Vector2[] tempSpecialMovementVectors = grabVectors(pieceDoc, "specialMovementVectors");
+				Vector2[] tempMovementVectors = grabVectors(pieceDoc, "movementVectors");
+				Vector2[] tempAttackVectors = grabVectors(pieceDoc, "attackVectors");
+
+				// Create the piece and add it to the array of pieces.
+				ChessPiece tempChessPiece = new ChessPiece(tempName, tempID, tempAttackDirectionVectors,
+						tempMovementDirectionVectors, tempSpecialMovementVectors, tempMovementVectors,
+						tempAttackVectors, tempBlackArtFile, tempWhiteArtFile, tempNPCArtFile);
+				tempChessPiece.setOwner(ChessOwner.WHITE);	// TODO: correct settings for the chess piece owner.
+				grabbedPieces.add(tempChessPiece);
+*/
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return grabbedChessBoard;	
+		
+	}
 
 	private String grabFirstString(Document inDoc, String tagName){
 		String tempString = "";
@@ -151,6 +223,32 @@ public class ResourceGrabber {
 		}
 		return temp;
 	}
-
+	/*
+	private ChessPiece[] grabBoardPieces(Document inDoc){
+		NodeList tempNodeList = inDoc.getElementsByTagName("piece");	// Get all the vectors in the file.
+		ArrayList<ChessPiece> ourPieces = new ArrayList<ChessPiece>();
+		for(int i = 0; i < tempNodeList.getLength(); i++){
+				String tempName, tempOwner;
+				int xTemp = 0, yTemp = 0;
+				
+				try{
+					xTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("x").getNodeValue());
+					yTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("y").getNodeValue());
+					tempName = tempNodeList.item(i).getAttributes().getNamedItem("name").getNodeValue();
+					tempOwner = tempNodeList.item(i).getAttributes().getNamedItem("owner").getNodeValue();
+				} catch(NumberFormatException e){
+					// TODO: NumberFormatException handling.
+					System.out.println("Number Format Error in XML Read!!!");
+				}
+				ourPieces.add(new ChessPiece());
+			
+		}
+		Vector2[] tempVectorArray = new Vector2[ourVectors.size()];
+		for( int i = 0; i < ourVectors.size(); i++){
+			tempVectorArray[i] = ourVectors.get(i);
+		}
+		return tempVectorArray;
+	}
+*/
 
 }
