@@ -78,7 +78,6 @@ public class ChessBoard implements Serializable {
 
 
 	public void drawBoard(ModelBatch modelBatch, Environment environment) {
-		boolean alt = true;
 		ModelBuilder modelBuilder = new ModelBuilder();
 		if(tileInstances == null) {
 			tileInstances = new Array<ModelInstance>();
@@ -93,7 +92,6 @@ public class ChessBoard implements Serializable {
 
 
 			for(int y = 0; y < boardWidth; y++) {
-				alt =  (1 == y % 2);
 				for(int x = 0; x < boardWidth; x++) {
 					Tile tile = tileArray[x][y];
 					if(tile != null){
@@ -103,7 +101,6 @@ public class ChessBoard implements Serializable {
 
 						tileInstances.add(tileInstance);
 					}
-					alt = !alt;	// Alternate colors on rows.
 				}
 			}
 		}
@@ -134,7 +131,6 @@ public class ChessBoard implements Serializable {
 
 	@Deprecated
 	public void drawBoard(ShapeRenderer shapeRenderer) {
-		boolean alt = true;
 		shapeRenderer.setColor(Color.BLACK);
 		shapeRenderer.rect(0,
 				0,
@@ -145,49 +141,19 @@ public class ChessBoard implements Serializable {
 				0);
 
 		for(int y = 0; y < boardWidth; y++) {
-			alt =  (1 == y % 2);
 			for(int x = 0; x < boardWidth; x++) {
-				if(tileArray[x][y] != null){
-					if(alt){
-						shapeRenderer.setColor(new Color(0.84f, 0.84f, 0.84f, 1));
-					} else {
-						shapeRenderer.setColor(new Color(0, 0.84f, 0.18f, 1));
-					}
+				Tile tile = tileArray[x][y];
+				if(tile != null){
+					shapeRenderer.setColor(tile.getColor());
 					shapeRenderer.rect(x*tileWidth + 1,
 							y*tileWidth + 1,
 							tileWidth-2,
 							tileWidth-2
 							);
 				}
-				alt = !alt;	// Alternate colors on rows.
 			}
 		}
-		/* Not used in the chess board editor.
-		if(selectedChessPiece != null) {
-			ArrayList<Vector2> possibleMoves = selectedChessPiece.getPossibleMoves();
-			for(Vector2 possibleMove : possibleMoves) {
-				shapeRenderer.setColor(Color.BLUE);
-				if(tileArray[(int) possibleMove.getX()][(int) possibleMove.getY()]){
-				shapeRenderer.rect((float) (possibleMove.getX() * tileWidth + 1),
-						(float) (possibleMove.getY()*tileWidth + 1),
-						tileWidth-2,
-						tileWidth-2
-						);
-				}
-			}
-			ArrayList<Vector2> possibleAttacks = selectedChessPiece.getPossibleAttacks();
-			for(Vector2 possibleAttack : possibleAttacks) {
-				shapeRenderer.setColor(Color.RED);
-				if(tileArray[(int) possibleAttack.getX()][(int) possibleAttack.getY()]){
-				shapeRenderer.rect((float) (possibleAttack.getX() * tileWidth + 1),
-						(float) (possibleAttack.getY()*tileWidth + 1),
-						tileWidth-2,
-						tileWidth-2
-						);
-				}
-			}
-		}
-		 */
+		
 		shapeRenderer.rect(512,
 				0,
 				400,
