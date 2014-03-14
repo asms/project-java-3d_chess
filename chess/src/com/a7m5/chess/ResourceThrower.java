@@ -2,7 +2,9 @@ package com.a7m5.chess;
 
 import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -90,11 +92,18 @@ public class ResourceThrower {
 	}
 
 	public void createBoardFile(ChessBoard outgoingBoard){
-		String tempName = JOptionPane.showInputDialog(null, "Whats a good name for your Board?\nBe careful not to overwrite another board save.", "");
-		
+		String tempName = "";
+		   JFileChooser chooser = new JFileChooser();
+		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		        "XML Board Files", "board.xml");
+		    chooser.setFileFilter(filter);
+		    int returnVal = chooser.showSaveDialog(null);
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		    	tempName = chooser.getSelectedFile().getAbsolutePath() + ".board.xml";
+		    }
 		if(!tempName.isEmpty()){
 		
-			File tempFile = new File(resourceDirectoryPath + "\\" + tempName + ".board.xml");
+			File tempFile = new File(tempName);
 
 			try {
 
@@ -132,7 +141,6 @@ public class ResourceThrower {
 			} catch (TransformerException tfe) {
 				tfe.printStackTrace();
 			}
-			
 		}
 	}
 
