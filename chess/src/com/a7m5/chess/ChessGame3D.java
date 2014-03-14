@@ -183,11 +183,13 @@ public class ChessGame3D implements ApplicationListener {
 						up).scale(8f, 8f, 8f);
 				modelBatch.render(opponentCameraModelInstance, environment);
 			}
+			
 			/*
 			 * Draws Board Tiles in 3D
 			 * Note: This is more efficient and allows drawing the rectangles in 3d,
 			 * 		 which resolves conflicts with 3D models.
 			 */
+			
 			client.board.drawBoard(modelBatch, environment);
 
 			client.board.drawCursors(modelBatch, environment, cam);
