@@ -91,7 +91,9 @@ public class ResourceThrower {
 
 	public void createBoardFile(ChessBoard outgoingBoard){
 		String tempName = JOptionPane.showInputDialog(null, "Whats a good name for your Board?\nBe careful not to overwrite another board save.", "");
+		
 		if(!tempName.isEmpty()){
+		
 			File tempFile = new File(resourceDirectoryPath + "\\" + tempName + ".board.xml");
 
 			try {
@@ -130,6 +132,7 @@ public class ResourceThrower {
 			} catch (TransformerException tfe) {
 				tfe.printStackTrace();
 			}
+			
 		}
 	}
 

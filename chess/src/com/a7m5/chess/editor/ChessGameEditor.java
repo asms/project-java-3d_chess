@@ -8,6 +8,10 @@
 
 package com.a7m5.chess.editor;
 
+import java.io.File;
+
+import javax.swing.JFileChooser;
+
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.ResourceGrabber;
@@ -31,14 +35,29 @@ public class ChessGameEditor implements ApplicationListener {
 	private static ChessPieceSet editorPieceSet;
 
 	public ChessGameEditor(int requestedBoardSize) {
+		// Grab the set of chess pieces before starting the editor
 		ResourceGrabber myGrab;
-		myGrab = new ResourceGrabber();
-		editorPieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
-		// Make the editing board of the correct size.
-		editingBoard = new ChessBoard(editorPieceSet);
-		ChessBoard.setBoardWidth(requestedBoardSize);
-		// Creates the palette in the correct position.
-		editingPalette = new ChessBoardPalette(522,10,editorPieceSet);
+		JFileChooser directoryChooser = new JFileChooser();
+		directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+/*
+		String fileAddress = null;
+		
+		if(JFileChooser.APPROVE_OPTION == directoryChooser.showOpenDialog(null)) {
+			File myFile = directoryChooser.getSelectedFile();
+			System.out.println("Opening Directory: " + myFile.getAbsolutePath());
+			fileAddress = myFile.getAbsolutePath();
+		}
+
+		if(fileAddress != null){
+		*/
+			myGrab = new ResourceGrabber();
+			editorPieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
+			// Make the editing board of the correct size.
+			editingBoard = new ChessBoard(editorPieceSet);
+			ChessBoard.setBoardWidth(requestedBoardSize);
+			// Creates the palette in the correct position.
+			editingPalette = new ChessBoardPalette(522,10,editorPieceSet);
+//		}
 	}
 
 	@Override
@@ -114,7 +133,7 @@ public class ChessGameEditor implements ApplicationListener {
 			}
 			// TODO: some way to remove chess peices.
 		} else if((ChessBoardPalette.getTabSelected() == ChessBoardPalette.tabTiles)&&(x < editingBoard.getBoardWidth()*ChessBoard.getTileWidth())){
-		// Toggling tiles.
+			// Toggling tiles.
 			editingBoard.toggleTile(ChessBoard.getTileFromCoordinate(x),  ChessBoard.boardWidth - ChessBoard.getTileFromCoordinate(y) - 1);
 		}
 

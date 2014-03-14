@@ -10,7 +10,8 @@ public class EditorInputProcessor implements InputProcessor {
 	@Override
 	public boolean keyDown (int keycode) {
 		if(keycode == Keys.TAB){
-			ResourceThrower boardEditorThrow = new ResourceThrower("C:\\Users\\Peter\\git\\weird-chess\\chess\\assets\\data");
+			ResourceThrower boardEditorThrow = new ResourceThrower("C:/Users/Peter/git/weird-chess/chess/assets/data");
+			
 			boardEditorThrow.createBoardFile(ChessGameEditor.getEditingBoard());
 		}
 		return false;
