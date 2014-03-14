@@ -15,6 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -26,6 +27,7 @@ import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.a7m5.chess.chesspieces.ChessTile;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 
 public class ResourceGrabber {
 
@@ -164,7 +166,8 @@ public class ResourceGrabber {
 			System.out.println("Temp Width: " + tempWidth);
 
 			grabBoardPieces(boardDoc, tempWidth);	// Creates the board 'grabbedChessBoard' of correct size and with pieces added in all their positions.
-
+			Tile[][] tiles = grabTiles(boardDoc, grabbedChessBoard.getBoardWidth());
+			grabbedChessBoard.setTileArray(tiles);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -252,6 +255,31 @@ public class ResourceGrabber {
 			}
 		}
 		return grabbedChessBoard;
+	}
+	
+	private Tile[][] grabTiles(Document doc, int width) {
+		Tile[][] tiles = new Tile[width][width];
+		NodeList nodeListTiles = doc.getElementsByTagName("tile");
+		for(int i = 0; i < nodeListTiles.getLength(); i++) {
+			try {
+				NamedNodeMap attributes = nodeListTiles.item(i).getAttributes();
+				Tile tile = new Tile();
+				
+				int x = Integer.parseInt(attributes.getNamedItem("x").getNodeValue());
+				int y = Integer.parseInt(attributes.getNamedItem("y").getNodeValue());
+				tile.setPosition(new Vector2(x, y));
+				
+				float r = Float.parseFloat(attributes.getNamedItem("r").getNodeValue());
+				float g = Float.parseFloat(attributes.getNamedItem("g").getNodeValue());
+				float b = Float.parseFloat(attributes.getNamedItem("b").getNodeValue());
+				float a = Float.parseFloat(attributes.getNamedItem("a").getNodeValue());
+				tile.setColor(new Color(r, g, b, a));
+				tiles[x][y] = tile;
+			} catch(NumberFormatException e) {
+				Gdx.app.log("grabTiles", "Error parsing number from tile attributes.");
+			}
+		}
+		return tiles;
 	}
 
 	public ChessPieceSet getGrabbedChessPieceSet() {

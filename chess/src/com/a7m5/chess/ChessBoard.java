@@ -37,7 +37,7 @@ public class ChessBoard implements Serializable {
 
 	private static ChessPieceSet gamePieceSet;
 	private ChessPiece[][] chessPieces;
-	private static Boolean[][] tileArray;
+	private static Tile[][] tileArray = null;
 	private ChessPiece selectedChessPiece = null;
 	private ChessOwner turnOwner;
 	private ChessOwner checkedPlayer = null;
@@ -59,17 +59,6 @@ public class ChessBoard implements Serializable {
 
 	public ChessBoard(ChessPieceSet gamePieceSet) {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
-		// Create an array of tile conditions.
-		tileArray = new Boolean[boardWidth][boardWidth];
-		for(int y = 0; y < boardWidth; y++) {
-			for(int x = 0; x < boardWidth; x++) {
-				tileArray[x][y] = true;
-			}
-		}
-		// TODO: fix.. only a test...
-		tileArray[4][2] = false;
-		tileArray[4][3] = false;
-		tileArray[4][4] = false;
 		
 
 		this.gamePieceSet = gamePieceSet;
@@ -106,14 +95,12 @@ public class ChessBoard implements Serializable {
 			for(int y = 0; y < boardWidth; y++) {
 				alt =  (1 == y % 2);
 				for(int x = 0; x < boardWidth; x++) {
-					if(tileArray[x][y]){
+					Tile tile = tileArray[x][y];
+					if(tile != null){
 						ModelInstance tileInstance = new ModelInstance(tileModel);
 						tileInstance.transform.setToTranslation(x*tileWidth, 0, -y*tileWidth);
-						if(alt){
-							tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(0.84f, 0.84f, 0.84f, 1)));
-						} else {
-							tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(new Color(0, 0.84f, 0.18f, 1)));
-						}
+						tileInstance.materials.get(0).set(ColorAttribute.createDiffuse(tile.getColor()));
+
 						tileInstances.add(tileInstance);
 					}
 					alt = !alt;	// Alternate colors on rows.
@@ -160,7 +147,7 @@ public class ChessBoard implements Serializable {
 		for(int y = 0; y < boardWidth; y++) {
 			alt =  (1 == y % 2);
 			for(int x = 0; x < boardWidth; x++) {
-				if(tileArray[x][y]){
+				if(tileArray[x][y] != null){
 					if(alt){
 						shapeRenderer.setColor(new Color(0.84f, 0.84f, 0.84f, 1));
 					} else {
@@ -216,7 +203,7 @@ public class ChessBoard implements Serializable {
 	public void drawPieces(SpriteBatch batch) {
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth; x++) {
-				if(tileArray[x][y]){
+				if(tileArray[x][y] != null){
 					ChessPiece chessPiece = chessPieces[x][y];
 					TextureRegion textureRegion = new TextureRegion();
 					if(chessPiece != null){
@@ -449,10 +436,15 @@ public class ChessBoard implements Serializable {
 		return tileWidth;
 	}
 
-	public static void toggleTile(int x, int y){
-		tileArray[x][y] = !tileArray[x][y];
-	}
-	public static boolean getTile(int x, int y){
+	public static Tile getTile(int x, int y){
 		return tileArray[x][y];
+	}
+
+	public void setTileArray(Tile[][] tiles) {
+		this.tileArray = tiles;
+	}
+
+	public Tile[][] getTileArray() {
+		return tileArray;
 	}
 }

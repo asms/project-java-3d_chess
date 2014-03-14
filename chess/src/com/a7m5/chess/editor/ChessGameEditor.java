@@ -133,7 +133,12 @@ public class ChessGameEditor implements ApplicationListener {
 			// TODO: some way to remove chess peices.
 		} else if((ChessBoardPalette.getTabSelected() == ChessBoardPalette.tabTiles)&&(x < editingBoard.getBoardWidth()*ChessBoard.getTileWidth())){
 			// Toggling tiles.
-			editingBoard.toggleTile(ChessBoard.getTileFromCoordinate(x),  ChessBoard.boardWidth - ChessBoard.getTileFromCoordinate(y) - 1);
+			/*
+			editingBoard.setTile(ChessBoard.getTile(
+				ChessBoard.getTileFromCoordinate(x),
+				ChessBoard.getTileFromCoordinate(y)
+			);
+			*/
 		}
 
 	}

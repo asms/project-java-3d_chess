@@ -19,6 +19,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.a7m5.chess.chesspieces.ChessPiece;
+import com.badlogic.gdx.graphics.Color;
 
 public class ResourceThrower {
 	String resourceDirectoryPath;
@@ -90,6 +91,31 @@ public class ResourceThrower {
 			root.appendChild(vectorGroup);
 		}
 	}
+	
+	private void addTiles(Document doc, Tile[][] tiles, Element root){
+		if(tiles != null){
+			Element vectorGroup = doc.createElement("tiles");
+			for(int x = 0; x < tiles.length; x++){
+				Tile[] tileRow = tiles[x];
+				for(int y = 0; y < tileRow.length; y++) {
+					Tile tile = tileRow[y];
+					Element el = doc.createElement("tile");
+					
+					el.setAttribute("x", String.valueOf(x));
+					el.setAttribute("y", String.valueOf(y));
+					
+					Color color = tile.getColor();
+					el.setAttribute("r", String.valueOf(color.r));
+					el.setAttribute("g", String.valueOf(color.g));
+					el.setAttribute("b", String.valueOf(color.b));
+					el.setAttribute("a", String.valueOf(color.a));
+					
+					vectorGroup.appendChild(el);
+				}
+			}
+			root.appendChild(vectorGroup);
+		}
+	}
 
 	public void createBoardFile(ChessBoard outgoingBoard){
 		String tempName = "";
@@ -126,6 +152,7 @@ public class ResourceThrower {
 						addPiece(outgoingBoard.getChessPieceByXYTile(x, y),  doc, pieceElement);
 					}
 				}
+				addTiles(doc, outgoingBoard.getTileArray(), pieceElement);
 				
 				// write the content into xml file
 				TransformerFactory transformerFactory = TransformerFactory.newInstance();
