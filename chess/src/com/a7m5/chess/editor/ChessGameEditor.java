@@ -8,19 +8,16 @@
 
 package com.a7m5.chess.editor;
 
-import java.io.File;
-
 import javax.swing.JFileChooser;
 
+import org.lwjgl.opengl.GL11;
+
 import com.a7m5.chess.ChessBoard;
-import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.ResourceGrabber;
 import com.a7m5.chess.chesspieces.ChessOwner;
-import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -83,7 +80,7 @@ public class ChessGameEditor implements ApplicationListener {
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 		ShapeRenderer shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(camera.combined);
