@@ -173,48 +173,23 @@ public class ChessBoard implements Serializable {
 					ChessPiece chessPiece = chessPieces[x][y];
 					TextureRegion textureRegion = new TextureRegion();
 					if(chessPiece != null){
-						if(chessPiece.getPieceName() != null){
-
-							if(chessPiece.getPieceName().compareTo("Pawn") == 0) {
+						String name = chessPiece.getPieceName();
+						if(name != null){
+							ChessPiece piece = gamePieceSet.getPieceByName(name);
+							if(piece != null) {
 								if(chessPiece.getOwner() == ChessOwner.WHITE) {
-									textureRegion = gamePieceSet.getPieceByName("Pawn").getWhiteTextureRegion();;
+									textureRegion = piece.getWhiteTextureRegion();
 								} else {
-									textureRegion = gamePieceSet.getPieceByName("Pawn").getBlackTextureRegion();;
-								}
-							} else if(chessPiece.getPieceName().compareTo("King") == 0) {
-								if(chessPiece.getOwner() == ChessOwner.WHITE) {
-									textureRegion = gamePieceSet.getPieceByName("King").getWhiteTextureRegion();;
-								} else {
-									textureRegion = gamePieceSet.getPieceByName("King").getBlackTextureRegion();;
-								}
-							} else if(chessPiece.getPieceName().compareTo("Queen") == 0) {
-								if(chessPiece.getOwner() == ChessOwner.WHITE) {
-									textureRegion = gamePieceSet.getPieceByName("Queen").getWhiteTextureRegion();;
-								} else {
-									textureRegion = gamePieceSet.getPieceByName("Queen").getBlackTextureRegion();;
-								}
-							} else if(chessPiece.getPieceName().compareTo("Knight") == 0) {
-								if(chessPiece.getOwner() == ChessOwner.WHITE) {
-									textureRegion = gamePieceSet.getPieceByName("Knight").getWhiteTextureRegion();;
-								} else {
-									textureRegion = gamePieceSet.getPieceByName("Knight").getBlackTextureRegion();;
-								}
-							} else if(chessPiece.getPieceName().compareTo("Rook") == 0) {
-								if(chessPiece.getOwner() == ChessOwner.WHITE) {
-									textureRegion = gamePieceSet.getPieceByName("Rook").getWhiteTextureRegion();;
-								} else {
-									textureRegion = gamePieceSet.getPieceByName("Rook").getBlackTextureRegion();;
-								}
-							} else if(chessPiece.getPieceName().compareTo("Bishop") == 0) {
-								if(chessPiece.getOwner() == ChessOwner.WHITE) {
-									textureRegion = gamePieceSet.getPieceByName("Bishop").getWhiteTextureRegion();;
-								} else {
-									textureRegion = gamePieceSet.getPieceByName("Bishop").getBlackTextureRegion();;
+									textureRegion = piece.getBlackTextureRegion();
 								}
 							} else {
 								break;
 							}
-						}	
+							
+
+						} else {
+							break;
+						}
 
 
 						int positionX;
