@@ -67,7 +67,7 @@ public class ChessBoard implements Serializable {
 
 	public static void loadTextures() {
 		ResourceGrabber myGrab;
-		myGrab = new ResourceGrabber("/home/steven/Desktop/ChessCache/");
+		myGrab = new ResourceGrabber();
 		gamePieceSet = myGrab.getChessPieceSet();
 
 		for(int i = 0; i < gamePieceSet.getLength(); i++){
@@ -213,7 +213,6 @@ public class ChessBoard implements Serializable {
 							positionX = x*tileWidth;
 							positionY = y*tileWidth;
 						}
-						new Object();
 						batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 					}
 				}
@@ -324,6 +323,16 @@ public class ChessBoard implements Serializable {
 		selectedChessPiece = null;
 	}
 	public void setChessPieces(ChessPiece[][] chessPieces) {
+		for(int x = 0; x < chessPieces.length; x++) {
+			ChessPiece[] row = chessPieces[x];
+			for(int y = 0; y < row.length; y++) {
+				ChessPiece piece = row[y];
+				if(piece != null) {
+					piece.setBoard(this);
+				}
+				
+			}
+		}
 		this.chessPieces = chessPieces;
 	}
 	public void attackChessPiece(Vector2 vector1, Vector2 vector2) {

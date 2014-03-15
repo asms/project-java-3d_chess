@@ -26,6 +26,7 @@ public class ChessGame3D implements ApplicationListener {
 
 	public static int width;
 	public static int height;
+	private static String cacheDirectory = null;
 
 	//3D stuff
 	public static PerspectiveCamera cam;
@@ -239,7 +240,7 @@ public class ChessGame3D implements ApplicationListener {
 
 		// Grab the set of chess pieces before starting the server.
 		ResourceGrabber myGrab;
-		myGrab = new ResourceGrabber("/home/steven/Desktop/ChessCache/");
+		myGrab = new ResourceGrabber();
 		ChessPieceSet gamePieceSet = myGrab.getChessPieceSet();
 
 		if(server == null && serverThread == null) {
@@ -311,5 +312,13 @@ public class ChessGame3D implements ApplicationListener {
 
 	private static ChessGame3D getInstance() {
 		return self;
+	}
+
+	public static String getCacheDirectory() {
+		return cacheDirectory;
+	}
+
+	public static void setCacheDirectory(String cacheDirectory) {
+		ChessGame3D.cacheDirectory = cacheDirectory;
 	}
 }

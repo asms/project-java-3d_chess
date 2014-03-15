@@ -69,7 +69,7 @@ public class ChessGameEditor implements ApplicationListener {
 
 		if(fileAddress != null){
 		 */
-		myGrab = new ResourceGrabber("/home/steven/Desktop/ChessCache/");
+		myGrab = new ResourceGrabber();
 		editorPieceSet = myGrab.getChessPieceSet();
 		editingBoard = new ChessBoard(editorPieceSet);
 		editingBoard.setBoardWidth(8);

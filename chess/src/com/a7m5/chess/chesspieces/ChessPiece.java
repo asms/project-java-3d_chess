@@ -103,7 +103,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	}
 
 	public void onClick() {
-		ChessPiece selectedChessPiece= board.getSelectedChessPiece();
+		ChessPiece selectedChessPiece = board.getSelectedChessPiece();
 		if(selectedChessPiece == null) {
 			if(getOwner() == ChessGame3D.getOwner()) {
 				board.setSelectedChessPiece(this);
@@ -369,5 +369,9 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 
 	public TextureRegion getBlackTextureRegion() {
 		return blackTextureRegion;
+	}
+
+	public void setBoard(ChessBoard chessBoard) {
+		this.board = chessBoard;
 	}
 }

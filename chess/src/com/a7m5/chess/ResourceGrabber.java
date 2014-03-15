@@ -21,22 +21,15 @@ public class ResourceGrabber {
 	ChessPieceSet set = null;
 	ArrayList<ChessBoard> boards = null;
 
-	public ResourceGrabber(String file) {
-		cacheDir = file;
+	public ResourceGrabber() {
+		cacheDir = ChessGame3D.getCacheDirectory();
 		set = grabChessPieceSet();
 		boards = grabBoards();
-		new Object();
-		
-		//grabInternalPieces();	// Need to get the pieces to populate boards.
-		//grabPieces("C://Users/Peter/Desktop/assets/data/");	// A test of an external grab.
-		//getGrabbedChessPieceSet(); // Used by grabBoard.
-		//grabInternalBoard();	// Gets the standard board.
-		//grabBoard("C://Users/Peter/Desktop/assets/data/standardChess.board.xml");
 	}
 	
 	private ChessPieceSet grabChessPieceSet() {
 		ChessPieceSet set = null;
-		File piecesDir = new File(cacheDir + "pieces/");
+		File piecesDir = new File(cacheDir + "/pieces/");
 		File[] pieceFiles = piecesDir.listFiles();
 		ChessPiece[] pieces = new ChessPiece[pieceFiles.length];
 		for(int i = 0; i < pieceFiles.length; i++) {
@@ -95,7 +88,7 @@ public class ResourceGrabber {
 
 	public ArrayList<ChessBoard> grabBoards() {
 		ArrayList<ChessBoard> boards = new ArrayList<ChessBoard>();
-		File boardsDir = new File(cacheDir + "boards/");
+		File boardsDir = new File(cacheDir + "/boards/");
 		File[] boardFiles = boardsDir.listFiles();
 		for(int i = 0; i < boardFiles.length; i++) {
 			ChessBoard board = grabBoard(boardFiles[i]);
@@ -144,8 +137,8 @@ public class ResourceGrabber {
 			if(tempNodeList.item(i).getParentNode().getNodeName().toString().compareTo(vectorType) == 0){
 				int xTemp = 0, yTemp = 0;
 				try{
-					xTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("x").getNodeValue());
-					yTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("y").getNodeValue());
+					xTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("x").getTextContent().toString());
+					yTemp = Integer.parseInt(tempNodeList.item(i).getAttributes().getNamedItem("y").getTextContent().toString());
 				} catch(NumberFormatException e){
 					System.out.println("Number Format Error in XML Read!!!");
 				}
@@ -181,6 +174,7 @@ public class ResourceGrabber {
 					owner = ChessOwner.NC;
 				}
 				ChessPiece piece = set.getPieceByName(name).getClone(owner);
+				piece.setPosition(new Vector2(x, y));
 				pieces[x][y] = piece;
 			} catch(NumberFormatException e){
 				System.out.println("grabBoardPieces: NumberFormatException");
