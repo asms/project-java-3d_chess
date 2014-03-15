@@ -34,7 +34,7 @@ public class ChessBoard implements Serializable {
 	 */
 	private static final long serialVersionUID = 7954652516619094585L;
 
-
+	private String name;
 	private static ChessPieceSet gamePieceSet;
 	private ChessPiece[][] chessPieces;
 	private static Tile[][] tileArray = null;
@@ -49,8 +49,8 @@ public class ChessBoard implements Serializable {
 	private Array<ModelInstance> specialTileInstances;
 
 	public static int actualBoardWidth = 512;
-	public static int boardWidth = 8; //8 (traditional), 16 (large), 32 (extra large)
-	public static int tileWidth = actualBoardWidth / boardWidth;
+	public int boardWidth; //8 (traditional), 16 (large), 32 (extra large)
+	public int tileWidth;
 
 
 	public ChessBoard(){
@@ -67,13 +67,12 @@ public class ChessBoard implements Serializable {
 
 	public static void loadTextures() {
 		ResourceGrabber myGrab;
-		myGrab = new ResourceGrabber();
-		gamePieceSet = new ChessPieceSet(myGrab.getGrabbedPieces());
+		myGrab = new ResourceGrabber("/home/steven/Desktop/ChessCache/");
+		gamePieceSet = myGrab.getChessPieceSet();
 
-		// Load from xml defined paths.
-		for(int i = 0; i < gamePieceSet.getLength()-1; i++){
+		for(int i = 0; i < gamePieceSet.getLength(); i++){
 			gamePieceSet.getPieceByIndex(i).loadTextures();
-		} 
+		}
 	}
 
 
@@ -214,6 +213,7 @@ public class ChessBoard implements Serializable {
 							positionX = x*tileWidth;
 							positionY = y*tileWidth;
 						}
+						new Object();
 						batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 					}
 				}
@@ -279,7 +279,7 @@ public class ChessBoard implements Serializable {
 		System.out.println("ChessBoard - Clear");
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
 	}
-	public static int getTileFromCoordinate(int x) {
+	public int getTileFromCoordinate(int x) {
 		return (int) Math.floor((float) x / (float) tileWidth);
 	}
 	public ChessPiece getChessPieceByXY(int x, int y) throws IndexOutOfBoundsException {
@@ -368,12 +368,12 @@ public class ChessBoard implements Serializable {
 		}
 	}
 
-	public static void setBoardWidth(int boardWidth) {
-		ChessBoard.boardWidth = boardWidth;
-		tileWidth = actualBoardWidth / boardWidth;
+	public void setBoardWidth(int boardWidth) {
+		this.boardWidth = boardWidth;
+		tileWidth = ChessBoard.actualBoardWidth / boardWidth;
 	}
 
-	public static int getTileWidth() {
+	public int getTileWidth() {
 		return tileWidth;
 	}
 
@@ -387,5 +387,13 @@ public class ChessBoard implements Serializable {
 
 	public Tile[][] getTileArray() {
 		return tileArray;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

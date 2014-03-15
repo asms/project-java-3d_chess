@@ -122,8 +122,8 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	}
 
 	public void onNullTileClicked(int x, int y) {
-		int tileX = ChessBoard.getTileFromCoordinate(x);
-		int tileY = ChessBoard.getTileFromCoordinate(y);
+		int tileX = board.getTileFromCoordinate(x);
+		int tileY = board.getTileFromCoordinate(y);
 		Vector2 tileClicked = new Vector2(tileX, tileY);
 		board.setSelectedChessPiece(null);
 		boolean moved;
@@ -300,7 +300,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	}
 
 	public double getSpeed() {
-		return ChessBoard.tileWidth/4;
+		return board.tileWidth/4;
 	}
 
 	@Override

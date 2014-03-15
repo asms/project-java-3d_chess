@@ -1,0 +1,86 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	default: { file: fonts/default.fnt }, 
+	arial-black: { file: fonts/ArialBlack.fnt }
+},
+com.badlogic.gdx.graphics.Color: {
+	green: { a: 1, b: 0, g: 1, r: 0 },
+	white: { a: 1, b: 1, g: 1, r: 1 },
+	red: { a: 1, b: 0, g: 0, r: 1 },
+	black: { a: 1, b: 0, g: 0, r: 0 }
+}, 
+com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+	new-file: { down: buttons/new_file_down, up: buttons/new_file_up, over: buttons/new_file_over }, 
+	save: { down: buttons/save_down, up: buttons/save_up, over: buttons/save_over }, 
+	open: { down: buttons/open_down, up: buttons/open_up, over: buttons/open_over }, 
+	back: { down: buttons/back_down, up: buttons/back_up, over: buttons/back_over }, 
+	next: { down: buttons/next_down, up: buttons/next_up, over: buttons/next_over }
+},
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	default: { down: buttons/button_menu_down, up: buttons/button_menu_up, over: buttons/button_menu_over, font: default, fontColor: white }, 
+	menu: { down: buttons/button_menu_down, up: buttons/button_menu_up, over: buttons/button_menu_over, font: default, fontColor: white }, 
+	blank: { font: default, fontColor: white }
+},
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: { font: default, fontColor: white }
+},
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: { background: textfields/background, focusedBackground: textfields/background_focus, cursor: textfields/blue_cursor, selection: textfields/selection, font: default, fontColor: white }
+},
+com.gdx.extension.ui.panel.Panel$PanelStyle: {
+	default: { background: backgrounds/black-blue }, 
+	grey: { background: backgrounds/grey }, 
+	light-grey: { background: backgrounds/light_grey }, 
+	black-alpha: { background: backgrounds/black_alpha }, 
+	blank: {}
+},
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+	default: { background: buttons/button_down, titleFont: default, titleFontColor: white }
+}, 
+com.gdx.extension.ui.ChoiceDialog$ChoiceDialogStyle: {
+	default: { refuseButtonStyle: default, acceptButtonStyle: default, messageStyle: default }
+}, 
+com.gdx.extension.ui.list.ListRow$ListRowStyle: {
+	default: { background: backgrounds/grey, checked: textfields/selection, over: textfields/selection, over: backgrounds/light_grey }
+},
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+	default: { background: backgrounds/black-blue, corner: textfields/selection, hScroll: scrolls/hScroll, hScrollKnob: scrolls/hScroll_knob, vScroll: scrolls/vScroll, vScrollKnob: scrolls/vScroll_knob }
+}, 
+com.gdx.extension.ui.ProgressBar$ProgressBarStyle: {
+	default: { background: progress/progress_outer, progressBackground: progress/progress_inner }
+},
+com.gdx.extension.ui.tab.Tab$TabStyle: {
+	default: { down: buttons/black-green, up: buttons/black-blue, over: buttons/black-green, checked: buttons/black-red, font: default, fontColor: white }
+}, 
+com.gdx.extension.ui.tab.TabPane$TabPaneStyle: {
+	default: { background: backgrounds/black_alpha }
+}, 
+com.gdx.extension.ui.tab.TabContainer$TabContainerStyle: {
+	default: { background: backgrounds/black-blue }
+}, 
+com.gdx.extension.ui.grid.GridSelectionItem$GridSelectionItemStyle: {
+	default: { background: backgrounds/black-blue-alpha, checked: backgrounds/black-blue-alpha-checked, over: backgrounds/black-green-alpha }
+}, 
+com.gdx.extension.ui.menu.MenuBar$MenuBarStyle: {
+	default: { background: backgrounds/grey }
+}, 
+com.gdx.extension.ui.menu.MenuItem$MenuItemStyle: {
+	default: { buttonStyle: menu }, 
+	default-sub: { buttonStyle: menu, sub: miscs/arrow }, 
+	default-checkbox: { buttonStyle: menu, icon: checkboxes/checked }
+}, 
+com.gdx.extension.ui.menu.ToolBar$ToolBarStyle: {
+	default: { background: backgrounds/light_grey }
+}, 
+com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+	default-horizontal: { background: backgrounds/grey, knob: sliders/knob }
+}, 
+com.gdx.extension.ui.color.SlideColorPicker$SlideColorPickerStyle: {
+	default-horizontal: { background: backgrounds/grey, knob: textfields/blue_cursor }, 
+	default-vertical: { background: backgrounds/grey, knob: textfields/blue_cursor }
+}, 
+com.gdx.extension.ui.slide.SlideShow$SlideShowStyle: {
+	default-horizontal: { background: backgrounds/grey, previousScroll: back, nextScroll: next },
+	default-vertical: { background: backgrounds/grey, previousScroll: back, nextScroll: next }
+}
+}

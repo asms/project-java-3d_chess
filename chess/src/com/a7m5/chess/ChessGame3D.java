@@ -239,12 +239,12 @@ public class ChessGame3D implements ApplicationListener {
 
 		// Grab the set of chess pieces before starting the server.
 		ResourceGrabber myGrab;
-		myGrab = new ResourceGrabber();
-		ChessPieceSet gamePieceSet = myGrab.getGrabbedChessPieceSet();
+		myGrab = new ResourceGrabber("/home/steven/Desktop/ChessCache/");
+		ChessPieceSet gamePieceSet = myGrab.getChessPieceSet();
 
 		if(server == null && serverThread == null) {
 			// Make the new board
-			ChessBoard board = myGrab.getGrabbedChessBoard();	// Starting pieces from grabbed chess board.
+			ChessBoard board = myGrab.getBoards().get(0);	// Starting pieces from grabbed chess board.
 			board.setTurnOwner(ChessOwner.WHITE);
 
 			server = new Server(port, board);

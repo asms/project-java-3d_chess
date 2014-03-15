@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.gdx.extension.ui.tab.TabPane;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.esotericsoftware.tablelayout.Cell;
 import com.gdx.extension.exception.OptimizationException;
