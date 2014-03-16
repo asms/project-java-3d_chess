@@ -115,6 +115,7 @@ public class ResourceGrabber {
 			board = new ChessBoard();
 			board.setName(name);
 			board.setBoardWidth(width);
+			board.setAbsoluteFilePath(file.getAbsolutePath());
 
 			ChessPiece[][] pieces = grabBoardPieces(doc, width);
 			Tile[][] tiles = grabTiles(doc, width);

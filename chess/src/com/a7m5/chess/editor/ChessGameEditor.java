@@ -9,6 +9,7 @@
 package com.a7m5.chess.editor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JFileChooser;
 
@@ -16,7 +17,9 @@ import org.lwjgl.opengl.GL11;
 
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ResourceGrabber;
+import com.a7m5.chess.Tile;
 import com.a7m5.chess.chesspieces.ChessOwner;
+import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -30,10 +33,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.gdx.extension.ui.color.SlideColorPicker;
 import com.gdx.extension.ui.list.AdvancedList;
 import com.gdx.extension.ui.list.ListRow;
 import com.gdx.extension.ui.tab.Tab;
@@ -44,12 +51,12 @@ public class ChessGameEditor implements ApplicationListener {
 	private OrthographicCamera camera;
 	private SpriteBatch spriteBatch;
 	private TabPane tabPane;
-	private TabContainer tabContainer;
 	private Stage stage;
 	private ShapeRenderer shapeRenderer;
 	private ArrayList<ChessBoard> boards;
 	private static ChessBoard editingBoard;
 	private int editingBoardIndex = -1;
+	private TextField boardWidthTextField;
 
 	private static ChessBoardPalette editingPalette;
 	private static ChessPieceSet editorPieceSet;
@@ -57,23 +64,9 @@ public class ChessGameEditor implements ApplicationListener {
 	public ChessGameEditor() {
 		// Grab the set of chess pieces before starting the editor
 		ResourceGrabber myGrab;
-		JFileChooser directoryChooser = new JFileChooser();
-		directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		/*
-		String fileAddress = null;
-
-		if(JFileChooser.APPROVE_OPTION == directoryChooser.showOpenDialog(null)) {
-			File myFile = directoryChooser.getSelectedFile();
-			System.out.println("Opening Directory: " + myFile.getAbsolutePath());
-			fileAddress = myFile.getAbsolutePath();
-		}
-
-		if(fileAddress != null){
-		 */
 		myGrab = new ResourceGrabber();
 		editorPieceSet = myGrab.getChessPieceSet();
 		boards = myGrab.getBoards();
-		new Object();
 		editingPalette = new ChessBoardPalette(522,10, editorPieceSet);
 	}
 
@@ -101,28 +94,80 @@ public class ChessGameEditor implements ApplicationListener {
 		Skin skin = new Skin(skinFile, atlas);
 
 		tabPane = new TabPane(skin);
-		tabContainer = new TabContainer(skin);
 		TabContainer boardsContainer = new TabContainer(skin);
+		TabContainer tilesContainer = new TabContainer(skin);
+		TabContainer piecesContainer = new TabContainer(skin);
 		Tab boardsTab = new Tab("Boards", boardsContainer, skin);
-		Tab tilesTab = new Tab("Tiles", tabContainer, skin);
-		Tab piecesTab = new Tab("Pieces", tabContainer, skin);
+		Tab tilesTab = new Tab("Tiles", tilesContainer, skin);
+		Tab piecesTab = new Tab("Pieces", piecesContainer, skin);
 		
-		AdvancedList<ListRow> list = new AdvancedList<ListRow>();
+		//Boards Container
+		Table wrapper = new Table();
+		ScrollPane scrollPane = new ScrollPane(wrapper);
+		AdvancedList<ListRow> boardList = new AdvancedList<ListRow>();
+		
 		for(int i = 0; i < boards.size(); i++) {
 			final int index = i;
 			ListRow row = new ListRow(skin);
-			row.add(new Label(boards.get(i).getName(), skin));
+			Label label = new Label(boards.get(i).getName(), skin);
+			label.setAlignment(Align.center);
+			row.add(label).width(100).fill().expand();
 			row.addListener(new ClickListener() {
 
 				@Override
 			    public void clicked(InputEvent event, float x, float y) {
 					editingBoardIndex = index;
-					System.out.println(index);
+					int width = boards.get(index).getBoardWidth();
+					boardWidthTextField.setText(String.valueOf(width));
 				}
 			});
-			list.addItem(row);
+			boardList.addItem(row);
 		}
-		boardsContainer.add(list);
+		
+		boardWidthTextField = new TextField("", skin);
+		Label textLabel = new Label("Size", skin);
+		TextButton updateBoardWidthButton = new TextButton("Update", skin);
+		updateBoardWidthButton.addListener(new ClickListener() {
+			@Override
+		    public void clicked(InputEvent event, float x, float y) {
+				String widthString = boardWidthTextField.getText();
+				try {
+					ChessBoard board = boards.get(editingBoardIndex);
+					int width = Integer.parseInt(widthString);
+					board.setBoardWidth(width);
+					//Resize Tile Array
+					Tile[][] newTileArray = new Tile[width][width];
+					Tile[][] oldTileArray = board.getTileArray();
+					for(int i = 0; i < oldTileArray.length && i < width; i++) {
+						newTileArray[i] = Arrays.copyOf(oldTileArray[i], width);
+					}
+					board.setTileArray(newTileArray);
+					
+					//Resize ChessPiece Array
+					ChessPiece[][] newPieceArray = new ChessPiece[width][width];
+					ChessPiece[][] oldPieceArray = board.getChessPieces();
+					for(int i = 0; i < oldPieceArray.length && i < width; i++) {
+						newPieceArray[i] = Arrays.copyOf(oldPieceArray[i], width);
+					}
+					board.setChessPieces(newPieceArray);
+				} catch(NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		wrapper.add(boardList).fillX().padBottom(16).left();
+		wrapper.row();
+		wrapper.add(textLabel).padRight(16);
+		wrapper.add(boardWidthTextField);
+		wrapper.add(updateBoardWidthButton);
+		wrapper.row();
+		
+		boardsContainer.add(scrollPane).fill().expand();
+		
+		//Tiles Container
+		SlideColorPicker colorPicker = new SlideColorPicker(false, skin);
+		tilesContainer.add(colorPicker);
 		
 		boardsTab.addListener(new ClickListener() {
 

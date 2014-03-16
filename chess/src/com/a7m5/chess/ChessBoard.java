@@ -1,5 +1,6 @@
 package com.a7m5.chess;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -52,6 +53,8 @@ public class ChessBoard implements Serializable {
 	public int boardWidth; //8 (traditional), 16 (large), 32 (extra large)
 	public int tileWidth;
 
+	private String absoluteFilePath;
+
 
 	public ChessBoard(){
 		System.out.println("NEW CHESSBOARD INSTANCE, empty constructor: " + toString());
@@ -59,7 +62,7 @@ public class ChessBoard implements Serializable {
 
 	public ChessBoard(ChessPieceSet gamePieceSet) {
 		chessPieces = new ChessPiece[boardWidth][boardWidth];
-		
+
 
 		this.gamePieceSet = gamePieceSet;
 		System.out.println("NEW CHESSBOARD INSTANCE, gamePieceSet constructor: " + toString());
@@ -141,18 +144,25 @@ public class ChessBoard implements Serializable {
 
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth; x++) {
-				Tile tile = tileArray[x][y];
-				if(tile != null){
-					shapeRenderer.setColor(tile.getColor());
-					shapeRenderer.rect(x*tileWidth + 1,
-							y*tileWidth + 1,
-							tileWidth-2,
-							tileWidth-2
-							);
+				if(x < tileArray.length) {
+					Tile[] row = tileArray[x];
+					if(row != null) {
+						if(y < row.length) {
+							Tile tile = row[y];
+							if(tile != null){
+								shapeRenderer.setColor(tile.getColor());
+								shapeRenderer.rect(x*tileWidth + 1,
+										y*tileWidth + 1,
+										tileWidth-2,
+										tileWidth-2
+										);
+							}
+						}
+					}
 				}
 			}
 		}
-		
+
 		shapeRenderer.rect(512,
 				0,
 				400,
@@ -168,54 +178,60 @@ public class ChessBoard implements Serializable {
 	public void drawPieces(SpriteBatch batch) {
 		for(int y = 0; y < boardWidth; y++) {
 			for(int x = 0; x < boardWidth; x++) {
-				if(tileArray[x][y] != null){
-					ChessPiece chessPiece = chessPieces[x][y];
-					TextureRegion textureRegion = new TextureRegion();
-					if(chessPiece != null){
-						String name = chessPiece.getPieceName();
-						if(name != null){
-							ChessPiece piece = gamePieceSet.getPieceByName(name);
-							if(piece != null) {
-								if(chessPiece.getOwner() == ChessOwner.WHITE) {
-									textureRegion = piece.getWhiteTextureRegion();
-								} else {
-									textureRegion = piece.getBlackTextureRegion();
+				ChessPiece chessPiece = null;
+				TextureRegion textureRegion = null;
+				if(x < tileArray.length) {
+					Tile[] row = tileArray[x];
+					if(row != null) {
+						if(y < row.length) {
+							Tile tile = row[y];
+							chessPiece = chessPieces[x][y];
+							if(chessPiece != null && tile != null){
+								String name = chessPiece.getPieceName();
+								if(name != null){
+									ChessPiece piece = gamePieceSet.getPieceByName(name);
+									if(piece != null) {
+										if(chessPiece.getOwner() == ChessOwner.WHITE) {
+											textureRegion = piece.getWhiteTextureRegion();
+										} else {
+											textureRegion = piece.getBlackTextureRegion();
+										}
+									}
 								}
-							} else {
-								break;
 							}
-							
-
-						} else {
-							break;
 						}
-
-
-						int positionX;
-						int positionY;
-
-						if(chessPiece.isAnimating()) {
-							double speed = chessPiece.getSpeed();
-							Vector2 animationPosition = chessPiece.getAnimationPosition();
-							Vector2 differenceVector = new Vector2(
-									x*tileWidth - animationPosition.getX(),
-									y*tileWidth - animationPosition.getY());
-							if(differenceVector.getMagnitude() <= speed) {
-								chessPiece.stopAnimation();
-							} else {
-								Vector2 movementVector = differenceVector.getUnitVector().multiply(speed);
-								animationPosition = animationPosition.add(movementVector);
-								chessPiece.setAnimationPosition(animationPosition);
-							}
-							positionX = (int) Math.floor(animationPosition.getX());
-							positionY = (int) Math.floor(animationPosition.getY());
-						} else {
-							positionX = x*tileWidth;
-							positionY = y*tileWidth;
-						}
-						batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 					}
 				}
+
+				if(chessPiece == null || textureRegion == null) {
+					break;
+				}
+
+
+
+				int positionX;
+				int positionY;
+
+				if(chessPiece.isAnimating()) {
+					double speed = chessPiece.getSpeed();
+					Vector2 animationPosition = chessPiece.getAnimationPosition();
+					Vector2 differenceVector = new Vector2(
+							x*tileWidth - animationPosition.getX(),
+							y*tileWidth - animationPosition.getY());
+					if(differenceVector.getMagnitude() <= speed) {
+						chessPiece.stopAnimation();
+					} else {
+						Vector2 movementVector = differenceVector.getUnitVector().multiply(speed);
+						animationPosition = animationPosition.add(movementVector);
+						chessPiece.setAnimationPosition(animationPosition);
+					}
+					positionX = (int) Math.floor(animationPosition.getX());
+					positionY = (int) Math.floor(animationPosition.getY());
+				} else {
+					positionX = x*tileWidth;
+					positionY = y*tileWidth;
+				}
+				batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 			}
 		}
 	}
@@ -330,7 +346,7 @@ public class ChessBoard implements Serializable {
 				if(piece != null) {
 					piece.setBoard(this);
 				}
-				
+
 			}
 		}
 		this.chessPieces = chessPieces;
@@ -379,7 +395,12 @@ public class ChessBoard implements Serializable {
 
 	public void setBoardWidth(int boardWidth) {
 		this.boardWidth = boardWidth;
-		tileWidth = ChessBoard.actualBoardWidth / boardWidth;
+		if(boardWidth != 0) {
+			tileWidth = ChessBoard.actualBoardWidth / boardWidth;
+		} else {
+			tileWidth = 0;
+		}
+		
 	}
 
 	public int getTileWidth() {
@@ -401,8 +422,16 @@ public class ChessBoard implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
+	}
+
+	public void setAbsoluteFilePath(String path) {
+		absoluteFilePath = path;
+	}
+
+	public String getAbsoluteFilePath() {
+		return absoluteFilePath;
 	}
 }
