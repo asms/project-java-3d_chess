@@ -90,7 +90,7 @@ public class ChessGameEditor implements ApplicationListener {
 		multiplexer.addProcessor(inputProcessor);
 		Gdx.input.setInputProcessor(multiplexer);
 		
-		camera = new OrthographicCamera(512, 512+330);
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.setToOrtho(false);
 		
 		shapeRenderer =  new ShapeRenderer();
@@ -162,7 +162,7 @@ public class ChessGameEditor implements ApplicationListener {
 		tabPane.addTab(piecesTab);
 		tabPane.setCurrentTab(0);
 		tabPane.setPosition(512, 0);
-		tabPane.setWidth(256);
+		tabPane.setWidth(300);
 		tabPane.setHeight(512);
 		stage.addActor(tabPane);
 	}
