@@ -11,16 +11,12 @@ package com.a7m5.chess.editor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.JFileChooser;
-
 import org.lwjgl.opengl.GL11;
 
 import com.a7m5.chess.ChessBoard;
-import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.ResourceGrabber;
 import com.a7m5.chess.ResourceThrower;
 import com.a7m5.chess.Tile;
-import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.ApplicationListener;
@@ -31,13 +27,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -49,7 +45,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.gdx.extension.ui.color.SlideColorPicker;
+import com.gdx.extension.ui.grid.GridSelection;
+import com.gdx.extension.ui.grid.GridSelectionItem;
 import com.gdx.extension.ui.list.AdvancedList;
 import com.gdx.extension.ui.list.ListRow;
 import com.gdx.extension.ui.tab.Tab;
@@ -82,22 +81,17 @@ public class ChessGameEditor implements ApplicationListener {
 	private Slider tileBrightnessSlider;
 	private TextField boardNameTextField;
 
-	private static ChessBoardPalette editingPalette;
-	private static ChessPieceSet editorPieceSet;
-
 	public ChessGameEditor() {
 		self = this;
 		// Grab the set of chess pieces before starting the editor
 		ResourceGrabber myGrab;
 		myGrab = new ResourceGrabber();
-		editorPieceSet = myGrab.getChessPieceSet();
+		ChessBoard.gamePieceSet = myGrab.getChessPieceSet();
 		boards = myGrab.getBoards();
-		editingPalette = new ChessBoardPalette(522,10, editorPieceSet);
 	}
 
 	@Override
 	public void create() {
-		ChessBoardPalette.loadTextures();
 		ChessBoard.loadTextures();
 
 		EditorInputProcessor inputProcessor = new EditorInputProcessor();
@@ -307,6 +301,22 @@ public class ChessGameEditor implements ApplicationListener {
 		tilesContainer.add(tilePickButton).pad(8);
 		tilesContainer.add(tileDeleteButton).pad(8);
 		
+		//Piece Container
+		GridSelection<GridSelectionItem> piecesGrid = new GridSelection<GridSelectionItem>();
+		
+		for(ChessPiece piece : getChessPieceSet().getPieces()) {
+			GridSelectionItem item = new GridSelectionItem(skin);
+			TextureRegion textureRegion = piece.getWhiteTextureRegion();
+			if(textureRegion != null) {
+				TextureRegionDrawable drawable = new TextureRegionDrawable(textureRegion);
+				item.add(new Image(drawable)).fill().expand();
+				piecesGrid.addItem(item);
+			} else {
+				System.out.println("texture is null");
+			}
+		}
+		piecesContainer.add(piecesGrid);
+		
 		boardsTab.addListener(new ClickListener() {
 
 			@Override
@@ -353,7 +363,6 @@ public class ChessGameEditor implements ApplicationListener {
 
 	@Override
 	public void resize(int width, int height) {
-		editingPalette.resize(width, height);
 		stage.setViewport(width, height, true);
 	}
 
@@ -369,7 +378,6 @@ public class ChessGameEditor implements ApplicationListener {
 			shapeRenderer.setProjectionMatrix(camera.combined);
 			shapeRenderer.begin(ShapeType.Filled);
 			boards.get(editingBoardIndex).drawBoard(shapeRenderer);
-			//editingPalette.drawBackground(shapeRenderer);
 			shapeRenderer.end();
 			
 			spriteBatch.setProjectionMatrix(camera.combined);
@@ -453,6 +461,10 @@ public class ChessGameEditor implements ApplicationListener {
 			return null;
 		}
 		
+	}
+	
+	public ChessPieceSet getChessPieceSet() {
+		return ChessBoard.gamePieceSet;
 	}
 
 	public static ChessGameEditor getInstance() {

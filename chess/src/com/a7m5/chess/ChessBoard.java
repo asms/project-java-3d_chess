@@ -36,7 +36,7 @@ public class ChessBoard implements Serializable {
 	private static final long serialVersionUID = 7954652516619094585L;
 
 	private String name;
-	private static ChessPieceSet gamePieceSet;
+	public static ChessPieceSet gamePieceSet;
 	private ChessPiece[][] chessPieces;
 	private Tile[][] tileArray = null;
 	private ChessPiece selectedChessPiece = null;

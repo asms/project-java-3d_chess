@@ -25,4 +25,8 @@ public class ChessPieceSet {
 	public int getLength(){
 		return set.length;
 	}
+
+	public ChessPiece[] getPieces() {
+		return set;
+	}
 }
