@@ -203,35 +203,32 @@ public class ChessBoard implements Serializable {
 					}
 				}
 
-				if(chessPiece == null || textureRegion == null) {
-					break;
-				}
+				if(chessPiece != null && textureRegion != null) {
 
-
-
-				int positionX;
-				int positionY;
-
-				if(chessPiece.isAnimating()) {
-					double speed = chessPiece.getSpeed();
-					Vector2 animationPosition = chessPiece.getAnimationPosition();
-					Vector2 differenceVector = new Vector2(
-							x*tileWidth - animationPosition.getX(),
-							y*tileWidth - animationPosition.getY());
-					if(differenceVector.getMagnitude() <= speed) {
-						chessPiece.stopAnimation();
+					int positionX;
+					int positionY;
+	
+					if(chessPiece.isAnimating()) {
+						double speed = chessPiece.getSpeed();
+						Vector2 animationPosition = chessPiece.getAnimationPosition();
+						Vector2 differenceVector = new Vector2(
+								x*tileWidth - animationPosition.getX(),
+								y*tileWidth - animationPosition.getY());
+						if(differenceVector.getMagnitude() <= speed) {
+							chessPiece.stopAnimation();
+						} else {
+							Vector2 movementVector = differenceVector.getUnitVector().multiply(speed);
+							animationPosition = animationPosition.add(movementVector);
+							chessPiece.setAnimationPosition(animationPosition);
+						}
+						positionX = (int) Math.floor(animationPosition.getX());
+						positionY = (int) Math.floor(animationPosition.getY());
 					} else {
-						Vector2 movementVector = differenceVector.getUnitVector().multiply(speed);
-						animationPosition = animationPosition.add(movementVector);
-						chessPiece.setAnimationPosition(animationPosition);
+						positionX = x*tileWidth;
+						positionY = y*tileWidth;
 					}
-					positionX = (int) Math.floor(animationPosition.getX());
-					positionY = (int) Math.floor(animationPosition.getY());
-				} else {
-					positionX = x*tileWidth;
-					positionY = y*tileWidth;
+					batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 				}
-				batch.draw(textureRegion, positionX, positionY, tileWidth, tileWidth);
 			}
 		}
 	}

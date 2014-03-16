@@ -1,19 +1,10 @@
 package com.a7m5.chess.editor;
 
-import com.a7m5.chess.ChessGame3D;
-import com.a7m5.chess.ResourceThrower;
-import com.a7m5.chess.chesspieces.ChessOwner;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Input.Keys;
 
 public class EditorInputProcessor implements InputProcessor {
 	@Override
 	public boolean keyDown (int keycode) {
-		if(keycode == Keys.TAB){
-			ResourceThrower boardEditorThrow = new ResourceThrower("C:/Users/Peter/git/weird-chess/chess/assets/data");
-			
-			boardEditorThrow.createBoardFile(ChessGameEditor.getEditingBoard());
-		}
 		return false;
 	}
 
@@ -30,7 +21,7 @@ public class EditorInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDown (int x, int y, int pointer, int button) {
-		ChessGameEditor.onClickListener(x, y, pointer, button);
+		ChessGameEditor.getInstance().onClickListener(x, y, pointer, button);
 		return false;
 	}
 
