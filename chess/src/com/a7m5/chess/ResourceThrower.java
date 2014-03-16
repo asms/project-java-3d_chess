@@ -1,6 +1,8 @@
 package com.a7m5.chess;
 
 import java.io.File;
+import java.sql.Time;
+import java.util.Date;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -24,8 +26,13 @@ import com.badlogic.gdx.graphics.Color;
 public class ResourceThrower {
 	String resourceDirectoryPath;
 
-	public ResourceThrower(String resourceDirectoryPath) {
-		this.resourceDirectoryPath = resourceDirectoryPath;
+
+	public void saveBoard(ChessBoard board) {
+		String filePath = board.getAbsoluteFilePath();
+		if(filePath == null) {
+			filePath = ChessGame3D.getCacheDirectory() + File.pathSeparator + String.valueOf(new Date().getTime()) + ".xml";
+		}
+		createBoardFile(board, filePath);
 	}
 
 	public void createPieceFile(ChessPiece outgoingPiece){
@@ -41,7 +48,7 @@ public class ResourceThrower {
 			Element rootElement = doc.createElement("chessPiece");
 			rootElement.setAttribute("uniquePieceID", Integer.toString(outgoingPiece.getUniquePieceID()));
 			doc.appendChild(rootElement);
-			
+
 			// Add all the standalone tags.
 			addStandaloneStr("pieceName", outgoingPiece.getPieceName(), doc, rootElement);
 			addStandaloneStr("blackArtFile", outgoingPiece.getBlackArtFile(), doc, rootElement);
@@ -91,83 +98,76 @@ public class ResourceThrower {
 			root.appendChild(vectorGroup);
 		}
 	}
-	
+
 	private void addTiles(Document doc, Tile[][] tiles, Element root){
 		if(tiles != null){
-			Element vectorGroup = doc.createElement("tiles");
+			Element tileGroup = doc.createElement("tiles");
 			for(int x = 0; x < tiles.length; x++){
 				Tile[] tileRow = tiles[x];
 				for(int y = 0; y < tileRow.length; y++) {
 					Tile tile = tileRow[y];
-					Element el = doc.createElement("tile");
-					
-					el.setAttribute("x", String.valueOf(x));
-					el.setAttribute("y", String.valueOf(y));
-					
-					Color color = tile.getColor();
-					el.setAttribute("r", String.valueOf(color.r));
-					el.setAttribute("g", String.valueOf(color.g));
-					el.setAttribute("b", String.valueOf(color.b));
-					el.setAttribute("a", String.valueOf(color.a));
-					
-					vectorGroup.appendChild(el);
+					if(tile != null) {
+						Element el = doc.createElement("tile");
+
+						el.setAttribute("x", String.valueOf(x));
+						el.setAttribute("y", String.valueOf(y));
+
+						Color color = tile.getColor();
+						el.setAttribute("r", String.valueOf(color.r));
+						el.setAttribute("g", String.valueOf(color.g));
+						el.setAttribute("b", String.valueOf(color.b));
+						el.setAttribute("a", String.valueOf(color.a));
+
+						tileGroup.appendChild(el);
+					}
 				}
 			}
-			root.appendChild(vectorGroup);
+			root.appendChild(tileGroup);
 		}
 	}
 
-	public void createBoardFile(ChessBoard outgoingBoard){
-		String tempName = "";
-		   JFileChooser chooser = new JFileChooser();
-		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		        "XML Board Files", "board.xml");
-		    chooser.setFileFilter(filter);
-		    int returnVal = chooser.showSaveDialog(null);
-		    if(returnVal == JFileChooser.APPROVE_OPTION) {
-		    	tempName = chooser.getSelectedFile().getAbsolutePath() + ".board.xml";
-		    }
-		if(!tempName.isEmpty()){
-		
-			File tempFile = new File(tempName);
+	public void createBoardFile(ChessBoard outgoingBoard, String filePath){
 
-			try {
+		File tempFile = new File(filePath);
 
-				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		try {
 
-				// root element, sets ID
-				Document doc = docBuilder.newDocument();
-				Element rootElement = doc.createElement("chessBoard");
-				rootElement.setAttribute("width", Integer.toString(outgoingBoard.getBoardWidth()));
-				doc.appendChild(rootElement);
-				
-				// Piece element
-				Element pieceElement = doc.createElement("pieces");
-				rootElement.appendChild(pieceElement);
-				
-				// Add all the pieces on the board.
-				for(int x =0; x < outgoingBoard.getBoardWidth(); x++){
-					for(int y =0; y < outgoingBoard.getBoardWidth(); y++){	
-						addPiece(outgoingBoard.getChessPieceByXYTile(x, y),  doc, pieceElement);
-					}
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			// root element, sets ID
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("chessBoard");
+			rootElement.setAttribute("width", Integer.toString(outgoingBoard.getBoardWidth()));
+			rootElement.setAttribute("name", outgoingBoard.getName());
+			doc.appendChild(rootElement);
+
+			// Piece element
+			Element pieceElement = doc.createElement("pieces");
+			rootElement.appendChild(pieceElement);
+
+			// Add all the pieces on the board.
+			for(int x =0; x < outgoingBoard.getBoardWidth(); x++){
+				for(int y =0; y < outgoingBoard.getBoardWidth(); y++){
+					
+					addPiece(outgoingBoard.getChessPieceByXYTile(x, y),  doc, pieceElement);
 				}
-				addTiles(doc, outgoingBoard.getTileArray(), pieceElement);
-				
-				// write the content into xml file
-				TransformerFactory transformerFactory = TransformerFactory.newInstance();
-				Transformer transformer = transformerFactory.newTransformer();
-				DOMSource source = new DOMSource(doc);
-				StreamResult result = new StreamResult(tempFile);
-				transformer.transform(source, result);
-
-				System.out.println("File saved: " + tempFile.getAbsolutePath());
-
-			} catch (ParserConfigurationException pce) {
-				pce.printStackTrace();
-			} catch (TransformerException tfe) {
-				tfe.printStackTrace();
 			}
+			addTiles(doc, outgoingBoard.getTileArray(), pieceElement);
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(tempFile);
+			transformer.transform(source, result);
+
+			System.out.println("File saved: " + tempFile.getAbsolutePath());
+
+		} catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		} catch (TransformerException tfe) {
+			tfe.printStackTrace();
 		}
 	}
 

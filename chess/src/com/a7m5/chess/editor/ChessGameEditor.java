@@ -18,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.ResourceGrabber;
+import com.a7m5.chess.ResourceThrower;
 import com.a7m5.chess.Tile;
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
@@ -79,6 +80,7 @@ public class ChessGameEditor implements ApplicationListener {
 	private SlideColorPicker tileColorPicker;
 	private Slider tileSaturationSlider;
 	private Slider tileBrightnessSlider;
+	private TextField boardNameTextField;
 
 	private static ChessBoardPalette editingPalette;
 	private static ChessPieceSet editorPieceSet;
@@ -140,15 +142,21 @@ public class ChessGameEditor implements ApplicationListener {
 				@Override
 			    public void clicked(InputEvent event, float x, float y) {
 					editingBoardIndex = index;
-					int width = boards.get(index).getBoardWidth();
+					ChessBoard board = getEditingBoard();
+					int width = board.getBoardWidth();
+					String name = board.getName();
 					boardWidthTextField.setText(String.valueOf(width));
+					boardNameTextField.setText(name);
 				}
 			});
 			boardList.addItem(row);
 		}
 		
+		Label boardNameLabel = new Label("Name", skin);
+		boardNameTextField = new TextField("", skin);
+		
 		boardWidthTextField = new TextField("", skin);
-		Label textLabel = new Label("Size", skin);
+		Label boardWidthLabel = new Label("Size", skin);
 		TextButton updateBoardWidthButton = new TextButton("Update", skin);
 		updateBoardWidthButton.addListener(new ClickListener() {
 			@Override
@@ -179,12 +187,33 @@ public class ChessGameEditor implements ApplicationListener {
 			}
 		});
 		
+		TextButton saveBoardButton = new TextButton("Save", skin);
+		saveBoardButton.addListener(new ClickListener() {
+			
+			@Override
+		    public void clicked(InputEvent event, float x, float y) {
+				ChessBoard board = getEditingBoard();
+				if(board != null) {
+					board.setName(boardNameTextField.getText());
+					ResourceThrower thrower = new ResourceThrower();
+					thrower.saveBoard(board);
+				}
+				
+				
+			}
+			
+		});
+		
 		wrapper.add(boardList).fillX().padBottom(16).left();
 		wrapper.row();
-		wrapper.add(textLabel).padRight(16);
+		wrapper.add(boardNameLabel);
+		wrapper.add(boardNameTextField);
+		wrapper.row();
+		wrapper.add(boardWidthLabel).padRight(16);
 		wrapper.add(boardWidthTextField);
 		wrapper.add(updateBoardWidthButton);
 		wrapper.row();
+		wrapper.add(saveBoardButton);
 		
 		boardsContainer.add(scrollPane).fill().expand();
 		
@@ -376,17 +405,18 @@ public class ChessGameEditor implements ApplicationListener {
 
 	public void onClickListener(int x, int y, int pointer, int button) {
 		System.out.println(x + ":" + y);
-		// Palette Clicks.
-		ChessBoardPalette.onClickListener(x, y, pointer, button);
-		// Board Clicks.
-		// Adding pieces.
+		
 		ChessBoard board = getEditingBoard();
 		if(board == null) {
 			return;
 		}
 		
+		int width = board.getBoardWidth();
 		int tileX = board.getTileFromCoordinate(x);
 		int tileY = board.getTileFromCoordinate(ChessBoard.actualBoardWidth - y);
+		if(tileX >= width || tileY >= width) {
+			return;
+		}
 		Tile[][] tiles = board.getTileArray();
 		
 		if(editorMode == EditingMode.TILE_DELETE) {
@@ -396,6 +426,9 @@ public class ChessGameEditor implements ApplicationListener {
 		}
 		
 		if(editorMode == EditingMode.TILE_PAINT && tilePaintColor != null) {
+			if(tiles[tileX][tileY] == null) {
+				tiles[tileX][tileY] = new Tile();
+			}
 			tiles[tileX][tileY].setColor(tilePaintColor);
 		}
 		
