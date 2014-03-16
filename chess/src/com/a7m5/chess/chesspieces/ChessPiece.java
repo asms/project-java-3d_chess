@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ChessGame3D;
 import com.a7m5.chess.Vector2;
-import com.a7m5.chess.editor.ChessBoardPalette;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -20,7 +19,6 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	protected ChessOwner owner;
 
 	protected ChessBoard board;
-	protected ChessBoardPalette palette;
 	private Vector2 position;
 	private boolean animating = false;
 	private Vector2 animationPosition;
@@ -73,11 +71,6 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 
 	public void register(ChessBoard chessBoard, Vector2 position) {
 		this.board = chessBoard;
-		this.position = position;
-	}
-
-	public void register(ChessBoardPalette chessPalette, Vector2 position) {
-		this.palette = chessPalette;
 		this.position = position;
 	}
 
