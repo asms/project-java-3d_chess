@@ -82,5 +82,8 @@ com.gdx.extension.ui.color.SlideColorPicker$SlideColorPickerStyle: {
 com.gdx.extension.ui.slide.SlideShow$SlideShowStyle: {
 	default-horizontal: { background: backgrounds/grey, previousScroll: back, nextScroll: next },
 	default-vertical: { background: backgrounds/grey, previousScroll: back, nextScroll: next }
+},
+com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
+	default: { font: default, fontColorSelected: red, fontColorUnselected: white, selection: backgrounds/grey}, 
 }
 }

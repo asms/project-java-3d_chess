@@ -37,7 +37,7 @@ public class ChessBoard implements Serializable {
 	private String name;
 	private static ChessPieceSet gamePieceSet;
 	private ChessPiece[][] chessPieces;
-	private static Tile[][] tileArray = null;
+	private Tile[][] tileArray = null;
 	private ChessPiece selectedChessPiece = null;
 	private ChessOwner turnOwner;
 	private ChessOwner checkedPlayer = null;
@@ -386,7 +386,7 @@ public class ChessBoard implements Serializable {
 		return tileWidth;
 	}
 
-	public static Tile getTile(int x, int y){
+	public Tile getTile(int x, int y){
 		return tileArray[x][y];
 	}
 

@@ -8,6 +8,8 @@
 
 package com.a7m5.chess.editor;
 
+import java.util.ArrayList;
+
 import javax.swing.JFileChooser;
 
 import org.lwjgl.opengl.GL11;
@@ -21,23 +23,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.gdx.extension.ui.list.AdvancedList;
+import com.gdx.extension.ui.list.ListRow;
 import com.gdx.extension.ui.tab.Tab;
 import com.gdx.extension.ui.tab.TabContainer;
 import com.gdx.extension.ui.tab.TabPane;
@@ -48,12 +46,15 @@ public class ChessGameEditor implements ApplicationListener {
 	private TabPane tabPane;
 	private TabContainer tabContainer;
 	private Stage stage;
+	private ShapeRenderer shapeRenderer;
+	private ArrayList<ChessBoard> boards;
 	private static ChessBoard editingBoard;
+	private int editingBoardIndex = -1;
 
 	private static ChessBoardPalette editingPalette;
 	private static ChessPieceSet editorPieceSet;
 
-	public ChessGameEditor(int requestedBoardSize) {
+	public ChessGameEditor() {
 		// Grab the set of chess pieces before starting the editor
 		ResourceGrabber myGrab;
 		JFileChooser directoryChooser = new JFileChooser();
@@ -71,8 +72,8 @@ public class ChessGameEditor implements ApplicationListener {
 		 */
 		myGrab = new ResourceGrabber();
 		editorPieceSet = myGrab.getChessPieceSet();
-		editingBoard = new ChessBoard(editorPieceSet);
-		editingBoard.setBoardWidth(8);
+		boards = myGrab.getBoards();
+		new Object();
 		editingPalette = new ChessBoardPalette(522,10, editorPieceSet);
 	}
 
@@ -91,7 +92,8 @@ public class ChessGameEditor implements ApplicationListener {
 		
 		camera = new OrthographicCamera(512, 512+330);
 		camera.setToOrtho(false);
-
+		
+		shapeRenderer =  new ShapeRenderer();
 		spriteBatch = new SpriteBatch();
 
 		FileHandle skinFile = Gdx.files.internal("skins/default.json");
@@ -100,9 +102,27 @@ public class ChessGameEditor implements ApplicationListener {
 
 		tabPane = new TabPane(skin);
 		tabContainer = new TabContainer(skin);
-		Tab boardsTab = new Tab("Boards", tabContainer, skin);
+		TabContainer boardsContainer = new TabContainer(skin);
+		Tab boardsTab = new Tab("Boards", boardsContainer, skin);
 		Tab tilesTab = new Tab("Tiles", tabContainer, skin);
 		Tab piecesTab = new Tab("Pieces", tabContainer, skin);
+		
+		AdvancedList<ListRow> list = new AdvancedList<ListRow>();
+		for(int i = 0; i < boards.size(); i++) {
+			final int index = i;
+			ListRow row = new ListRow(skin);
+			row.add(new Label(boards.get(i).getName(), skin));
+			row.addListener(new ClickListener() {
+
+				@Override
+			    public void clicked(InputEvent event, float x, float y) {
+					editingBoardIndex = index;
+					System.out.println(index);
+				}
+			});
+			list.addItem(row);
+		}
+		boardsContainer.add(list);
 		
 		boardsTab.addListener(new ClickListener() {
 
@@ -140,6 +160,7 @@ public class ChessGameEditor implements ApplicationListener {
 		tabPane.addTab(boardsTab);
 		tabPane.addTab(tilesTab);
 		tabPane.addTab(piecesTab);
+		tabPane.setCurrentTab(0);
 		tabPane.setPosition(512, 0);
 		tabPane.setWidth(256);
 		tabPane.setHeight(512);
@@ -159,22 +180,21 @@ public class ChessGameEditor implements ApplicationListener {
 		Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		
 		stage.act(Gdx.graphics.getDeltaTime());
-
-		ShapeRenderer shapeRenderer = new ShapeRenderer();
-		shapeRenderer.setProjectionMatrix(camera.combined);
-
-		shapeRenderer.begin(ShapeType.Filled);
-		editingBoard.drawBoard(shapeRenderer);
-		//editingPalette.drawBackground(shapeRenderer);
-		shapeRenderer.end();
-
-
-
-		spriteBatch.setProjectionMatrix(camera.combined);
-		spriteBatch.begin();
-		//editingPalette.drawElements(spriteBatch);
-		editingBoard.drawPieces(spriteBatch);
-		spriteBatch.end();
+		
+		if(editingBoardIndex > -1) {
+			shapeRenderer.setProjectionMatrix(camera.combined);
+			shapeRenderer.begin(ShapeType.Filled);
+			boards.get(editingBoardIndex).drawBoard(shapeRenderer);
+			//editingPalette.drawBackground(shapeRenderer);
+			shapeRenderer.end();
+			
+			spriteBatch.setProjectionMatrix(camera.combined);
+			spriteBatch.begin();
+			//editingPalette.drawElements(spriteBatch);
+			boards.get(editingBoardIndex).drawPieces(spriteBatch);
+			spriteBatch.end();
+		}
+		
 		
 		stage.act(Gdx.graphics.getDeltaTime());
 	    stage.draw();
