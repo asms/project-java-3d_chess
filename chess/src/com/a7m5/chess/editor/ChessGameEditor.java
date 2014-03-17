@@ -208,6 +208,7 @@ public class ChessGameEditor implements ApplicationListener {
 		wrapper.add(updateBoardWidthButton).padLeft(8);
 		wrapper.row();
 		wrapper.add(saveBoardButton);
+		wrapper.align(Align.top);
 		
 		boardsContainer.add(scrollPane).fill().expand();
 		
@@ -300,6 +301,7 @@ public class ChessGameEditor implements ApplicationListener {
 		tilesContainer.add(tilePaintButton).pad(8);
 		tilesContainer.add(tilePickButton).pad(8);
 		tilesContainer.add(tileDeleteButton).pad(8);
+		tilesContainer.align(Align.top);
 		
 		//Piece Container
 		GridSelection<GridSelectionItem> piecesGrid = new GridSelection<GridSelectionItem>();
