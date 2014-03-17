@@ -67,7 +67,7 @@ public class ChessGameEditor implements ApplicationListener {
 	private ArrayList<ChessBoard> boards;
 	private int editingBoardIndex = -1;
 	private TextField boardWidthTextField;
-	
+
 	private EditingMode editorMode;
 	private enum EditingMode {
 		Board,
@@ -83,6 +83,7 @@ public class ChessGameEditor implements ApplicationListener {
 	private Slider tileBrightnessSlider;
 	private TextField boardNameTextField;
 	private int selectedChessPieceIndex = -1;
+	private ChessOwner selectedChessOwner = ChessOwner.WHITE;
 
 	public ChessGameEditor() {
 		self = this;
@@ -104,10 +105,10 @@ public class ChessGameEditor implements ApplicationListener {
 		multiplexer.addProcessor(stage);
 		multiplexer.addProcessor(inputProcessor);
 		Gdx.input.setInputProcessor(multiplexer);
-		
+
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.setToOrtho(false);
-		
+
 		shapeRenderer =  new ShapeRenderer();
 		spriteBatch = new SpriteBatch();
 
@@ -122,12 +123,12 @@ public class ChessGameEditor implements ApplicationListener {
 		Tab boardsTab = new Tab("Boards", boardsContainer, skin);
 		Tab tilesTab = new Tab("Tiles", tilesContainer, skin);
 		Tab piecesTab = new Tab("Pieces", piecesContainer, skin);
-		
+
 		//Boards Container
 		Table wrapper = new Table();
 		ScrollPane scrollPane = new ScrollPane(wrapper);
 		AdvancedList<ListRow> boardList = new AdvancedList<ListRow>();
-		
+
 		for(int i = 0; i < boards.size(); i++) {
 			final int index = i;
 			ListRow row = new ListRow(skin);
@@ -137,7 +138,7 @@ public class ChessGameEditor implements ApplicationListener {
 			row.addListener(new ClickListener() {
 
 				@Override
-			    public void clicked(InputEvent event, float x, float y) {
+				public void clicked(InputEvent event, float x, float y) {
 					editingBoardIndex = index;
 					ChessBoard board = getEditingBoard();
 					int width = board.getBoardWidth();
@@ -148,16 +149,16 @@ public class ChessGameEditor implements ApplicationListener {
 			});
 			boardList.addItem(row);
 		}
-		
+
 		Label boardNameLabel = new Label("Name", skin);
 		boardNameTextField = new TextField("", skin);
-		
+
 		boardWidthTextField = new TextField("", skin);
 		Label boardWidthLabel = new Label("Size", skin);
 		TextButton updateBoardWidthButton = new TextButton("Update", skin);
 		updateBoardWidthButton.addListener(new ClickListener() {
 			@Override
-		    public void clicked(InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				String widthString = boardWidthTextField.getText();
 				try {
 					ChessBoard board = boards.get(editingBoardIndex);
@@ -170,7 +171,7 @@ public class ChessGameEditor implements ApplicationListener {
 						newTileArray[i] = Arrays.copyOf(oldTileArray[i], width);
 					}
 					board.setTileArray(newTileArray);
-					
+
 					//Resize ChessPiece Array
 					ChessPiece[][] newPieceArray = new ChessPiece[width][width];
 					ChessPiece[][] oldPieceArray = board.getChessPieces();
@@ -183,24 +184,24 @@ public class ChessGameEditor implements ApplicationListener {
 				}
 			}
 		});
-		
+
 		TextButton saveBoardButton = new TextButton("Save", skin);
 		saveBoardButton.addListener(new ClickListener() {
-			
+
 			@Override
-		    public void clicked(InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				ChessBoard board = getEditingBoard();
 				if(board != null) {
 					board.setName(boardNameTextField.getText());
 					ResourceThrower thrower = new ResourceThrower();
 					thrower.saveBoard(board);
 				}
-				
-				
+
+
 			}
-			
+
 		});
-		
+
 		wrapper.add(boardList).colspan(3).fillX().padBottom(16).left();
 		wrapper.row();
 		wrapper.add(boardNameLabel).width(60).padRight(8);
@@ -212,9 +213,9 @@ public class ChessGameEditor implements ApplicationListener {
 		wrapper.row();
 		wrapper.add(saveBoardButton);
 		wrapper.align(Align.top);
-		
+
 		boardsContainer.add(scrollPane).fill().expand();
-		
+
 		//Tiles Container
 		tileColorPicker = new SlideColorPicker(false, skin);
 		tileColorPicker.addListener(new ChangeListener() {
@@ -223,75 +224,75 @@ public class ChessGameEditor implements ApplicationListener {
 			public void changed(ChangeEvent event, Actor actor) {
 				if(!tileColorPicker.isDragging()) {
 					java.awt.Color color = java.awt.Color.getHSBColor(tileColorPicker.getValue() / 360f, tileColorPicker.getSaturation(), tileColorPicker.getBrightness());
-					
+
 					tilePaintColor = new Color((float) color.getRed() / 256f, (float) color.getGreen() / 256f, (float) color.getBlue() / 256f, 1);
 				}
 			}
 
-			
+
 		});
 		tileColorPicker.fire(new ChangeEvent());
-		
+
 		tileSaturationSlider = new Slider(0f, 1f, 1f / 100f, false, skin);
 		tileSaturationSlider.setValue(tileColorPicker.getSaturation());
 		tileSaturationSlider.addListener(new ChangeListener() {
-		    
-		    @Override
-		    public void changed(ChangeEvent event, Actor actor)
-		    {
-		    	tileColorPicker.setSaturation(tileSaturationSlider.getValue());
-		    	tileColorPicker.fire(new ChangeEvent());
-		    }
-		    
+
+			@Override
+			public void changed(ChangeEvent event, Actor actor)
+			{
+				tileColorPicker.setSaturation(tileSaturationSlider.getValue());
+				tileColorPicker.fire(new ChangeEvent());
+			}
+
 		});
 		tileBrightnessSlider = new Slider(0f, 1f, 1f / 100f, false, skin);
 		tileBrightnessSlider.setValue(tileColorPicker.getBrightness());
 		tileBrightnessSlider.addListener(new ChangeListener() {
-		    
-		    @Override
-		    public void changed(ChangeEvent event, Actor actor)
-		    {
-		    	tileColorPicker.setBrightness(tileBrightnessSlider.getValue());
-		    	tileColorPicker.fire(new ChangeEvent());
-		    }
-		    
+
+			@Override
+			public void changed(ChangeEvent event, Actor actor)
+			{
+				tileColorPicker.setBrightness(tileBrightnessSlider.getValue());
+				tileColorPicker.fire(new ChangeEvent());
+			}
+
 		});
-		
+
 		TextButton tilePaintButton = new TextButton("Paint", skin);
 		TextButton tilePickButton = new TextButton("Pick", skin);
 		TextButton tileDeleteButton = new TextButton("Delete", skin);
 		Label colorLabel = new Label("Color", skin);
 		Label saturationLabel = new Label("Saturation", skin);
 		Label brightnessLabel = new Label("Brightness", skin);
-		
+
 		tilePaintButton.addListener(new ClickListener() {
 
 			@Override
-		    public void clicked(InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				editorMode = EditingMode.TILE_PAINT;
 			}
-			
-			
+
+
 		});
 		tilePickButton.addListener(new ClickListener() {
 
 			@Override
-		    public void clicked(InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				editorMode = EditingMode.TILE_PICK;
 			}
-			
-			
+
+
 		});
 		tileDeleteButton.addListener(new ClickListener() {
 
 			@Override
-		    public void clicked(InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				editorMode = EditingMode.TILE_DELETE;
 			}
-			
-			
+
+
 		});
-		
+
 		tilesContainer.add(colorLabel).pad(8);
 		tilesContainer.add(tileColorPicker).pad(8);
 		tilesContainer.row();
@@ -305,10 +306,10 @@ public class ChessGameEditor implements ApplicationListener {
 		tilesContainer.add(tilePickButton).pad(8);
 		tilesContainer.add(tileDeleteButton).pad(8);
 		tilesContainer.align(Align.top);
-		
+
 		//Piece Container
 		GridSelection<GridSelectionItem> piecesGrid = new GridSelection<GridSelectionItem>();
-		
+
 		ChessPiece[] set = getChessPieceSet().getPieces();
 		for(int i = 0; i < set.length; i++) {
 			final int index = i;
@@ -322,9 +323,10 @@ public class ChessGameEditor implements ApplicationListener {
 
 					@Override
 					public void clicked(InputEvent event, float x, float y) {
+						editorMode = EditingMode.PIECE_SET;
 						selectedChessPieceIndex = index;
 					}
-					
+
 				});
 				piecesGrid.addItem(item);
 			} else {
@@ -333,43 +335,78 @@ public class ChessGameEditor implements ApplicationListener {
 		}
 		TextButton whiteChessOwnerButton = new TextButton("White", skin);
 		TextButton blackChessOwnerButton = new TextButton("Black", skin);
-		piecesContainer.add(piecesGrid);
+		TextButton chessPieceDeleteButton = new TextButton("Delete", skin);
+
+		whiteChessOwnerButton.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				editorMode = EditingMode.PIECE_SET;
+				selectedChessOwner = ChessOwner.WHITE;
+			}
+
+		});
+
+		blackChessOwnerButton.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				editorMode = EditingMode.PIECE_SET;
+				selectedChessOwner = ChessOwner.BLACK;
+			}
+
+		});
 		
+		chessPieceDeleteButton.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				editorMode = EditingMode.PIECE_REMOVE;
+			}
+
+		});
+
+		piecesContainer.add(piecesGrid).colspan(3);
+		piecesContainer.row();
+		piecesContainer.add(whiteChessOwnerButton);
+		piecesContainer.add(blackChessOwnerButton);
+		piecesContainer.add(chessPieceDeleteButton);
+		piecesContainer.align(Align.top);
 		boardsTab.addListener(new ClickListener() {
 
 			@Override
-		    public void clicked(InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				// TODO Auto-generated method stub
 				System.out.println("Boards tab clicked.");
 			}
-			
-			
+
+
 		});
-		
+
 		piecesTab.addListener(new ClickListener() {
 
 			@Override
-		    public void clicked(InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				// TODO Auto-generated method stub
 				System.out.println("Pieces tab clicked.");
 				editorMode = EditingMode.PIECE_SET;
 			}
-			
-			
+
+
 		});
-		
+
 		tilesTab.addListener(new ClickListener() {
 
 			@Override
-		    public void clicked(InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				// TODO Auto-generated method stub
 				System.out.println("Tiles tab clicked.");
 				editorMode = EditingMode.TILE_PAINT;
 			}
-			
-			
+
+
 		});
-		
+
 		tabPane.addTab(boardsTab);
 		tabPane.addTab(tilesTab);
 		tabPane.addTab(piecesTab);
@@ -390,25 +427,25 @@ public class ChessGameEditor implements ApplicationListener {
 	public void render() {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
-		
+
 		stage.act(Gdx.graphics.getDeltaTime());
-		
+
 		if(editingBoardIndex > -1) {
 			shapeRenderer.setProjectionMatrix(camera.combined);
 			shapeRenderer.begin(ShapeType.Filled);
 			boards.get(editingBoardIndex).drawBoard(shapeRenderer);
 			shapeRenderer.end();
-			
+
 			spriteBatch.setProjectionMatrix(camera.combined);
 			spriteBatch.begin();
 			//editingPalette.drawElements(spriteBatch);
 			boards.get(editingBoardIndex).drawPieces(spriteBatch);
 			spriteBatch.end();
 		}
-		
-		
+
+
 		stage.act(Gdx.graphics.getDeltaTime());
-	    stage.draw();
+		stage.draw();
 	}
 
 	@Override
@@ -432,12 +469,12 @@ public class ChessGameEditor implements ApplicationListener {
 
 	public void onClickListener(int x, int y, int pointer, int button) {
 		System.out.println(x + ":" + y);
-		
+
 		ChessBoard board = getEditingBoard();
 		if(board == null) {
 			return;
 		}
-		
+
 		int width = board.getBoardWidth();
 		int tileX = board.getTileFromCoordinate(x);
 		int tileY = board.getTileFromCoordinate(ChessBoard.actualBoardWidth - y);
@@ -446,19 +483,19 @@ public class ChessGameEditor implements ApplicationListener {
 		}
 		Tile[][] tiles = board.getTileArray();
 		ChessPiece[][] pieces = board.getChessPieces();
-		
+
 		if(editorMode == EditingMode.TILE_DELETE) {
 			tiles[tileX][tileY] = null;
 			pieces[tileX][tileY] = null;
 		}
-		
+
 		if(editorMode == EditingMode.TILE_PAINT && tilePaintColor != null) {
 			if(tiles[tileX][tileY] == null) {
 				tiles[tileX][tileY] = new Tile();
 			}
 			tiles[tileX][tileY].setColor(tilePaintColor);
 		}
-		
+
 		if(editorMode == EditingMode.TILE_PICK) {
 			Color pickedColor = tiles[tileX][tileY].getColor();
 			float[] hsb = new float[3];
@@ -470,13 +507,18 @@ public class ChessGameEditor implements ApplicationListener {
 			tileBrightnessSlider.setValue(hsb[2]);
 			tileColorPicker.fire(new ChangeEvent());
 		}
-		
+
+
 		if(editorMode == EditingMode.PIECE_SET) {
 			if(tiles[tileX][tileY] != null && selectedChessPieceIndex > -1) {
-				ChessPiece piece = getChessPieceSet().getPieceByIndex(selectedChessPieceIndex).getClone(ChessOwner.WHITE);
+				ChessPiece piece = getChessPieceSet().getPieceByIndex(selectedChessPieceIndex).getClone(selectedChessOwner);
 				piece.setPosition(new Vector2(tileX, tileY));
 				pieces[tileX][tileY] = piece;
 			}
+		}
+
+		if(editorMode == EditingMode.PIECE_REMOVE) {
+			pieces[tileX][tileY] = null;
 		}
 
 	}
@@ -487,9 +529,9 @@ public class ChessGameEditor implements ApplicationListener {
 		} else {
 			return null;
 		}
-		
+
 	}
-	
+
 	public ChessPieceSet getChessPieceSet() {
 		return ChessBoard.gamePieceSet;
 	}
