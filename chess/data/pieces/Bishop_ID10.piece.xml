@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<chessPiece uniquePieceID="10">
+	<pieceName>Bishop</pieceName>
+	<blackArtFile>textures/bishop-black.png</blackArtFile>
+	<whiteArtFile>textures/bishop-white.png</whiteArtFile>
+	<NPCArtFile />
+	<movementDirectionVectors>
+		<vector x="1" y="1" />
+		<vector x="-1" y="-1" />
+		<vector x="-1" y="1" />
+		<vector x="1" y="-1" />
+	</movementDirectionVectors>
+	<attackDirectionVectors>
+		<vector x="1" y="1" />
+		<vector x="-1" y="-1" />
+		<vector x="-1" y="1" />
+		<vector x="1" y="-1" />
+	</attackDirectionVectors>
+</chessPiece>
