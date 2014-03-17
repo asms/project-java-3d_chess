@@ -1,5 +1,9 @@
 package com.a7m5.chess;
 
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.a7m5.networking.Client;
@@ -243,9 +247,25 @@ public class ChessGame3D implements ApplicationListener {
 		myGrab = new ResourceGrabber();
 		ChessPieceSet gamePieceSet = myGrab.getChessPieceSet();
 
-		if(server == null && serverThread == null) {
-			// Make the new board
-			ChessBoard board = myGrab.getBoards().get(0);	// Starting pieces from grabbed chess board.
+		Object[] possibilities = new Object[myGrab.getBoards().size()];
+		for( int i = myGrab.getBoards().size() - 1; i >= 0; i--){
+			possibilities[i] = (myGrab.getBoards().get(i).getName());
+		}
+		
+		String selection = (String)JOptionPane.showInputDialog(null, "Which board do you want to play.", "Board Selection", JOptionPane.PLAIN_MESSAGE,
+		                    null,
+		                    possibilities,
+		                    myGrab.getBoards().get(0).getName());
+		
+		int boardToPlay = 0;
+		for(int i = 0; i < possibilities.length; i++){
+			if(selection == possibilities[i]){
+				boardToPlay = i;
+			}
+		}
+		
+		// Make the new board
+			ChessBoard board = myGrab.getBoards().get(boardToPlay);	// Starting pieces from grabbed chess board.
 			board.setTurnOwner(ChessOwner.WHITE);
 
 			server = new Server(port, board);
@@ -253,7 +273,7 @@ public class ChessGame3D implements ApplicationListener {
 			serverThread.start();
 		}
 
-	}
+	
 
 	public static void killServer() throws InterruptedException {
 		if(server != null && serverThread != null) {
