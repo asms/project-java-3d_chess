@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<chessPiece uniquePieceID="30">
+	<pieceName>Knight</pieceName>
+	<blackArtFile>textures/knight-black.png</blackArtFile>
+	<whiteArtFile>textures/knight-white.png</whiteArtFile>
+	<NPCArtFile />
+	<movementVectors>
+		<vector x="2" y="-1" />
+		<vector x="2" y="1" />
+		<vector x="-2" y="-1" />
+		<vector x="-2" y="1" />
+		<vector x="1" y="-2" />
+		<vector x="1" y="2" />
+		<vector x="-1" y="-2" />
+		<vector x="-1" y="2" />
+	</movementVectors>
+	<attackVectors>
+		<vector x="2" y="-1" />
+		<vector x="2" y="1" />
+		<vector x="-2" y="-1" />
+		<vector x="-2" y="1" />
+		<vector x="1" y="-2" />
+		<vector x="1" y="2" />
+		<vector x="-1" y="-2" />
+		<vector x="-1" y="2" />
+	</attackVectors>
+</chessPiece>
