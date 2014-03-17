@@ -17,6 +17,7 @@ import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ResourceGrabber;
 import com.a7m5.chess.ResourceThrower;
 import com.a7m5.chess.Tile;
+import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
 import com.badlogic.gdx.ApplicationListener;
@@ -80,6 +81,7 @@ public class ChessGameEditor implements ApplicationListener {
 	private Slider tileSaturationSlider;
 	private Slider tileBrightnessSlider;
 	private TextField boardNameTextField;
+	private int selectedChessPieceIndex = -1;
 
 	public ChessGameEditor() {
 		self = this;
@@ -304,12 +306,23 @@ public class ChessGameEditor implements ApplicationListener {
 		//Piece Container
 		GridSelection<GridSelectionItem> piecesGrid = new GridSelection<GridSelectionItem>();
 		
-		for(ChessPiece piece : getChessPieceSet().getPieces()) {
+		ChessPiece[] set = getChessPieceSet().getPieces();
+		for(int i = 0; i < set.length; i++) {
+			final int index = i;
+			ChessPiece piece = set[i];
 			GridSelectionItem item = new GridSelectionItem(skin);
 			TextureRegion textureRegion = piece.getWhiteTextureRegion();
 			if(textureRegion != null) {
 				TextureRegionDrawable drawable = new TextureRegionDrawable(textureRegion);
 				item.add(new Image(drawable)).fill().expand();
+				item.addListener(new ClickListener() {
+
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						selectedChessPieceIndex = index;
+					}
+					
+				});
 				piecesGrid.addItem(item);
 			} else {
 				System.out.println("texture is null");
@@ -334,6 +347,7 @@ public class ChessGameEditor implements ApplicationListener {
 		    public void clicked(InputEvent event, float x, float y) {
 				// TODO Auto-generated method stub
 				System.out.println("Pieces tab clicked.");
+				editorMode = EditingMode.PIECE_SET;
 			}
 			
 			
@@ -426,10 +440,10 @@ public class ChessGameEditor implements ApplicationListener {
 			return;
 		}
 		Tile[][] tiles = board.getTileArray();
+		ChessPiece[][] pieces = board.getChessPieces();
 		
 		if(editorMode == EditingMode.TILE_DELETE) {
 			tiles[tileX][tileY] = null;
-			ChessPiece[][] pieces = board.getChessPieces();
 			pieces[tileX][tileY] = null;
 		}
 		
@@ -450,6 +464,12 @@ public class ChessGameEditor implements ApplicationListener {
 			tileSaturationSlider.setValue(hsb[1]);
 			tileBrightnessSlider.setValue(hsb[2]);
 			tileColorPicker.fire(new ChangeEvent());
+		}
+		
+		if(editorMode == EditingMode.PIECE_SET) {
+			if(tiles[tileX][tileY] != null && selectedChessPieceIndex > -1) {
+				pieces[tileX][tileY] = getChessPieceSet().getPieceByIndex(selectedChessPieceIndex).getClone(ChessOwner.WHITE);
+			}
 		}
 
 	}
