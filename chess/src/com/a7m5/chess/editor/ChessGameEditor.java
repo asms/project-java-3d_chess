@@ -130,7 +130,7 @@ public class ChessGameEditor implements ApplicationListener {
 			ListRow row = new ListRow(skin);
 			Label label = new Label(boards.get(i).getName(), skin);
 			label.setAlignment(Align.center);
-			row.add(label).width(100).fill().expand();
+			row.add(label).width(200).fill().expand();
 			row.addListener(new ClickListener() {
 
 				@Override
@@ -198,14 +198,14 @@ public class ChessGameEditor implements ApplicationListener {
 			
 		});
 		
-		wrapper.add(boardList).fillX().padBottom(16).left();
+		wrapper.add(boardList).colspan(3).fillX().padBottom(16).left();
 		wrapper.row();
-		wrapper.add(boardNameLabel);
+		wrapper.add(boardNameLabel).width(60).padRight(8);
 		wrapper.add(boardNameTextField);
 		wrapper.row();
-		wrapper.add(boardWidthLabel).padRight(16);
+		wrapper.add(boardWidthLabel).width(60).padRight(8);
 		wrapper.add(boardWidthTextField);
-		wrapper.add(updateBoardWidthButton);
+		wrapper.add(updateBoardWidthButton).padLeft(8);
 		wrapper.row();
 		wrapper.add(saveBoardButton);
 		
