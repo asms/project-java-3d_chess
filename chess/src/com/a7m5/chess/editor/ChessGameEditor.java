@@ -35,6 +35,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -84,6 +85,9 @@ public class ChessGameEditor implements ApplicationListener {
 	private TextField boardNameTextField;
 	private int selectedChessPieceIndex = -1;
 	private ChessOwner selectedChessOwner = ChessOwner.WHITE;
+	private AdvancedList<ListRow> movementVectorsList;
+	private AdvancedList<ListRow> attackVectorsList;
+	private Skin skin;
 
 	public ChessGameEditor() {
 		self = this;
@@ -114,7 +118,7 @@ public class ChessGameEditor implements ApplicationListener {
 
 		FileHandle skinFile = Gdx.files.internal("skins/default.json");
 		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("skins/skin.atlas"));
-		Skin skin = new Skin(skinFile, atlas);
+		skin = new Skin(skinFile, atlas);
 
 		tabPane = new TabPane(skin);
 		TabContainer boardsContainer = new TabContainer(skin);
@@ -127,7 +131,7 @@ public class ChessGameEditor implements ApplicationListener {
 		//Boards Container
 		Table wrapper = new Table();
 		ScrollPane scrollPane = new ScrollPane(wrapper);
-		AdvancedList<ListRow> boardList = new AdvancedList<ListRow>();
+		final AdvancedList<ListRow> boardList = new AdvancedList<ListRow>();
 
 		for(int i = 0; i < boards.size(); i++) {
 			final int index = i;
@@ -325,6 +329,8 @@ public class ChessGameEditor implements ApplicationListener {
 					public void clicked(InputEvent event, float x, float y) {
 						editorMode = EditingMode.PIECE_SET;
 						selectedChessPieceIndex = index;
+						updateMovementVectorList();
+						updateAttackVectorList();
 					}
 
 				});
@@ -365,18 +371,64 @@ public class ChessGameEditor implements ApplicationListener {
 			}
 
 		});
+		
+		Label movementVectorsLabel = new Label("Movement Vectors", skin);
+		Label attackVectorsLabel = new Label("Attack Vectors", skin);
+		TextButton newMovementVectorButton = new TextButton("Add", skin);
+		TextButton newAttackVectorButton = new TextButton("Add", skin);
+		
+		newMovementVectorButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				ChessPiece piece = getSelectedChessPiece();
+				if(piece != null) {
+					Vector2[] oldVectorArray = piece.getMovementVectors();
+					int newLength = oldVectorArray.length + 1;
+					Vector2[] newVectorArray = Arrays.copyOf(oldVectorArray, newLength);
+					newVectorArray[newLength - 1] = new Vector2(0, 0);
+					piece.setMovementVectors(newVectorArray);
+					updateMovementVectorList();
+				}
+			}
+		});
+		
+		newAttackVectorButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				ChessPiece piece = getSelectedChessPiece();
+				if(piece != null) {
+					Vector2[] oldVectorArray = piece.getAttackVectors();
+					int newLength = oldVectorArray.length + 1;
+					Vector2[] newVectorArray = Arrays.copyOf(oldVectorArray, newLength);
+					newVectorArray[newLength - 1] = new Vector2(0, 0);
+					piece.setAttackVectors(newVectorArray);
+					updateAttackVectorList();
+				}
+			}
+		});
+		movementVectorsList = new AdvancedList<ListRow>();
+		attackVectorsList = new AdvancedList<ListRow>();
 
 		piecesContainer.add(piecesGrid).colspan(3);
 		piecesContainer.row();
 		piecesContainer.add(whiteChessOwnerButton);
 		piecesContainer.add(blackChessOwnerButton);
 		piecesContainer.add(chessPieceDeleteButton);
+		piecesContainer.row().padTop(8);
+		piecesContainer.add(movementVectorsLabel).colspan(2);
+		piecesContainer.add(newMovementVectorButton);
+		piecesContainer.row().padTop(4);
+		piecesContainer.add(movementVectorsList).colspan(3);
+		piecesContainer.row().padTop(8);
+		piecesContainer.add(attackVectorsLabel).colspan(2);
+		piecesContainer.add(newAttackVectorButton);
+		piecesContainer.row().padTop(4);
+		piecesContainer.add(attackVectorsList).colspan(3);
 		piecesContainer.align(Align.top);
 		boardsTab.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO Auto-generated method stub
 				System.out.println("Boards tab clicked.");
 			}
 
@@ -387,7 +439,6 @@ public class ChessGameEditor implements ApplicationListener {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO Auto-generated method stub
 				System.out.println("Pieces tab clicked.");
 				editorMode = EditingMode.PIECE_SET;
 			}
@@ -399,7 +450,6 @@ public class ChessGameEditor implements ApplicationListener {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO Auto-generated method stub
 				System.out.println("Tiles tab clicked.");
 				editorMode = EditingMode.TILE_PAINT;
 			}
@@ -510,10 +560,11 @@ public class ChessGameEditor implements ApplicationListener {
 
 
 		if(editorMode == EditingMode.PIECE_SET) {
-			if(tiles[tileX][tileY] != null && selectedChessPieceIndex > -1) {
-				ChessPiece piece = getChessPieceSet().getPieceByIndex(selectedChessPieceIndex).getClone(selectedChessOwner);
-				piece.setPosition(new Vector2(tileX, tileY));
-				pieces[tileX][tileY] = piece;
+			ChessPiece piece = getSelectedChessPiece();
+			if(tiles[tileX][tileY] != null && piece != null) {
+				ChessPiece newPiece = piece.getClone(selectedChessOwner);
+				newPiece.setPosition(new Vector2(tileX, tileY));
+				pieces[tileX][tileY] = newPiece;
 			}
 		}
 
@@ -521,6 +572,31 @@ public class ChessGameEditor implements ApplicationListener {
 			pieces[tileX][tileY] = null;
 		}
 
+	}
+	
+	private void updateMovementVectorList() {
+		// TODO Auto-generated method stub
+		movementVectorsList.clear();
+		ChessPiece piece = getSelectedChessPiece();
+		Vector2[] movementVectors = piece.getMovementVectors();
+		//Vector2[] movementDirecitonVectors = piece.getMovementDirectionVectors();
+		for(int i = 0; i < movementVectors.length; i++) {
+			Vector2 movementVector = movementVectors[i];
+			ListRow row = new ListRow(skin);
+			TextField xComponentField = new TextField(String.valueOf(movementVector.getX()), skin);
+			TextField yComponentField = new TextField(String.valueOf(movementVector.getY()), skin);
+			CheckBox directionVectorCheckBox = new CheckBox("Direction", skin);
+			row.add(xComponentField);
+			row.add(yComponentField);
+			row.add(directionVectorCheckBox);
+			movementVectorsList.addItem(row);
+		}
+		
+	}
+	
+	private void updateAttackVectorList() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public ChessBoard getEditingBoard() {
@@ -534,6 +610,14 @@ public class ChessGameEditor implements ApplicationListener {
 
 	public ChessPieceSet getChessPieceSet() {
 		return ChessBoard.gamePieceSet;
+	}
+	
+	private ChessPiece getSelectedChessPiece() {
+		if(selectedChessPieceIndex > -1) {
+			return getChessPieceSet().getPieceByIndex(selectedChessPieceIndex);
+		} else {
+			return null;
+		}
 	}
 
 	public static ChessGameEditor getInstance() {

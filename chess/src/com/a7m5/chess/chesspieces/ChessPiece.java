@@ -172,7 +172,9 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 				for(int i = 1; i < board.getBoardWidth() - 1; i++) {
 					Vector2 testVector = getPosition().add(movementVector.multiply(i));
 					try {
-						if(board.getChessPieceByVector(testVector) == null) {
+						if(board.getTile((int) testVector.getX(),(int) testVector.getY()) == null){
+							break;
+						} else if(board.getChessPieceByVector(testVector) == null) {
 							possibleMoves.add(testVector);
 						} else {
 							break;
@@ -191,7 +193,8 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 				}
 				Vector2 testVector = getPosition().add(movementVector);
 				try {
-					if(board.getChessPieceByVector(testVector) == null) {
+					if(!(board.getTile((int) testVector.getX(),(int) testVector.getY()) == null)
+							&& (board.getChessPieceByVector(testVector) == null)) {
 						possibleMoves.add(testVector);
 					}
 				} catch(Exception e) {}
@@ -203,7 +206,9 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	public boolean tryMove(Vector2 newPosition) {
 		ArrayList<Vector2> possibleMoves = getPossibleMoves();
 		for(Vector2 possibleMove : possibleMoves) {
-			if(newPosition.equals(possibleMove)) {
+			if(board.getTile((int) possibleMove.getX(),(int) possibleMove.getY()) == null){
+				break;
+			} else if(newPosition.equals(possibleMove)) {
 				return true;
 			}
 		}
@@ -220,7 +225,9 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 					for(int i = 1; i < board.getBoardWidth() - 1; i++) {
 						Vector2 testVector = getPosition().add(attackVector.multiply(i));
 						try {
-							if(board.getChessPieceByVector(testVector) != null) {
+							if(board.getTile((int) testVector.getX(),(int) testVector.getY()) == null){
+								break;
+							} else if(board.getChessPieceByVector(testVector) != null) {
 								if(testVector.equals(targetChessPiece.getPosition())) {
 									return true;
 								} else {
@@ -239,7 +246,8 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 					if(owner == ChessOwner.WHITE) {
 						attackVector = attackVector.multiplyY(-1);
 					}
-					if(getPosition().add(attackVector).equals(targetChessPiece.getPosition())) {
+					if(!(board.getTile((int) attackVector.getX(),(int) attackVector.getY()) == null)
+							&& (getPosition().add(attackVector).equals(targetChessPiece.getPosition()))) {
 						return true;
 					}
 				}
@@ -259,7 +267,9 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 					Vector2 testVector = getPosition().add(attackVector.multiply(i));
 					try {
 						ChessPiece testPiece = board.getChessPieceByVector(testVector);
-						if(testPiece != null) {
+						if(board.getTile((int) testVector.getX(),(int) testVector.getY()) == null){
+							break;
+						} else if(testPiece != null) {
 							if(testPiece.getOwner() != ChessGame3D.getOwner()) {
 								possibleAttacks.add(testVector);
 							}
@@ -281,7 +291,8 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 				try {
 					ChessPiece testPiece = board.getChessPieceByVector(testVector);
 					if(testPiece != null) {
-						if(testPiece.getOwner() != ChessGame3D.getOwner()) {
+						if(!(board.getTile((int) testVector.getX(),(int) testVector.getY()) == null)
+								&& (testPiece.getOwner() != ChessGame3D.getOwner())) {
 							possibleAttacks.add(testVector);
 						}
 
@@ -366,5 +377,13 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 
 	public void setBoard(ChessBoard chessBoard) {
 		this.board = chessBoard;
+	}
+
+	public void setMovementVectors(Vector2[] newVectorArray) {
+		movementVectors = newVectorArray;
+	}
+
+	public void setAttackVectors(Vector2[] newVectorArray) {
+		attackVectors = newVectorArray;
 	}
 }
