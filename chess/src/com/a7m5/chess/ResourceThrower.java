@@ -30,13 +30,21 @@ public class ResourceThrower {
 	public void saveBoard(ChessBoard board) {
 		String filePath = board.getAbsoluteFilePath();
 		if(filePath == null) {
-			filePath = ChessGame3D.getCacheDirectory() + File.pathSeparator + String.valueOf(new Date().getTime()) + ".xml";
+			filePath = ChessGame3D.getCacheDirectory() + File.pathSeparator + "boards" + File.pathSeparator + String.valueOf(new Date().getTime()) + ".xml";
 		}
 		createBoardFile(board, filePath);
 	}
+	
+	public void savePiece(ChessPiece piece) {
+		String filePath = piece.getAbsolutePath();
+		if(filePath == null) {
+			filePath = ChessGame3D.getCacheDirectory() + File.pathSeparator + "pieces" + File.pathSeparator + String.valueOf(new Date().getTime()) + ".xml";
+		}
+		createPieceFile(piece, filePath);
+	}
 
-	public void createPieceFile(ChessPiece outgoingPiece){
-		File tempFile = new File(resourceDirectoryPath + "\\" + outgoingPiece.getPieceName() + "_ID" + outgoingPiece.getUniquePieceID() + ".piece.xml");
+	public void createPieceFile(ChessPiece outgoingPiece, String filePath){
+		File tempFile = new File(filePath);
 
 		try {
 

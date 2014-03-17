@@ -44,6 +44,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
@@ -87,6 +88,10 @@ public class ChessGameEditor implements ApplicationListener {
 	private ChessOwner selectedChessOwner = ChessOwner.WHITE;
 	private AdvancedList<ListRow> movementVectorsList;
 	private AdvancedList<ListRow> attackVectorsList;
+	private ArrayList<Vector2> attackVectors = null;
+	private ArrayList<Vector2> attackDirectionVectors = null;
+	private ArrayList<Vector2> movementVectors = null;
+	private ArrayList<Vector2> movementDirectionVectors = null;
 	private Skin skin;
 
 	public ChessGameEditor() {
@@ -317,7 +322,7 @@ public class ChessGameEditor implements ApplicationListener {
 		ChessPiece[] set = getChessPieceSet().getPieces();
 		for(int i = 0; i < set.length; i++) {
 			final int index = i;
-			ChessPiece piece = set[i];
+			final ChessPiece piece = set[i];
 			GridSelectionItem item = new GridSelectionItem(skin);
 			TextureRegion textureRegion = piece.getWhiteTextureRegion();
 			if(textureRegion != null) {
@@ -329,6 +334,10 @@ public class ChessGameEditor implements ApplicationListener {
 					public void clicked(InputEvent event, float x, float y) {
 						editorMode = EditingMode.PIECE_SET;
 						selectedChessPieceIndex = index;
+						attackVectors = new ArrayList<Vector2>(Arrays.asList(piece.getAttackVectors()));
+						attackDirectionVectors = new ArrayList<Vector2>(Arrays.asList(piece.getAttackDirectionVectors()));
+						movementVectors = new ArrayList<Vector2>(Arrays.asList(piece.getMovementVectors()));
+						movementDirectionVectors = new ArrayList<Vector2>(Arrays.asList(piece.getMovementDirectionVectors()));
 						updateMovementVectorList();
 						updateAttackVectorList();
 					}
@@ -376,18 +385,29 @@ public class ChessGameEditor implements ApplicationListener {
 		Label attackVectorsLabel = new Label("Attack Vectors", skin);
 		TextButton newMovementVectorButton = new TextButton("Add", skin);
 		TextButton newAttackVectorButton = new TextButton("Add", skin);
+		TextButton savePieceButton = new TextButton("Save", skin);
+		
+		savePieceButton.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				ResourceThrower thrower = new ResourceThrower();
+				ChessPiece piece = getSelectedChessPiece();
+				piece.setMovementVectors(movementVectors.toArray(new Vector2[movementVectors.size()]));
+				piece.setMovementDirectionVectors(movementDirectionVectors.toArray(new Vector2[movementDirectionVectors.size()]));
+				piece.setAttackVectors(attackVectors.toArray(new Vector2[attackVectors.size()]));
+				piece.setAttackDirectionVectors(attackDirectionVectors.toArray(new Vector2[attackDirectionVectors.size()]));
+				thrower.savePiece(piece);
+			}
+		});
 		
 		newMovementVectorButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				ChessPiece piece = getSelectedChessPiece();
 				if(piece != null) {
-					Vector2[] oldVectorArray = piece.getMovementVectors();
-					int newLength = oldVectorArray.length + 1;
-					Vector2[] newVectorArray = Arrays.copyOf(oldVectorArray, newLength);
-					newVectorArray[newLength - 1] = new Vector2(0, 0);
-					piece.setMovementVectors(newVectorArray);
-					updateMovementVectorList();
+					movementVectors.add(new Vector2(0, 0));
+					ListRow row = createMovementVectorListRow(movementVectors.size()-1);
+					movementVectorsList.addItem(row);
 				}
 			}
 		});
@@ -397,34 +417,40 @@ public class ChessGameEditor implements ApplicationListener {
 			public void clicked(InputEvent event, float x, float y) {
 				ChessPiece piece = getSelectedChessPiece();
 				if(piece != null) {
-					Vector2[] oldVectorArray = piece.getAttackVectors();
-					int newLength = oldVectorArray.length + 1;
-					Vector2[] newVectorArray = Arrays.copyOf(oldVectorArray, newLength);
-					newVectorArray[newLength - 1] = new Vector2(0, 0);
-					piece.setAttackVectors(newVectorArray);
-					updateAttackVectorList();
+					attackVectors.add(new Vector2(0, 0));
+					ListRow row = createMovementVectorListRow(attackVectors.size()-1);
+					attackVectorsList.addItem(row);
 				}
 			}
 		});
 		movementVectorsList = new AdvancedList<ListRow>();
 		attackVectorsList = new AdvancedList<ListRow>();
+		
+		Table piecesContainerWrapper = new Table();
 
-		piecesContainer.add(piecesGrid).colspan(3);
-		piecesContainer.row();
-		piecesContainer.add(whiteChessOwnerButton);
-		piecesContainer.add(blackChessOwnerButton);
-		piecesContainer.add(chessPieceDeleteButton);
-		piecesContainer.row().padTop(8);
-		piecesContainer.add(movementVectorsLabel).colspan(2);
-		piecesContainer.add(newMovementVectorButton);
-		piecesContainer.row().padTop(4);
-		piecesContainer.add(movementVectorsList).colspan(3);
-		piecesContainer.row().padTop(8);
-		piecesContainer.add(attackVectorsLabel).colspan(2);
-		piecesContainer.add(newAttackVectorButton);
-		piecesContainer.row().padTop(4);
-		piecesContainer.add(attackVectorsList).colspan(3);
-		piecesContainer.align(Align.top);
+		piecesContainerWrapper.add(piecesGrid).colspan(3);
+		piecesContainerWrapper.row();
+		piecesContainerWrapper.add(whiteChessOwnerButton);
+		piecesContainerWrapper.add(blackChessOwnerButton);
+		piecesContainerWrapper.add(chessPieceDeleteButton);
+		piecesContainerWrapper.row().padTop(8);
+		piecesContainerWrapper.add(movementVectorsLabel).colspan(2);
+		piecesContainerWrapper.add(newMovementVectorButton);
+		piecesContainerWrapper.row().padTop(4);
+		piecesContainerWrapper.add(movementVectorsList).colspan(3);
+		piecesContainerWrapper.row().padTop(8);
+		piecesContainerWrapper.add(attackVectorsLabel).colspan(2);
+		piecesContainerWrapper.add(newAttackVectorButton);
+		piecesContainerWrapper.row().padTop(4);
+		piecesContainerWrapper.add(attackVectorsList).colspan(3);
+		piecesContainerWrapper.row().padTop(8);
+		piecesContainerWrapper.add(savePieceButton);
+		piecesContainerWrapper.align(Align.top);
+		
+		ScrollPane piecesContainerScrollPane = new ScrollPane(piecesContainerWrapper);
+		piecesContainerScrollPane.setScrollingDisabled(true, false);
+		piecesContainer.add(piecesContainerScrollPane).fill().expand();
+		
 		boardsTab.addListener(new ClickListener() {
 
 			@Override
@@ -575,28 +601,213 @@ public class ChessGameEditor implements ApplicationListener {
 	}
 	
 	private void updateMovementVectorList() {
-		// TODO Auto-generated method stub
-		movementVectorsList.clear();
-		ChessPiece piece = getSelectedChessPiece();
-		Vector2[] movementVectors = piece.getMovementVectors();
-		//Vector2[] movementDirecitonVectors = piece.getMovementDirectionVectors();
-		for(int i = 0; i < movementVectors.length; i++) {
-			Vector2 movementVector = movementVectors[i];
-			ListRow row = new ListRow(skin);
-			TextField xComponentField = new TextField(String.valueOf(movementVector.getX()), skin);
-			TextField yComponentField = new TextField(String.valueOf(movementVector.getY()), skin);
-			CheckBox directionVectorCheckBox = new CheckBox("Direction", skin);
-			row.add(xComponentField);
-			row.add(yComponentField);
-			row.add(directionVectorCheckBox);
+		movementVectorsList.removeItems(movementVectorsList.getItems());
+		for(int i = 0; i < movementVectors.size(); i++) {
+			ListRow row = createMovementVectorListRow(i);
+			movementVectorsList.addItem(row);
+		}
+		for(int i = 0; i < movementDirectionVectors.size(); i++) {
+			ListRow row = createMovementDirectionVectorListRow(i);
 			movementVectorsList.addItem(row);
 		}
 		
 	}
 	
 	private void updateAttackVectorList() {
-		// TODO Auto-generated method stub
-		
+				attackVectorsList.clear();
+				for(int i = 0; i < attackVectors.size(); i++) {
+					ListRow row = createAttackVectorListRow(i);
+					attackVectorsList.addItem(row);
+				}
+				for(int i = 0; i < attackDirectionVectors.size(); i++) {
+					ListRow row = createAttackMovementVectorListRow(i);
+					attackVectorsList.addItem(row);
+				}
+	}
+	
+	public ListRow createMovementVectorListRow(int i) {
+		final Vector2 movementVector = movementVectors.get(i);
+		ListRow row = new ListRow(skin);
+		final TextField xComponentField = new TextField(String.valueOf(movementVector.getX()), skin);
+		final TextField yComponentField = new TextField(String.valueOf(movementVector.getY()), skin);
+		final CheckBox directionVectorCheckBox = new CheckBox("Dir", skin);
+		directionVectorCheckBox.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(directionVectorCheckBox.isChecked()) {
+					movementVectors.remove(movementVector);
+					movementDirectionVectors.add(movementVector);
+				} else {
+					movementDirectionVectors.remove(movementVector);
+					movementVectors.add(movementVector);
+				}
+			}
+			
+		});
+		xComponentField.setTextFieldListener(new TextFieldListener() {
+			public void keyTyped (TextField textField, char key) {
+				try {
+					double xComponent = Double.parseDouble(xComponentField.getText());
+					System.out.println("Changed value: " + xComponent);
+					movementVector.setX(xComponent);
+				} catch(NumberFormatException e) {}
+				
+			}
+			
+		});
+		yComponentField.setTextFieldListener(new TextFieldListener() {
+			
+			public void keyTyped (TextField textField, char key) {
+				try {
+					double yComponent = Double.parseDouble(yComponentField.getText());
+					movementVector.setY(yComponent);
+				} catch(NumberFormatException e) {}
+				
+			}
+			
+		});
+		row.add(xComponentField).width(50);
+		row.add(yComponentField).width(50);
+		row.add(directionVectorCheckBox).width(100);
+		return row;
+	}
+	
+	public ListRow createMovementDirectionVectorListRow(int i) {
+		final Vector2 movementDirectionVector = movementDirectionVectors.get(i);
+		ListRow row = new ListRow(skin);
+		final TextField xComponentField = new TextField(String.valueOf(movementDirectionVector.getX()), skin);
+		final TextField yComponentField = new TextField(String.valueOf(movementDirectionVector.getY()), skin);
+		final CheckBox directionVectorCheckBox = new CheckBox("Dir", skin);
+		directionVectorCheckBox.setChecked(true);
+		directionVectorCheckBox.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(!directionVectorCheckBox.isChecked()) {
+					movementDirectionVectors.remove(movementDirectionVector);
+					movementVectors.add(movementDirectionVector);
+				} else {
+					movementVectors.remove(movementDirectionVector);
+					movementDirectionVectors.add(movementDirectionVector);
+				}
+			}
+			
+		});
+		xComponentField.setTextFieldListener(new TextFieldListener() {
+			public void keyTyped (TextField textField, char key) {
+				try {
+					double xComponent = Double.parseDouble(xComponentField.getText());
+					movementDirectionVector.setX(xComponent);
+				} catch(NumberFormatException e) {}
+				
+			}
+			
+		});
+		yComponentField.setTextFieldListener(new TextFieldListener() {
+			public void keyTyped (TextField textField, char key) {
+				try {
+					double yComponent = Double.parseDouble(yComponentField.getText());
+					movementDirectionVector.setY(yComponent);
+				} catch(NumberFormatException e) {}
+				
+			}
+			
+		});
+		row.add(xComponentField).width(50);
+		row.add(yComponentField).width(50);
+		row.add(directionVectorCheckBox).width(100);
+		return row;
+	}
+	
+	public ListRow createAttackVectorListRow(int i) {
+		final Vector2 attackVector = attackVectors.get(i);
+		ListRow row = new ListRow(skin);
+		final TextField xComponentField = new TextField(String.valueOf(attackVector.getX()), skin);
+		final TextField yComponentField = new TextField(String.valueOf(attackVector.getY()), skin);
+		final CheckBox directionVectorCheckBox = new CheckBox("Dir", skin);
+		directionVectorCheckBox.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(directionVectorCheckBox.isChecked()) {
+					attackVectors.remove(attackVector);
+					attackDirectionVectors.add(attackVector);
+				} else {
+					attackDirectionVectors.remove(attackVector);
+					attackVectors.add(attackVector);
+				}
+			}
+			
+		});
+		xComponentField.setTextFieldListener(new TextFieldListener() {
+			public void keyTyped (TextField textField, char key) {
+				try {
+					double xComponent = Double.parseDouble(xComponentField.getText());
+					attackVector.setX(xComponent);
+				} catch(NumberFormatException e) {}
+				
+			}
+			
+		});
+		yComponentField.setTextFieldListener(new TextFieldListener() {
+			public void keyTyped (TextField textField, char key) {
+				try {
+					double yComponent = Double.parseDouble(yComponentField.getText());
+					attackVector.setY(yComponent);
+				} catch(NumberFormatException e) {}
+				
+			}
+			
+		});
+		row.add(xComponentField).width(50);
+		row.add(yComponentField).width(50);
+		row.add(directionVectorCheckBox).width(100);
+		return row;
+	}
+	
+	public ListRow createAttackMovementVectorListRow(int i) {
+		final Vector2 attackDirectionVector = attackDirectionVectors.get(i);
+		ListRow row = new ListRow(skin);
+		final TextField xComponentField = new TextField(String.valueOf(attackDirectionVector.getX()), skin);
+		final TextField yComponentField = new TextField(String.valueOf(attackDirectionVector.getY()), skin);
+		final CheckBox directionVectorCheckBox = new CheckBox("Dir", skin);
+		directionVectorCheckBox.setChecked(true);
+		directionVectorCheckBox.addListener(new ClickListener() {
+			
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if(!directionVectorCheckBox.isChecked()) {
+					attackDirectionVectors.remove(attackDirectionVector);
+					attackVectors.add(attackDirectionVector);
+				} else {
+					attackVectors.remove(attackDirectionVector);
+					attackDirectionVectors.add(attackDirectionVector);
+				}
+			}
+			
+		});
+		xComponentField.setTextFieldListener(new TextFieldListener() {
+			public void keyTyped (TextField textField, char key) {
+				try {
+					double xComponent = Double.parseDouble(xComponentField.getText());
+					attackDirectionVector.setX(xComponent);
+				} catch(NumberFormatException e) {}
+				
+			}
+			
+		});
+		yComponentField.setTextFieldListener(new TextFieldListener() {
+			public void keyTyped (TextField textField, char key) {
+				try {
+					double yComponent = Double.parseDouble(yComponentField.getText());
+					attackDirectionVector.setY(yComponent);
+				} catch(NumberFormatException e) {}
+				
+			}
+			
+		});
+		row.add(xComponentField).width(50);
+		row.add(yComponentField).width(50);
+		row.add(directionVectorCheckBox).width(100);
+		return row;
 	}
 
 	public ChessBoard getEditingBoard() {

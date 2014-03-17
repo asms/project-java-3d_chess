@@ -35,6 +35,7 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	protected Texture blackTexture;
 	protected TextureRegion whiteTextureRegion;
 	protected TextureRegion blackTextureRegion;
+	private String absolutePath = null;
 
 	public ChessPiece(ChessOwner owner) {
 		this.owner = owner;
@@ -216,41 +217,10 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 	}
 
 	public boolean tryAttack(ChessPiece targetChessPiece) {
-		if(owner != targetChessPiece.owner) {
-			if(attackDirectionVectors != null) {
-				for(Vector2 attackVector : attackDirectionVectors) {
-					if(owner == ChessOwner.WHITE) {
-						attackVector = attackVector.multiplyY(-1);
-					}
-					for(int i = 1; i < board.getBoardWidth() - 1; i++) {
-						Vector2 testVector = getPosition().add(attackVector.multiply(i));
-						try {
-							if(board.getTile((int) testVector.getX(),(int) testVector.getY()) == null){
-								break;
-							} else if(board.getChessPieceByVector(testVector) != null) {
-								if(testVector.equals(targetChessPiece.getPosition())) {
-									return true;
-								} else {
-									break;
-								}
-							}
-						} catch(Exception e) {
-							break;
-						}
-					}
-
-				}
-			}
-			if(attackVectors != null) {
-				for(Vector2 attackVector : attackVectors) {
-					if(owner == ChessOwner.WHITE) {
-						attackVector = attackVector.multiplyY(-1);
-					}
-					if(!(board.getTile((int) attackVector.getX(),(int) attackVector.getY()) == null)
-							&& (getPosition().add(attackVector).equals(targetChessPiece.getPosition()))) {
-						return true;
-					}
-				}
+		ArrayList<Vector2> possibleAttacks = getPossibleAttacks();
+		for(Vector2 possibleAttack : possibleAttacks) {
+			if(targetChessPiece.getPosition().equals(possibleAttack)) {
+				return true;
 			}
 		}
 		return false;
@@ -385,5 +355,21 @@ public class ChessPiece implements Serializable, ChessPieceInterface {
 
 	public void setAttackVectors(Vector2[] newVectorArray) {
 		attackVectors = newVectorArray;
+	}
+
+	public String getAbsolutePath() {
+		return absolutePath;
+	}
+
+	public void setAbsolutePath(String absolutePath) {
+		this.absolutePath = absolutePath;
+	}
+
+	public void setMovementDirectionVectors(Vector2[] array) {
+		this.movementDirectionVectors = array;
+	}
+	
+	public void setAttackDirectionVectors(Vector2[] array) {
+		this.attackDirectionVectors = array;
 	}
 }

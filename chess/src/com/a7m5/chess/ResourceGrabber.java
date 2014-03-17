@@ -78,6 +78,7 @@ public class ResourceGrabber {
 					whiteArtFile,
 					NPCArtFile
 					);
+			piece.setAbsolutePath(file.getAbsolutePath());
 			
 			
 		} catch(Exception e) {

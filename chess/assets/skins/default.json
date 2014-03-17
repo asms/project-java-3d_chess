@@ -16,6 +16,9 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	back: { down: buttons/back_down, up: buttons/back_up, over: buttons/back_over }, 
 	next: { down: buttons/next_down, up: buttons/next_up, over: buttons/next_over }
 },
+com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
+	default: { checkboxOn: backgrounds/black_alpha, checkboxOff: backgrounds/light_grey, font: default, fontColor: white }
+},
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: buttons/button_menu_down, up: buttons/button_menu_up, over: buttons/button_menu_over, font: default, fontColor: white }, 
 	menu: { down: buttons/button_menu_down, up: buttons/button_menu_up, over: buttons/button_menu_over, font: default, fontColor: white }, 
