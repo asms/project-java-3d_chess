@@ -17,6 +17,7 @@ import com.a7m5.chess.ChessBoard;
 import com.a7m5.chess.ResourceGrabber;
 import com.a7m5.chess.ResourceThrower;
 import com.a7m5.chess.Tile;
+import com.a7m5.chess.Vector2;
 import com.a7m5.chess.chesspieces.ChessOwner;
 import com.a7m5.chess.chesspieces.ChessPiece;
 import com.a7m5.chess.chesspieces.ChessPieceSet;
@@ -330,6 +331,8 @@ public class ChessGameEditor implements ApplicationListener {
 				System.out.println("texture is null");
 			}
 		}
+		TextButton whiteChessOwnerButton = new TextButton("White", skin);
+		TextButton blackChessOwnerButton = new TextButton("Black", skin);
 		piecesContainer.add(piecesGrid);
 		
 		boardsTab.addListener(new ClickListener() {
@@ -470,7 +473,9 @@ public class ChessGameEditor implements ApplicationListener {
 		
 		if(editorMode == EditingMode.PIECE_SET) {
 			if(tiles[tileX][tileY] != null && selectedChessPieceIndex > -1) {
-				pieces[tileX][tileY] = getChessPieceSet().getPieceByIndex(selectedChessPieceIndex).getClone(ChessOwner.WHITE);
+				ChessPiece piece = getChessPieceSet().getPieceByIndex(selectedChessPieceIndex).getClone(ChessOwner.WHITE);
+				piece.setPosition(new Vector2(tileX, tileY));
+				pieces[tileX][tileY] = piece;
 			}
 		}
 
